@@ -2,21 +2,26 @@
 
 html {
 	font-family: $font-stack;
-	font-size: 16px;
+	font-size: $font-base;
 }
 
 body {
 	color: $color-text;
 }
 
+h1 {
+	@include font-size($font-medium);
+	font-weight: bold;
+}
+
 .text-right { text-align: right; }
 
 #header {
-	@include font-size(32px);
+	@include font-size($font-large);
 	color: #fff;
 
-	& i:last-child {
-		@include font-size(24px);
-		border: 1px solid red;
+	& div:last-child {
+		@include font-size($font-medium);
+		@include rem('line-height', $font-large);
 	}
 }

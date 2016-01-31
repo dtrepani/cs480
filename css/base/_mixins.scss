@@ -1,4 +1,4 @@
-// Properties
+// Cross-browser
 // ----------------------------
 @mixin property($property, $value) {
 	-webkit-#{$property}: #{$value};
@@ -39,9 +39,13 @@
 
 // Other
 // ----------------------------
-@mixin font-size($size) {
-	font-size: #{$size};
-	font-size: #{($size / $font-base)}rem;
+@mixin rem($property, $size-px) {
+	#{$property}: #{$size-px};
+	#{$property}: #{($size-px / $font-base)}rem;
+}
+
+@mixin font-size($size-px) {
+	@include rem('font-size', $size-px);
 }
 
 @mixin vertical-center() {
