@@ -1,5 +1,13 @@
-@import "../base/base";
-
 body {
 	background-color: $color-bg;
+}
+
+#header {
+	height: 45px;
+	background-color: $color-primary;
+	padding: 0 5px;
+
+	& [class*="col-"] {
+		@include vertical-center();
+	}
 }

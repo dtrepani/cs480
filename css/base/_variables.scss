@@ -1,0 +1,53 @@
+// COLORS
+// ----------------------------
+$color-primary: #0086E4;
+$color-accent: #000;
+
+$color-text: #444;
+$color-bg: #ddd;
+
+// FONT
+// ----------------------------
+$font-stack: 'Open Sans', Helvetica, Arial, sans-serif;
+$font-base: 16px;
+
+// GRID
+// ----------------------------
+$total-columns: 12;
+$gutter-width: 2%;
+$col-width: (100% - ($gutter-width * ($total-columns - 1))) / $total-columns;
+
+$breakpoint-widths: (
+	bp-768: (
+		col-width:		50px,
+		gutter-width:	20px
+	),
+	bp-960: (
+		col-width: 		60px,
+		gutter-width:	20px
+	),
+	bp-1200: (
+		col-width: 		70px,
+		gutter-width:	30px
+	)
+);
+
+$col-width-768:		50px;
+$gutter-768:		20px;
+$row-width-768:		get-row-width($col-width-768, $gutter-768);
+
+$col-width-960:		60px;
+$gutter-960:		20px;
+$row-width-960:		get-row-width($col-width-960, $gutter-960);
+
+$col-width-1200:	70px;
+$gutter-1200:		30px;
+$row-width-1200:	get-row-width($col-width-1200, $gutter-1200);
+
+// BREAKPOINTS
+// ----------------------------
+$breakpoints: (
+  small: 768px,
+  medium: 960px,
+  large: 1200px
+);

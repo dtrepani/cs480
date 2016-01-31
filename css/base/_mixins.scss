@@ -1,0 +1,71 @@
+// Properties
+// ----------------------------
+@mixin property($property, $value) {
+	-webkit-#{$property}: #{$value};
+	-moz-#{$property}: #{$value};
+	-ms-#{$property}: #{$value};
+	-o-#{$property}: #{$value};
+	#{$property}: #{$value};
+}
+
+@mixin border-radius($radius) {
+	@include property('border-radius', $radius);
+}
+
+@mixin opacity($opacity) {
+	@include property('opacity', $opacity);
+	filter: alpha(opacity=$opacity * 100);
+}
+
+@mixin transform($params...) {
+	@include property('transform', $params);
+}
+
+@mixin transition($params...) {
+	@include property('transition', $params);
+}
+
+@mixin animation($params...) {
+	@include property('animation', $params);
+}
+
+@mixin keyframes($animation-name) {
+	-webkit-keyframes #{$animation-name} { @content; }
+	-moz-keyframes #{$animation-name} { @content; }
+	-ms-keyframes #{$animation-name} { @content; }
+	-o-keyframes #{$animation-name} { @content; }
+	keyframes #{$animation-name} { @content; }
+}
+
+// Other
+// ----------------------------
+@mixin font-size($size) {
+	font-size: #{$size};
+	font-size: #{($size / $font-base)}rem;
+}
+
+@mixin vertical-center() {
+	position: relative;
+	top: 50%;
+	@include transform(translateY(-50%));
+}
+
+@mixin breakpoint($breakpoint) {
+	@if map-has-key($breakpoints, $breakpoint) {
+		@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+			@content;
+		}
+	} @else {
+		@warn "No such breakpoint '#{$breakpoint}' exists.";
+	}
+}
+
+// Functions
+// ----------------------------
+@function remove-units($number) {
+  @return $number / ($number * 0 + 1);
+}
+
+@function get-row-width($col-width, $gutter) {
+	@return (($total-columns * $col-width) + ($gutter * ($total-columns - 1)));
+}

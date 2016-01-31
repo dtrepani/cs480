@@ -1,5 +1,7 @@
 @import "base/reset";
-@import "base/base";
+@import "base/variables";
+@import "base/mixins";
+@import "base/extends";
 @import "base/typography";
 
 @import "layout/grid";
