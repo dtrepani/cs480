@@ -18,10 +18,27 @@ h1 {
 
 #header {
 	@include font-size($font-large);
-	color: #fff;
+	color: $color-bg-content;
 
 	& div:last-child {
 		@include font-size($font-medium);
 		@include rem('line-height', $font-large);
+	}
+}
+
+.incomplete {
+	& i {
+		color: $color-dim;
+	}
+}
+
+.complete {
+	& span {
+		text-decoration: line-through;
+	}
+
+	& i {
+		color: $color-text;
+		text-decoration: none;
 	}
 }

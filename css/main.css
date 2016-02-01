@@ -72,6 +72,15 @@ h1 {
     line-height: 32px;
     line-height: 2rem; }
 
+.incomplete i {
+  color: #eee; }
+
+.complete span {
+  text-decoration: line-through; }
+.complete i {
+  color: #444;
+  text-decoration: none; }
+
 .row {
   width: 100%; }
 
@@ -185,34 +194,66 @@ h1 {
   .push-12:first-child {
     margin-left: 102%; }
 
+html, body, .grid {
+  height: 100%; }
+
 body {
   background-color: #ddd; }
 
+.row {
+  width: 98%;
+  height: 100%;
+  margin: auto; }
+
 #header {
   height: 45px;
-  background-color: #0086E4;
+  background-color: #d53939;
+  width: 100%;
   position: fixed; }
-  #header [class*="col-"] {
-    position: relative;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);
-    transform: translateY(-50%); }
-  #header div:first-child {
-    padding-left: 5px; }
-  #header div:last-child {
-    padding-right: 5px; }
-    #header div:last-child i {
-      margin-left: 15px; }
+
+#header .row [class*="col-"] {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%); }
+#header .row div:last-child i {
+  margin-left: 15px; }
 
 #content {
-  margin-top: 45px; }
-  #content [class*="col-"] {
-    padding: 5px; }
+  background-color: #fff;
+  height: 100%; }
+
+#content .row {
+  margin-top: 45px;
+  height: 100%; }
+
+.checkmark {
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  background: url("../../img/icons.png") 0 0;
+  display: inline-block;
+  border: 1px solid red; }
 
 .task-list li {
-  margin: 20px 0; }
+  padding: 10px 0;
+  -webkit-border-bottom: 1px solid #eee;
+  -moz-border-bottom: 1px solid #eee;
+  -ms-border-bottom: 1px solid #eee;
+  -o-border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eee; }
+  .task-list li:last-child {
+    -webkit-border-bottom: none;
+    -moz-border-bottom: none;
+    -ms-border-bottom: none;
+    -o-border-bottom: none;
+    border-bottom: none; }
+  .task-list li i {
+    margin-right: 20px; }
+    .task-list li i:hover {
+      cursor: pointer; }
 
 /*# sourceMappingURL=main.css.map */

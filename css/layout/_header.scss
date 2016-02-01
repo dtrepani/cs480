@@ -1,33 +1,53 @@
+html, body, .grid {
+	height: 100%;
+}
+
 body {
-	background-color: $color-bg;
+	background-color: $color-bg-body;
+}
+
+.row {
+	width: 98%;
+	height: 100%;
+	margin: auto;
 }
 
 #header {
 	height: $header-height;
 	background-color: $color-primary;
+	width: 100%;
 	position: fixed;
+}
 
+#header .row {
 	& [class*="col-"] {
 		@include vertical-center();
 	}
 
-	& div:first-child {
-		padding-left: $body-padding;
-	}
-
-	& div:last-child {
-		padding-right: $body-padding;
-
-		& i {
-			margin-left: 15px;
-		}
+	& div:last-child i {
+		margin-left: 15px;
 	}
 }
 
 #content {
+	background-color: $color-bg-content;
+	height: 100%;
+}
+
+#content .row {
 	margin-top: $header-height;
+	height: 100%;
 
 	& [class*="col-"] {
-		padding: $body-padding;
+		//padding: $body-padding;
 	}
+}
+
+.checkmark {
+	vertical-align: middle;
+	width: 30px;
+	height: 30px;
+	background: url("../../img/icons.png") 0 0;
+	display: inline-block;
+	border: 1px solid red;
 }

@@ -1,10 +1,19 @@
 .task-list {
-
 }
 
 .task-list li {
-	margin: 20px 0;
+	padding: 10px 0;
+	@include property('border-bottom', 1px solid $color-dim);
 
-	&:before {
+	&:last-child {
+		@include property('border-bottom', none);
+	}
+
+	& i {
+		margin-right: 20px;
+
+		&:hover {
+			cursor: pointer;
+		}
 	}
 }
