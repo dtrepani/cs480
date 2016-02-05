@@ -1,0 +1,70 @@
+#sidebar {
+	position: fixed;
+	height: 100%;
+	overflow: hidden;
+	z-index: $z-index-top;
+}
+
+#nav {
+	padding: $body-padding 0;
+	background-color: $color-bg-sidebar;
+	height: 100%;
+}
+
+.sidebar-collapsed {
+	width: $sidebar-collapsed-width-small;
+}
+
+.sidebar-expanded {
+	width: $sidebar-expanded-width;
+}
+
+ul[id*="nav-"] {
+	margin-bottom: 30px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+li[id*="nav-"] {
+	padding: ($body-padding / 2) $body-padding;
+	margin: 2px 0;
+	display: block;
+
+	& i {
+		vertical-align: middle;
+		margin-right: 8px;
+	}
+
+	&:hover {
+		cursor: pointer;
+		background-color: $color-bg-content;
+	}
+}
+
+#header-sidebar {
+	padding: ($body-padding / 2);
+	background-color: $color-primary-dark;
+	width: 100%;
+
+	& i {
+		@include vertical-center();
+	}
+}
+
+.selected {
+	background-color: $color-bg-content;
+}
+
+@include breakpoint(small) {
+	.collapsed {
+		width: $sidebar-collapsed-width;
+	}
+
+	ul[id*="nav-"] {
+		margin-bottom: 30px;
+	}
+
+	li[id*="nav-"]:before {
+		margin-left: -27px - $body-padding;
+	}
+}

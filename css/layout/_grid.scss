@@ -1,49 +1,41 @@
 .grid {
 	@extend %clearfix;
+	height: 100%;
 }
 
 .row {
 	@extend %clearfix;
 	width: 100%;
+	height: 100%;
 }
 
-// @each $breakpoint, $width in $breakpoints {
-// 	@media screen and (min-width: map-get($breakpoint, $width)) {
+[class*="col-"] {
+	@include property('box-sizing', 'border-box');
+	display: block;
+	float: left;
+	width: 100%;
+	margin-left: $gutter-width;
+	min-height: 1px;
 
-// 		//TODO: not breakpoint-widths, but specific bps like bp768
-// 		$row-width: get-row-width(map-get($breakpoint-widths, col-width), map-get($breakpoint-widths, gutter-width));
-// 		$col-width: map-get($breakpoint-widths, col-width)/$row-width * 100%;
-// 		$gutter-width: map-get($breakpoint-widths, gutter-width)/$row-width * 100%;
+	// &:first-child {
+	// 	margin-left: 0;
+	// }
+}
 
-		[class*="col-"] {
-			@include property('box-sizing', 'border-box');
-			display: block;
-			float: left;
-			width: 100%;
-			margin-left: $gutter-width;
-			min-height: 1px;
+@for $i from 1 through $total-columns {
+	.col-#{$i} {
+		width: ($col-width * $i) + ($gutter-width * ($i - 1));
+	}
+}
 
-			&:first-child {
-				margin-left: 0;
-			}
-		}
+@for $i from 1 through $total-columns {
+	$i-width: ($col-width * $i) + ($gutter-width * ($i - 1));
 
-		@for $i from 1 through $total-columns {
-			.col-#{$i} {
-				width: ($col-width * $i) + ($gutter-width * ($i - 1));
-			}
-		}
+	.push-#{$i} {
+		margin-left: $i-width + $gutter-width * 2;
 
-		@for $i from 1 through $total-columns {
-			$i-width: ($col-width * $i) + ($gutter-width * ($i - 1));
-
-			.push-#{$i} {
-				margin-left: $i-width + $gutter-width * 2;
-
-				&:first-child {
-					margin-left: $i-width + $gutter-width;
-				}
-			}
-		}
-// 	}
-// }
+		// &:first-child {
+		// 	margin-left: $i-width + $gutter-width;
+		// }
+	}
+}

@@ -8,10 +8,6 @@
 	#{$property}: #{$value};
 }
 
-@mixin border-radius($radius) {
-	@include property('border-radius', $radius);
-}
-
 @mixin opacity($opacity) {
 	@include property('opacity', $opacity);
 	filter: alpha(opacity=$opacity * 100);

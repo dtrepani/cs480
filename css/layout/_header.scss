@@ -1,30 +1,46 @@
-html, body, .grid {
+* {
+	@include property('box-sizing', 'border-box');
+}
+
+html, body {
 	height: 100%;
+	width: 100%;
 }
 
 body {
 	background-color: $color-bg-body;
 }
 
-.row {
-	width: 98%;
-	height: 100%;
-	margin: auto;
+h1 {
+	margin-bottom: 5px;
 }
 
-#header {
-	height: $header-height;
-	background-color: $color-primary;
-	width: 100%;
-	position: fixed;
-}
-
-#header .row {
-	& [class*="col-"] {
-		@include vertical-center();
+#main {
+	& .sidebar-collapsed {
+		padding-left: $sidebar-collapsed-width-small + $body-padding;
 	}
 
-	& div:last-child i {
+	& .sidebar-expanded {
+		padding-right: $sidebar-expanded-width + $body-padding;
+	}
+}
+
+.header {
+	height: $header-height;
+	background-color: $color-primary;
+	padding: 0 $body-padding;
+	z-index: $z-index-middle;
+}
+
+.header i:hover {
+	cursor: pointer;
+}
+
+#header-right {
+	position: fixed;
+
+	& i {
+		@include vertical-center();
 		margin-left: 15px;
 	}
 }
@@ -32,22 +48,8 @@ body {
 #content {
 	background-color: $color-bg-content;
 	height: 100%;
+	padding: ($header-height + $body-padding) $body-padding $body-padding;
 }
 
-#content .row {
-	margin-top: $header-height;
-	height: 100%;
-
-	& [class*="col-"] {
-		//padding: $body-padding;
-	}
-}
-
-.checkmark {
-	vertical-align: middle;
-	width: 30px;
-	height: 30px;
-	background: url("../../img/icons.png") 0 0;
-	display: inline-block;
-	border: 1px solid red;
+@include breakpoint(small) {
 }

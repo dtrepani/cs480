@@ -2,18 +2,45 @@
 }
 
 .task-list li {
-	padding: 10px 0;
 	@include property('border-bottom', 1px solid $color-dim);
+	padding: 10px 0;
+
+	&:first-child {
+		padding-top: 0;
+	}
 
 	&:last-child {
 		@include property('border-bottom', none);
 	}
+}
 
-	& i {
-		margin-right: 20px;
+.task-list i:hover {
+	&:hover {
+		cursor: pointer;
+	}
+}
 
-		&:hover {
-			cursor: pointer;
-		}
+.check {
+	margin-right: 10px;
+}
+
+.edit {
+	@include rem('width', $font-small);
+	text-align: center;
+	float: right;
+	visibility: hidden;
+
+	li:hover & {
+		visibility: visible;
+	}
+}
+
+@include breakpoint(small) {
+	.task-list li {
+		padding: 15px 0;
+	}
+
+	.edit {
+		@include rem('width', $font-base);
 	}
 }

@@ -1,87 +1,180 @@
 <!DOCTYPE html>
 <head>
+	<meta charset="UTF-8">
+
 	<title></title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
-	<!-- <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>
-	<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p> -->
-
 	<div class="grid">
-		<div id="header">
-			<div class="row">
-				<div class="col-1">
-					<i class="fa fa-bars"></i>
-				</div>
-				<div class="col-6 push-5 text-right">
-					<i class="fa fa-plus"></i>
-					<i class="fa fa-cog"></i>
-				</div>
-			</div>
-		</div>
+		<div class="row">
 
-		<div id="content">
-			<div class="row">
-				<div class="col-12">
-					<h1>Inbox</h1>
-					<ul class="task-list">
-						<li class="incomplete">
-							<div class="checkmark"></div>
-							<span>Call mom</span>
+			<div id="sidebar" class="col-1 sidebar-expanded">
+				<div id="header-sidebar" class="header">
+					<i class="fa fa-bars fa-fw"></i>
+				</div>
+				<div id="nav">
+					<ul id="nav-calendar-list">
+						<li id="nav-calendar" class="selected">
+  							<i class="fa fa-calendar fa-fw"></i>
+							Calendar
 						</li>
-						<li class="complete">
-							<div class="checkmark"></div>
-							<span>Meet with person at place</span>
+						<li id="nav-sub-calendars" class="sub-nav">
+  							<i class="fa fa-calendar-o fa-fw"></i>
+							My Calendars
 						</li>
-						<li class="incomplete">
-							<div class="checkmark"></div>
-							<span>Do laundry</span>
+					</ul>
+
+					<ul id="nav-task-list">
+						<li id="nav-inbox">
+  							<i class="fa fa-inbox fa-fw"></i>
+							Inbox
+						</li>
+						<li id="nav-today">
+  							<i class="fa fa-list fa-fw"></i>
+							Today
+						</li>
+						<li id="nav-7-days">
+  							<i class="fa fa-list fa-fw"></i>
+							Next 7 Days
+						</li>
+						<li id="nav-sub-labels" class="sub-nav">
+  							<i class="fa fa-list-alt fa-fw"></i>
+							My Labels
 						</li>
 					</ul>
 				</div>
 			</div>
+
+			<div id="main" class="col-7 push-1">
+				<div id="header-right" class="row">
+					<div class="header col-7">
+						<i class="fa fa-plus"></i>
+						<i class="fa fa-cog"></i>
+					</div>
+				</div>
+
+				<div id="content" class="row">
+					<div class="col-7">
+						<h1>Inbox</h1>
+						<ul class="task-list">
+							<li class="incomplete">
+  								<i class="fa fa-check check"></i>
+								<span>Call mom</span>
+  								<i class="fa fa-ellipsis-v edit"></i>
+							</li>
+							<li class="complete">
+  								<i class="fa fa-check check"></i>
+								<span>Meet with person at place</span>
+  								<i class="fa fa-ellipsis-v edit"></i>
+							</li>
+							<li class="incomplete">
+  								<i class="fa fa-check check"></i>
+								<span>Do laundry</span>
+  								<i class="fa fa-ellipsis-v edit"></i>
+							</li>
+						</ul>
+
+						<div id="calendar-header">
+							<h1>February</h1>
+							<ul id="calendar-view">
+								<li>Day</li>
+								<li>Week</li>
+								<li>Month</li>
+								<li>Agenda</li>
+							</ul>
+						</div>
+						<ul id="calendar-month">
+							<ul id="day-names">
+								<li>Sun</li>
+								<li>Mon</li>
+								<li>Tue</li>
+								<li>Wed</li>
+								<li>Thur</li>
+								<li>Fri</li>
+								<li>Sat</li>
+							</ul>
+
+							<ul id="month">
+								<li>
+									<ul class="all-day-events">
+										<li></li>
+										<li></li>
+									</ul>
+									<span class="date">1</span>
+									<ul class="events">
+										<li></li>
+										<li></li>
+										<li></li>
+									</ul>
+								</li>
+								<li>
+									<ul class="all-day-events">
+										<li></li>
+									</ul>
+									<span class="date">2</span>
+									<ul class="events">
+										<li></li>
+										<li></li>
+										<li></li>
+									</ul>
+								</li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+
+								<li>
+									<ul class="all-day-events">
+										<li></li>
+									</ul>
+									<span class="date">22</span>
+									<ul class="events">
+										<li></li>
+										<li></li>
+										<li></li>
+									</ul>
+								</li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+							</ul>
+						</ul>
+
+					</div>
+				</div>
+
+			</div>
 		</div>
 	</div>
-
-
-	<!-- <section class="grid">
-
-		<div class="row">
-
-			<div class="col-3"><span>3</span></div>
-			<div class="col-3"><span>3</span></div>
-			<div class="col-6"><span>6</span></div>
-
-		</div>
-
-		<div class="row">
-
-			<div class="col-4"><span>4</span></div>
-			<div class="col-4"><span>4</span></div>
-			<div class="col-4"><span>4</span></div>
-
-		</div>
-
-		<div class="row">
-
-			<div class="col-2"><span>2</span></div>
-			<div class="col-2"><span>2</span></div>
-			<div class="col-1"><span>1</span></div>
-			<div class="col-4"><span>4</span></div>
-			<div class="col-1"><span>1</span></div>
-			<div class="col-1"><span>1</span></div>
-			<div class="col-1"><span>1</span></div>
-
-		</div>
-
-		<div class="row">
-
-			<div class="col-12"><span>12</span></div>
-
-		</div>
-
-	</section> -->
-
 </body>
 </html>

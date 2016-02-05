@@ -2,7 +2,7 @@
 
 html {
 	font-family: $font-stack;
-	font-size: $font-base;
+	font-size: $font-small;
 }
 
 body {
@@ -14,31 +14,69 @@ h1 {
 	font-weight: bold;
 }
 
-.text-right { text-align: right; }
-
-#header {
-	@include font-size($font-large);
-	color: $color-bg-content;
-
-	& div:last-child {
-		@include font-size($font-medium);
-		@include rem('line-height', $font-large);
+@include breakpoint(small) {
+	html {
+		font-size: $font-base;
 	}
 }
 
-.incomplete {
-	& i {
-		color: $color-dim;
+// HEADER
+// ----------------------------
+.header {
+	@include font-size($font-large);
+	color: $color-bg-content;
+}
+
+#header-right {
+	text-align: right;
+}
+
+// SIDEBAR
+// ----------------------------
+#header-sidebar {
+	@include font-size($font-large);
+}
+
+li[id*="nav-"] {
+	@include rem('line-height', $font-medium);
+}
+
+li[id*="nav-"] i {
+	@include font-size($font-medium);
+}
+
+// LISTS
+// ----------------------------
+.edit {
+	color: $color-dim;
+
+	&:hover {
+		color: $color-text;
+	}
+}
+
+.incomplete .check {
+	color: $color-dim;
+
+	&:hover {
+		color: $color-dim-dark;
 	}
 }
 
 .complete {
 	& span {
+		color: $color-dim-dark;
 		text-decoration: line-through;
 	}
 
-	& i {
+	& .check {
 		color: $color-text;
 		text-decoration: none;
 	}
+}
+
+// CALENDAR
+// ----------------------------
+#calendar-month {
+	@include font-size(14px);
 }

@@ -1,0 +1,8 @@
+TODO:
+
+	Task names limited to one line in overview
+	Height of #content set to 100% via jQuery
+	Task labels and calendars via dropdown in sidebar
+	Media queries to ems
+
+	Remove %icons?

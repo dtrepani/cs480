@@ -1,0 +1,77 @@
+#calendar-header {
+	@extend %clearfix;
+
+	h1 {
+		float: left;
+	}
+
+	& ul {
+		float: right;
+	}
+
+	& li {
+		display: inline-block;
+	}
+}
+
+#calendar-month > ul > li {
+	width: $month-day-width;
+ 	float: left;
+	margin: -1px 0 0 -1px;
+}
+
+#day-names li {
+	padding-bottom: 2px;
+}
+
+#month {
+	& > li {
+	 	@include property('border', '1px solid #{$color-dim}');
+	 	height: $event-height-small * 15;
+	}
+
+	& ul li {
+		height: $event-height-small;
+		background-color: $color-primary;
+		margin: 1px 0;
+	}
+}
+
+.all-day-events {
+	width: 100%;
+	height: $event-height-small*2 + $event-height-small/2;
+	padding: 0 $month-day-padding;
+}
+
+.date {
+	width: 20%;
+	margin-left: $month-day-padding;
+	padding-left: 2%;
+}
+
+.events {
+	width: 50%;
+	float: right;
+	margin-right: $month-day-padding;
+}
+
+
+@include breakpoint(small) {
+	#month {
+		& > li {
+	 	height: $event-height * 15;
+		}
+
+		& ul li {
+			height: $event-height;
+		}
+	}
+
+	.all-day-events {
+		height: $event-height*2 + $event-height/2;
+	}
+
+	.events {
+		width: 80%;
+	}
+}
