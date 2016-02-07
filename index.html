@@ -5,14 +5,15 @@
 	<title></title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<script type="text/javascript" src="js/script.js"></script>
 </head>
 <body>
-	<div class="grid">
-		<div class="row">
+	<div class="wrapper">
 
-			<div id="sidebar" class="col-1 sidebar-expanded">
+			<div id="sidebar" class="sidebar-collapsed">
 				<div id="header-sidebar" class="header">
-					<i class="fa fa-bars fa-fw"></i>
+					<i id="sidebar-toggle" class="fa fa-bars fa-fw"></i>
 				</div>
 				<div id="nav">
 					<ul id="nav-calendar-list">
@@ -47,35 +48,33 @@
 				</div>
 			</div>
 
-			<div id="main" class="col-7 push-1">
-				<div id="header-right" class="row">
-					<div class="header col-7">
-						<i class="fa fa-plus"></i>
-						<i class="fa fa-cog"></i>
-					</div>
+			<div id="main">
+				<div id="header-right" class="header">
+					<i class="fa fa-plus"></i>
+					<i class="fa fa-cog"></i>
 				</div>
 
-				<div id="content" class="row">
-					<div class="col-7">
-						<h1>Inbox</h1>
-						<ul class="task-list">
-							<li class="incomplete">
-  								<i class="fa fa-check check"></i>
-								<span>Call mom</span>
-  								<i class="fa fa-ellipsis-v edit"></i>
-							</li>
-							<li class="complete">
-  								<i class="fa fa-check check"></i>
-								<span>Meet with person at place</span>
-  								<i class="fa fa-ellipsis-v edit"></i>
-							</li>
-							<li class="incomplete">
-  								<i class="fa fa-check check"></i>
-								<span>Do laundry</span>
-  								<i class="fa fa-ellipsis-v edit"></i>
-							</li>
-						</ul>
+				<div id="content">
+					<h1>Inbox</h1>
+					<ul class="task-list">
+						<li class="incomplete">
+							<i class="fa fa-check check"></i>
+							<span>Call mom</span>
+							<i class="fa fa-ellipsis-v edit"></i>
+						</li>
+						<li class="complete">
+							<i class="fa fa-check check"></i>
+							<span>Meet with person at place with a really, really, really, long task name</span>
+							<i class="fa fa-ellipsis-v edit"></i>
+						</li>
+						<li class="incomplete">
+							<i class="fa fa-check check"></i>
+							<span>Do laundry</span>
+							<i class="fa fa-ellipsis-v edit"></i>
+						</li>
+					</ul>
 
+					<div id="calendar">
 						<div id="calendar-header">
 							<h1>February</h1>
 							<ul id="calendar-view">
@@ -169,12 +168,10 @@
 								<li></li>
 							</ul>
 						</ul>
-
 					</div>
 				</div>
-
 			</div>
-		</div>
+
 	</div>
 </body>
 </html>

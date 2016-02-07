@@ -4,6 +4,8 @@
 .task-list li {
 	@include property('border-bottom', 1px solid $color-dim);
 	padding: 10px 0;
+	//white-space: nowrap;
+	overflow: hidden;
 
 	&:first-child {
 		padding-top: 0;

@@ -1,3 +1,7 @@
+#calendar {
+	@extend %clearfix;
+}
+
 #calendar-header {
 	@extend %clearfix;
 

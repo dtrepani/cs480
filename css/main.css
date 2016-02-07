@@ -41,10 +41,10 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-.grid:before, .row:before, #calendar-header:before, .grid:after, .row:after, #calendar-header:after {
+.grid:before, .row:before, #calendar:before, #calendar-header:before, .grid:after, .row:after, #calendar:after, #calendar-header:after {
   display: table;
   content: ""; }
-.grid:after, .row:after, #calendar-header:after {
+.grid:after, .row:after, #calendar:after, #calendar-header:after {
   clear: both; }
 
 html {
@@ -67,7 +67,7 @@ h1 {
   font-size: 2rem;
   color: #fff; }
 
-#header-right {
+#header-main {
   text-align: right; }
 
 #header-sidebar {
@@ -187,12 +187,11 @@ body {
 h1 {
   margin-bottom: 5px; }
 
-#main .sidebar-collapsed {
-  padding-left: 54px; }
-#main .sidebar-expanded {
-  padding-right: 260px; }
+#content-wrapper {
+  height: 100%; }
 
 .header {
+  position: fixed;
   height: 45px;
   background-color: #3272BB;
   padding: 0 10px;
@@ -201,9 +200,9 @@ h1 {
 .header i:hover {
   cursor: pointer; }
 
-#header-right {
-  position: fixed; }
-  #header-right i {
+#header-main {
+  width: 100%; }
+  #header-main i {
     position: relative;
     top: 50%;
     -webkit-transform: translateY(-50%);
@@ -215,6 +214,7 @@ h1 {
 
 #content {
   background-color: #fff;
+  width: 100%;
   height: 100%;
   padding: 55px 10px 10px; }
 
@@ -223,17 +223,17 @@ h1 {
   height: 100%;
   overflow: hidden;
   z-index: 1020; }
+  #sidebar:hover {
+    overflow-y: auto; }
 
 #nav {
-  padding: 10px 0;
+  padding: 55px 0 10px;
   background-color: #F7F7F7;
-  height: 100%; }
-
-.sidebar-collapsed {
-  width: 44px; }
-
-.sidebar-expanded {
+  height: inherit;
   width: 250px; }
+
+.is-collapsed {
+  width: 44px; }
 
 ul[id*="nav-"] {
   margin-bottom: 30px;
@@ -254,7 +254,7 @@ li[id*="nav-"] {
 #header-sidebar {
   padding: 5px;
   background-color: #2d67a8;
-  width: 100%; }
+  width: inherit; }
   #header-sidebar i {
     position: relative;
     top: 50%;
@@ -264,12 +264,12 @@ li[id*="nav-"] {
     -o-transform: translateY(-50%);
     transform: translateY(-50%); }
 
-.selected {
+.is-selected {
   background-color: #fff; }
 
 @media screen and (min-width: 768px) {
-  .collapsed {
-    width: 49px; }
+  .is-collapsed {
+    width: 54px; }
 
   ul[id*="nav-"] {
     margin-bottom: 30px; }
@@ -282,7 +282,8 @@ li[id*="nav-"] {
   -ms-border-bottom: 1px solid #ddd;
   -o-border-bottom: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  padding: 10px 0; }
+  padding: 10px 0;
+  overflow: hidden; }
   .task-list li:first-child {
     padding-top: 0; }
   .task-list li:last-child {

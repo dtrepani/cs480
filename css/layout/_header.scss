@@ -15,17 +15,12 @@ h1 {
 	margin-bottom: 5px;
 }
 
-#main {
-	& .sidebar-collapsed {
-		padding-left: $sidebar-collapsed-width-small + $body-padding;
-	}
-
-	& .sidebar-expanded {
-		padding-right: $sidebar-expanded-width + $body-padding;
-	}
+#content-wrapper {
+	height: 100%;
 }
 
 .header {
+	position: fixed;
 	height: $header-height;
 	background-color: $color-primary;
 	padding: 0 $body-padding;
@@ -36,8 +31,8 @@ h1 {
 	cursor: pointer;
 }
 
-#header-right {
-	position: fixed;
+#header-main {
+	width: 100%;
 
 	& i {
 		@include vertical-center();
@@ -47,9 +42,7 @@ h1 {
 
 #content {
 	background-color: $color-bg-content;
+	width: 100%;
 	height: 100%;
 	padding: ($header-height + $body-padding) $body-padding $body-padding;
-}
-
-@include breakpoint(small) {
 }

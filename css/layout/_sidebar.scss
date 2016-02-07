@@ -3,20 +3,21 @@
 	height: 100%;
 	overflow: hidden;
 	z-index: $z-index-top;
+
+	&:hover {
+		overflow-y: auto;
+	}
 }
 
 #nav {
-	padding: $body-padding 0;
+	padding: ($header-height + $body-padding) 0 $body-padding;
 	background-color: $color-bg-sidebar;
-	height: 100%;
-}
-
-.sidebar-collapsed {
-	width: $sidebar-collapsed-width-small;
-}
-
-.sidebar-expanded {
+	height: inherit;
 	width: $sidebar-expanded-width;
+}
+
+.is-collapsed {
+	width: $sidebar-collapsed-width-small;
 }
 
 ul[id*="nav-"] {
@@ -44,19 +45,19 @@ li[id*="nav-"] {
 #header-sidebar {
 	padding: ($body-padding / 2);
 	background-color: $color-primary-dark;
-	width: 100%;
+	width: inherit;
 
 	& i {
 		@include vertical-center();
 	}
 }
 
-.selected {
+.is-selected {
 	background-color: $color-bg-content;
 }
 
 @include breakpoint(small) {
-	.collapsed {
+	.is-collapsed {
 		width: $sidebar-collapsed-width;
 	}
 

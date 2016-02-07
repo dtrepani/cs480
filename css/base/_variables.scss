@@ -34,7 +34,7 @@ $z-index-top: 1020;
 // ----------------------------
 $sidebar-expanded-width: 250px;
 $sidebar-collapsed-width-small: $font-medium + ($body-padding * 2);
-$sidebar-collapsed-width: $font-medium + ($body-padding * 2.5);
+$sidebar-collapsed-width: $font-medium + ($body-padding * 3);
 
 // ICONS
 // ----------------------------
@@ -60,7 +60,7 @@ $col-width: (100% - ($gutter-width * ($total-columns - 1))) / $total-columns;
 // BREAKPOINTS
 // ----------------------------
 $breakpoints: (
-  small: 768px,
-  medium: 960px,
-  large: 1200px
+	small: 768px,
+	medium: 960px,
+	large: 1200px
 );

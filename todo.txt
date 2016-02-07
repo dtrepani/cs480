@@ -3,6 +3,10 @@ TODO:
 	Task names limited to one line in overview
 	Height of #content set to 100% via jQuery
 	Task labels and calendars via dropdown in sidebar
+		Calendars only available on Calendar page?
 	Media queries to ems
+	Add search box
 
-	Remove %icons?
+TO REMOVE?
+	grid + variables
+	remove-units and get-row-width functions
