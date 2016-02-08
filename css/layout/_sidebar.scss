@@ -69,12 +69,4 @@ li[id*="nav-"] a, li[id*="nav-"] span {
 		min-width: $sidebar-collapsed-width !important;
 		width: $sidebar-collapsed-width !important;
 	}
-
-	ul[id*="nav-"] {
-		margin-bottom: 30px;
-	}
-
-	li[id*="nav-"]:before {
-		margin-left: -27px - $body-padding;
-	}
 }

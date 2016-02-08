@@ -6,7 +6,7 @@
 	display: table;
 	table-layout: fixed;
 	overflow: hidden;
-	padding: 10px 0;
+	@include rem('padding', 10px 0);
 	width: 100%;
 
 	&:last-child {
@@ -35,11 +35,5 @@
 
 	li:hover & {
 		visibility: visible;
-	}
-}
-
-@include breakpoint(small) {
-	.task-list li {
-		padding: 15px 0;
 	}
 }

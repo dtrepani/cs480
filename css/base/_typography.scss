@@ -69,6 +69,10 @@ li[id*="nav-"] {
 
 // LISTS
 // ----------------------------
+.task-list li {
+	@include rem('line-height', $font-medium);
+}
+
 .edit-icon {
 	color: $color-dim;
 

@@ -102,6 +102,10 @@ li[id*="nav-"] {
     vertical-align: middle;
     border: 1px solid red; }
 
+.task-list li {
+  line-height: 24px;
+  line-height: 1.5rem; }
+
 .edit-icon {
   color: #ddd; }
   .edit-icon:hover {
@@ -275,13 +279,7 @@ li[id*="nav-"] a, li[id*="nav-"] span {
 @media screen and (min-width: 768px) {
   .is-collapsed {
     min-width: 54px !important;
-    width: 54px !important; }
-
-  ul[id*="nav-"] {
-    margin-bottom: 30px; }
-
-  li[id*="nav-"]:before {
-    margin-left: -37px; } }
+    width: 54px !important; } }
 .task-list li {
   -webkit-border-bottom: 1px solid #ddd;
   -moz-border-bottom: 1px solid #ddd;
@@ -291,7 +289,8 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   display: table;
   table-layout: fixed;
   overflow: hidden;
-  padding: 10px 0;
+  padding: 10px 0px;
+  padding: 0.625rem 0rem;
   width: 100%; }
   .task-list li:last-child {
     -webkit-border-bottom: none;
@@ -316,9 +315,6 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   li:hover .edit-icon {
     visibility: visible; }
 
-@media screen and (min-width: 768px) {
-  .task-list li {
-    padding: 15px 0; } }
 #month-name {
   float: left; }
 

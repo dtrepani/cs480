@@ -27,9 +27,25 @@
 
 // Other
 // ----------------------------
-@mixin rem($property, $size-px) {
-	#{$property}: #{$size-px};
-	#{$property}: #{($size-px / $font-base)}rem;
+@mixin rem($property, $params) {
+	$length: length($params);
+	$px-params: '';
+	$rem-params: '';
+
+	@for $i from 1 through $length {
+		$number: strip-units(nth($params, $i));
+
+		$px-params: #{$px-params + $number}px;
+		$rem-params: #{$rem-params + ($number / strip-units($font-base))}rem;
+
+		@if ($i < $length) {
+			$px-params: #{$px-params + ' '};
+			$rem-params: #{$rem-params + ' '};
+		}
+	}
+
+	#{$property}: $px-params;
+	#{$property}: $rem-params;
 }
 
 @mixin font-size($size-px) {
@@ -50,4 +66,10 @@
 	} @else {
 		@warn "No such breakpoint '#{$breakpoint}' exists.";
 	}
+}
+
+// Functions
+// ----------------------------
+@function strip-units($number) {
+ 	@return $number / ($number * 0 + 1);
 }
