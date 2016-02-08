@@ -60,7 +60,7 @@
 			</nav>
 		</div>
 
-		<div id="content-wrapper">
+		<div id="content-wrapper" class="disable-preload-transition">
 			<div id="overlay"></div>
 
 			<div id="header-main" class="header">
@@ -68,4 +68,4 @@
 				<i class="fa fa-cog"></i>
 			</div>
 
-			<main id="content" role="main">
+			<main id="content" class="disable-preload-transition" role="main">

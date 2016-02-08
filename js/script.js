@@ -121,5 +121,5 @@ $(function() {
 	resizeDivs();
 	clicksInit();
 	$(window).resize(resizeDivs);
-	$('#sidebar').removeClass('disable-preload-transition');
+	$('.disable-preload-transition').removeClass('disable-preload-transition');
 });

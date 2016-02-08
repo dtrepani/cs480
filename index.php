@@ -13,7 +13,7 @@ include("header.php");
 	</li>
 	<li class="is-complete">
 		<i class="fa fa-check check-icon"></i>
-		<span class="task-name">Meet with person at place with a really, really, really, long task name</span>
+		<span class="task-name">Meet with person at place with a really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really long task name</span>
 		<i class="fa fa-ellipsis-v edit-icon"></i>
 	</li>
 	<li>

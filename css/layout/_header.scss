@@ -15,6 +15,10 @@ h1 {
 	margin-bottom: 10px;
 }
 
+i {
+	cursor: pointer;
+}
+
 .disable-preload-transition {
 	@include transition('none !important');
 }
@@ -30,10 +34,6 @@ h1 {
 	background-color: $color-primary;
 	padding: 0 $body-padding;
 	z-index: $z-index-header;
-}
-
-.header i:hover {
-	cursor: pointer;
 }
 
 #overlay {
@@ -57,7 +57,7 @@ h1 {
 #header-main {
 	width: 100%;
 
-	& i {
+	i {
 		@include vertical-center();
 		margin-left: 15px;
 	}
@@ -66,14 +66,7 @@ h1 {
 #content {
 	@include transition('all #{$animation-speed} ease #{$ease-speed}');
 	background-color: $color-bg-content;
-	margin-left: $sidebar-collapsed-width-small;
 	width: 100%;
 	height: 100%;
 	padding: ($header-height + $body-padding) $body-padding $body-padding;
-}
-
-@include breakpoint(xsmall) {
-	#content {
-		margin-left: $sidebar-expanded-width;
-	}
 }

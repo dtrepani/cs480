@@ -47,9 +47,9 @@ table {
 #calendar:after, #calendar-header:after {
   clear: both; }
 
-.task-list li, .all-day-events, .events {
+.task-list li .task-name, .all-day-events, .events {
   white-space: nowrap;
-  overflow: hidden; }
+  overflow-x: hidden; }
 
 html {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
@@ -135,6 +135,9 @@ body {
 h1 {
   margin-bottom: 10px; }
 
+i {
+  cursor: pointer; }
+
 .disable-preload-transition {
   -webkit-transition: none !important;
   -moz-transition: none !important;
@@ -156,9 +159,6 @@ h1 {
   background-color: #3272BB;
   padding: 0 10px;
   z-index: 1010; }
-
-.header i:hover {
-  cursor: pointer; }
 
 #overlay {
   -webkit-transition: all 0.3s ease-in 0.2s;
@@ -199,14 +199,10 @@ h1 {
   -o-transition: all 0.5s ease 0.1s;
   transition: all 0.5s ease 0.1s;
   background-color: #fff;
-  margin-left: 44px;
   width: 100%;
   height: 100%;
   padding: 55px 10px 10px; }
 
-@media screen and (min-width: 570px) {
-  #content {
-    margin-left: 250px; } }
 #sidebar {
   -webkit-transition: all 0.5s ease 0.1s;
   -moz-transition: all 0.5s ease 0.1s;
@@ -283,38 +279,37 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   -ms-border-bottom: 1px solid #ddd;
   -o-border-bottom: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  padding: 10px 0; }
-  .task-list li:first-child {
-    padding-top: 0; }
+  display: table;
+  table-layout: fixed;
+  overflow: hidden;
+  padding: 10px 0;
+  width: 100%; }
   .task-list li:last-child {
     -webkit-border-bottom: none;
     -moz-border-bottom: none;
     -ms-border-bottom: none;
     -o-border-bottom: none;
     border-bottom: none; }
-
-.task-list i:hover:hover {
-  cursor: pointer; }
+  .task-list li i {
+    display: table-cell;
+    width: 30px;
+    width: 1.875rem; }
+  .task-list li .task-name {
+    display: table-cell;
+    text-overflow: ellipsis; }
 
 .check-icon {
   margin-right: 10px; }
 
 .edit-icon {
-  width: 12px;
-  width: 0.75rem;
   text-align: center;
-  float: right;
   visibility: hidden; }
   li:hover .edit-icon {
     visibility: visible; }
 
 @media screen and (min-width: 768px) {
   .task-list li {
-    padding: 15px 0; }
-
-  .edit-icon {
-    width: 16px;
-    width: 1rem; } }
+    padding: 15px 0; } }
 #month-name {
   float: left; }
 

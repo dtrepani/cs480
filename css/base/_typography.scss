@@ -77,11 +77,9 @@ li[id*="nav-"] {
 	}
 }
 
-.is-complete {
-	.task-name {
-		color: $color-dim-dark;
-		text-decoration: line-through;
-	}
+.is-complete .task-name {
+	color: $color-dim-dark;
+	text-decoration: line-through;
 }
 
 // CALENDAR
