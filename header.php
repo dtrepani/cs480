@@ -18,42 +18,42 @@
 			</div>
 			<nav id="nav" role="navigation">
 				<ul id="nav-calendar-list">
-					<a href="#"><li id="nav-calendar" class="is-selected">
-						<i class="fa fa-calendar fa-fw"></i>
-						Calendar
-					</li></a>
+					<li id="nav-calendar" class="is-selected">
+						<a href="#"> <i class="fa fa-calendar fa-fw"></i> Calendar </a>
+					</li>
 					<li id="nav-my-calendars" class="sub-nav">
-						<i class="fa fa-calendar-o fa-fw"></i>
-						My Calendars
+						<span>
+							<i class="fa fa-calendar-o fa-fw"></i>
+							My Calendars
+						</span>
 						<ul class="sub-nav-list">
-							<a href="#"><li>Personal</li></a>
-							<a href="#"><li>Appointments</li></a>
-							<a href="#"><li>Classes</li></a>
-							<a href="#"><li>Work</li></a>
+							<li><a href="#">Personal</a></li>
+							<li><a href="#">Appointments</a></li>
+							<li><a href="#">Classes</a></li>
+							<li><a href="#">Work</a></li>
 						</ul>
 					</li>
 				</ul>
 
 				<ul id="nav-task-list">
-					<a href="#"><li id="nav-inbox">
-						<i class="fa fa-inbox fa-fw"></i>
-						Inbox
-					</li></a>
-					<a href="#"><li id="nav-today">
-						<i class="fa fa-list fa-fw"></i>
-						Today
-					</li></a>
-					<a href="#"><li id="nav-7-days">
-						<i class="fa fa-list fa-fw"></i>
-						Next 7 Days
-					</li></a>
+					<li id="nav-inbox">
+						<a href="#"> <i class="fa fa-inbox fa-fw"></i> Inbox </a>
+					</li>
+					<li id="nav-today">
+						<a href="#"> <i class="fa fa-list fa-fw"></i> Today </a>
+					</li>
+					<li id="nav-7-days">
+						<a href="#"> <i class="fa fa-list fa-fw"></i> Next 7 Days </a>
+					</li>
 					<li id="nav-my-labels" class="sub-nav">
-						<i class="fa fa-list-alt fa-fw"></i>
-						My Labels
+						<span>
+							<i class="fa fa-list-alt fa-fw"></i>
+							My Labels
+						</span>
 						<ul class="sub-nav-list">
-							<a href="#"><li>Personal</li></a>
-							<a href="#"><li>Shopping</li></a>
-							<a href="#"><li>Project</li></a>
+							<li><a href="#">Personal</a></li>
+							<li><a href="#">Shopping</a></li>
+							<li><a href="#">Project</a></li>
 						</ul>
 					</li>
 				</ul>

@@ -89,14 +89,12 @@ function documentClick() {
 function subNavClick() {
 	$('.sub-nav-list').slideUp(0);
 
-	$('.sub-nav').click(function(event) {
+	$('.sub-nav span').click(function() {
 		if($('#sidebar').hasClass('is-collapsed')) {
 			sidebarToggle();
-			$(this).find('.sub-nav-list').slideDown();
+			$(this).siblings('.sub-nav-list').slideDown();
 		} else {
-			if($(event.target).closest('.sub-nav-list').length == 0) {
-				$(this).find('.sub-nav-list').slideToggle();
-			}
+			$(this).siblings('.sub-nav-list').slideToggle();
 		}
 	});
 }

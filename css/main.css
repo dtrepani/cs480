@@ -221,30 +221,6 @@ h1 {
   #sidebar:hover {
     overflow-y: auto; }
 
-#nav {
-  padding: 55px 0 10px;
-  background-color: #F7F7F7;
-  height: inherit; }
-
-.is-collapsed {
-  min-width: 44px !important;
-  width: 44px !important; }
-
-ul[id*="nav-"] {
-  margin-bottom: 30px;
-  vertical-align: middle;
-  white-space: nowrap; }
-
-li[id*="nav-"] {
-  padding: 5px 10px;
-  margin: 2px 0; }
-  li[id*="nav-"]:hover {
-    cursor: pointer;
-    background-color: #fff; }
-  li[id*="nav-"] i {
-    vertical-align: middle;
-    margin-right: 9px; }
-
 #header-sidebar {
   padding: 5px;
   background-color: #2d67a8;
@@ -258,21 +234,38 @@ li[id*="nav-"] {
     position: relative;
     top: 50%; }
 
-#nav .is-selected {
-  background-color: #fff; }
+#nav {
+  padding: 55px 0 10px;
+  background-color: #F7F7F7;
+  height: inherit; }
+  #nav .is-selected {
+    background-color: #fff; }
 
-.sub-nav {
-  padding: 0; }
-  .sub-nav i {
-    padding-left: 5px; }
+.is-collapsed {
+  min-width: 44px !important;
+  width: 44px !important; }
 
-.sub-nav-list li {
-  padding: 2.5px 10px;
-  padding-left: 44px;
-  padding-left: 2.75rem;
+ul[id*="nav-"] {
+  margin-bottom: 30px;
+  vertical-align: middle;
+  white-space: nowrap; }
+
+li[id*="nav-"] a, li[id*="nav-"] span {
+  display: block;
+  padding: 5px 10px;
   margin: 2px 0; }
-  .sub-nav-list li:hover {
-    background-color: #F7F7F7; }
+  li[id*="nav-"] a:hover, li[id*="nav-"] span:hover {
+    cursor: pointer;
+    background-color: #fff; }
+  li[id*="nav-"] a i, li[id*="nav-"] span i {
+    vertical-align: middle;
+    margin-right: 9px; }
+
+.sub-nav-list li a {
+  padding: 2.5px 10px;
+  padding-left: 54px;
+  padding-left: 3.375rem;
+  margin: 2px 0; }
 
 @media screen and (min-width: 768px) {
   .is-collapsed {

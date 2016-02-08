@@ -11,10 +11,24 @@
 	}
 }
 
+#header-sidebar {
+	padding: ($body-padding / 2);
+	background-color: $color-primary-dark;
+	width: inherit;
+
+	i {
+		@include vertical-center();
+	}
+}
+
 #nav {
 	padding: ($header-height + $body-padding) 0 $body-padding;
 	background-color: $color-bg-sidebar;
 	height: inherit;
+
+	.is-selected {
+ 		background-color: $color-bg-content;
+	}
 }
 
 .is-collapsed {
@@ -28,7 +42,8 @@ ul[id*="nav-"] {
 	white-space: nowrap;
 }
 
-li[id*="nav-"] {
+li[id*="nav-"] a, li[id*="nav-"] span {
+	display: block;
 	padding: ($body-padding / 2) $body-padding;
 	margin: 2px 0;
 
@@ -43,35 +58,10 @@ li[id*="nav-"] {
 	}
 }
 
-#header-sidebar {
-	padding: ($body-padding / 2);
-	background-color: $color-primary-dark;
-	width: inherit;
-
-	i {
-		@include vertical-center();
-	}
-}
-
-#nav .is-selected {
-	background-color: $color-bg-content;
-}
-
-.sub-nav {
-	padding: 0;
-	i {
-		padding-left: $body-padding / 2;
-	}
-}
-
-.sub-nav-list li {
+.sub-nav-list li a {
 	padding: ($body-padding / 4) $body-padding;
-	@include rem('padding-left', ($body-padding * 2 + $font-medium));
+	@include rem('padding-left', ($body-padding * 3 + $font-medium));
 	margin: 2px 0;
-
-	&:hover {
-		background-color: $color-bg-sidebar;
-	}
 }
 
 @include breakpoint(small) {

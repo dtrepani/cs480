@@ -90,7 +90,7 @@ include("header.php");
 			<li></li>
 			<li></li>
 
-			<li class="is-selected">
+			<li>
 				<ul class="all-day-events">
 					<li></li>
 				</ul>
