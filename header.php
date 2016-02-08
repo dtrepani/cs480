@@ -18,42 +18,42 @@
 			</div>
 			<nav id="nav" role="navigation">
 				<ul id="nav-calendar-list">
-					<li id="nav-calendar" class="is-selected">
+					<a href="#"><li id="nav-calendar" class="is-selected">
 						<i class="fa fa-calendar fa-fw"></i>
 						Calendar
-					</li>
+					</li></a>
 					<li id="nav-my-calendars" class="sub-nav">
 						<i class="fa fa-calendar-o fa-fw"></i>
 						My Calendars
 						<ul class="sub-nav-list">
-							<li>Personal</li>
-							<li>Appointments</li>
-							<li>Classes</li>
-							<li>Work</li>
+							<a href="#"><li>Personal</li></a>
+							<a href="#"><li>Appointments</li></a>
+							<a href="#"><li>Classes</li></a>
+							<a href="#"><li>Work</li></a>
 						</ul>
 					</li>
 				</ul>
 
 				<ul id="nav-task-list">
-					<li id="nav-inbox">
+					<a href="#"><li id="nav-inbox">
 						<i class="fa fa-inbox fa-fw"></i>
 						Inbox
-					</li>
-					<li id="nav-today">
+					</li></a>
+					<a href="#"><li id="nav-today">
 						<i class="fa fa-list fa-fw"></i>
 						Today
-					</li>
-					<li id="nav-7-days">
+					</li></a>
+					<a href="#"><li id="nav-7-days">
 						<i class="fa fa-list fa-fw"></i>
 						Next 7 Days
-					</li>
+					</li></a>
 					<li id="nav-my-labels" class="sub-nav">
 						<i class="fa fa-list-alt fa-fw"></i>
 						My Labels
 						<ul class="sub-nav-list">
-							<li>Personal</li>
-							<li>Shopping</li>
-							<li>Project</li>
+							<a href="#"><li>Personal</li></a>
+							<a href="#"><li>Shopping</li></a>
+							<a href="#"><li>Project</li></a>
 						</ul>
 					</li>
 				</ul>

@@ -20,7 +20,7 @@ h1 {
 }
 
 #content-wrapper {
-	@include transition('width 0.3s ease 0.1s');
+	@include transition('width #{$animation-speed} ease #{$ease-speed}');
 	height: 100%;
 }
 
@@ -64,7 +64,7 @@ h1 {
 }
 
 #content {
-	@include transition('all 0.3s ease 0.1s');
+	@include transition('all #{$animation-speed} ease #{$ease-speed}');
 	background-color: $color-bg-content;
 	margin-left: $sidebar-collapsed-width-small;
 	width: 100%;

@@ -33,6 +33,11 @@ h1 {
 
 // SIDEBAR
 // ----------------------------
+#nav a {
+	color: $color-text;
+	text-decoration: none;
+}
+
 #header-sidebar {
 	@include font-size($font-large);
 }

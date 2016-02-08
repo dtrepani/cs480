@@ -16,7 +16,7 @@ var breakpoints = {
 };
 
 var resizeDivs = function() {
-	var sidebarWidth = getWidths();
+	var sidebarWidth = getSidebarWidth();
 
 	$('#content-wrapper').css('width', $(window).outerWidth() - sidebarWidth);
 	$('#content').css({
@@ -55,7 +55,7 @@ function toggleOverlay() {
 // sidebarCollapsedWidthSmall is used for xsmall widths. #content-wrapper on xsmall
 // widths do not change their width to make room for the sidebar, but instead the
 // sidebar overlays it.
-function getWidths() {
+function getSidebarWidth() {
 	if($(window).outerWidth() <= breakpoints.xsmall) {
 		return sidebarWidths.collapsedSmall;
 	} else if(!$('#sidebar').hasClass('is-collapsed')) {
@@ -89,12 +89,14 @@ function documentClick() {
 function subNavClick() {
 	$('.sub-nav-list').slideUp(0);
 
-	$('.sub-nav').click(function() {
+	$('.sub-nav').click(function(event) {
 		if($('#sidebar').hasClass('is-collapsed')) {
 			sidebarToggle();
 			$(this).find('.sub-nav-list').slideDown();
 		} else {
-			$(this).find('.sub-nav-list').slideToggle();
+			if($(event.target).closest('.sub-nav-list').length == 0) {
+				$(this).find('.sub-nav-list').slideToggle();
+			}
 		}
 	});
 }
