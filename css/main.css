@@ -331,7 +331,7 @@ li[id*="nav-"] a, li[id*="nav-"] span {
 
 .all-day-events {
   width: 100%;
-  height: 7.5px;
+  height: 10.5px;
   padding: 0 1px; }
 
 .events {
@@ -364,12 +364,23 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   background-color: #3272BB;
   margin: 1px 0; }
 
+@media screen and (min-width: 570px) {
+  .events {
+    width: 70%; } }
 @media screen and (min-width: 768px) {
   .all-day-events {
-    height: 22.5px; }
+    height: 12.5px; }
 
   .events {
     width: 80%; }
+
+  #month > li {
+    height: 75px; }
+  #month ul li {
+    height: 5px; } }
+@media screen and (min-width: 1200px) {
+  .all-day-events {
+    height: 22.5px; }
 
   #month > li {
     height: 135px; }

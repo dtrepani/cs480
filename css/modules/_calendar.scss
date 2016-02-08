@@ -25,7 +25,7 @@
 .all-day-events {
 	@extend %one-line;
 	width: 100%;
-	height: $event-height-small*2 + $event-height-small/2;
+	height: $event-height-small * 3 + $event-height-small / 2;
 	padding: 0 $month-day-padding;
 }
 
@@ -57,7 +57,7 @@
 
 #month {
 	> li {
-	 	@include property('border', '1px solid #{$color-dim}');
+	 	@include property('border', 1px solid #{$color-dim});
 	 	height: $event-height-small * 15;
 	}
 
@@ -69,9 +69,15 @@
 }
 
 
+@include breakpoint(xsmall) {
+	.events {
+		width: 70%;
+	}
+}
+
 @include breakpoint(small) {
 	.all-day-events {
-		height: $event-height*2 + $event-height/2;
+		height: $event-height-medium * 2 + $event-height-medium / 2;
 	}
 
 	.events {
@@ -80,12 +86,27 @@
 
 	#month {
 		> li {
-	 		height: $event-height * 15;
+	 		height: $event-height-medium * 15;
 		}
 
 		ul li {
-			height: $event-height;
+			height: $event-height-medium;
 		}
 	}
+}
 
+@include breakpoint(large) {
+	.all-day-events {
+		height: $event-height-large * 2 + $event-height-large / 2;
+	}
+
+	#month {
+		> li {
+	 		height: $event-height-large * 15;
+		}
+
+		ul li {
+			height: $event-height-large;
+		}
+	}
 }
