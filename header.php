@@ -27,10 +27,10 @@
 							My Calendars
 						</span>
 						<ul class="sub-nav-list">
-							<li><a href="#">Personal</a></li>
-							<li><a href="#">Appointments</a></li>
-							<li><a href="#">Classes</a></li>
-							<li><a href="#">Work</a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Personal</a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Appointments</a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Classes</a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Work</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -51,9 +51,9 @@
 							My Labels
 						</span>
 						<ul class="sub-nav-list">
-							<li><a href="#">Personal</a></li>
-							<li><a href="#">Shopping</a></li>
-							<li><a href="#">Project</a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Personal </a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Shopping</a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Project</a></li>
 						</ul>
 					</li>
 				</ul>

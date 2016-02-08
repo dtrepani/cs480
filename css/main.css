@@ -92,6 +92,15 @@ li[id*="nav-"] {
 .sub-nav-list {
   font-size: 14px;
   font-size: 0.875rem; }
+  .sub-nav-list li a {
+    display: block;
+    border: 1px solid red;
+    vertical-align: bottom; }
+  .sub-nav-list li i {
+    font-size: 12px;
+    font-size: 0.75rem;
+    vertical-align: middle;
+    border: 1px solid red; }
 
 .edit-icon {
   color: #ddd; }
@@ -322,7 +331,7 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   background: #F0F0F0; }
 
 #calendar-month .is-selected {
-  background: #e0eaf5; }
+  background: #ebf1f8; }
 
 .all-day-events {
   width: 100%;
