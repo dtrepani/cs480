@@ -31,15 +31,12 @@
 
 .events {
 	@extend %one-line;
-	width: 50%;
-	float: right;
-	margin-right: $month-day-padding;
+	width: 100%;
 }
 
 .day-number {
-	width: 20%;
-	margin-left: $month-day-padding;
-	padding-left: 2%;
+	@include rem('padding-right', 10px);
+	vertical-align: top;
 }
 
 
@@ -68,20 +65,19 @@
 	}
 }
 
+.month-day-row {
+	display: table;
+	width: 100%;
+	padding: 0 $month-day-padding;
 
-@include breakpoint(xsmall) {
-	.events {
-		width: 70%;
+	.day-number, .events {
+		display: table-cell;
 	}
 }
 
 @include breakpoint(small) {
 	.all-day-events {
 		height: $event-height-medium * 2 + $event-height-medium / 2;
-	}
-
-	.events {
-		width: 80%;
 	}
 
 	#month {

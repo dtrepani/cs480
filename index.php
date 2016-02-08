@@ -50,23 +50,27 @@ include("header.php");
 					<li></li>
 					<li></li>
 				</ul>
-				<span class="day-number">1</span>
-				<ul class="events">
-					<li></li>
-					<li></li>
-					<li></li>
-				</ul>
+				<div class="month-day-row">
+					<span class="day-number">1</span>
+					<ul class="events">
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
 			</li>
 			<li class="is-today">
 				<ul class="all-day-events">
 					<li></li>
 				</ul>
-				<span class="day-number">2</span>
-				<ul class="events">
-					<li></li>
-					<li></li>
-					<li></li>
-				</ul>
+				<div class="month-day-row">
+					<span class="day-number">2</span>
+					<ul class="events">
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
 			</li>
 			<li></li>
 			<li></li>
@@ -94,12 +98,14 @@ include("header.php");
 				<ul class="all-day-events">
 					<li></li>
 				</ul>
-				<span class="day-number">22</span>
-				<ul class="events">
-					<li></li>
-					<li></li>
-					<li></li>
-				</ul>
+				<div class="month-day-row">
+					<span class="day-number">22</span>
+					<ul class="events">
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
 			</li>
 			<li></li>
 			<li></li>

@@ -335,14 +335,12 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   padding: 0 1px; }
 
 .events {
-  width: 50%;
-  float: right;
-  margin-right: 1px; }
+  width: 100%; }
 
 .day-number {
-  width: 20%;
-  margin-left: 1px;
-  padding-left: 2%; }
+  padding-right: 10px;
+  padding-right: 0.625rem;
+  vertical-align: top; }
 
 #calendar-month > ul > li {
   width: 14.28571%;
@@ -364,15 +362,16 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   background-color: #3272BB;
   margin: 1px 0; }
 
-@media screen and (min-width: 570px) {
-  .events {
-    width: 70%; } }
+.month-day-row {
+  display: table;
+  width: 100%;
+  padding: 0 1px; }
+  .month-day-row .day-number, .month-day-row .events {
+    display: table-cell; }
+
 @media screen and (min-width: 768px) {
   .all-day-events {
     height: 12.5px; }
-
-  .events {
-    width: 80%; }
 
   #month > li {
     height: 75px; }
