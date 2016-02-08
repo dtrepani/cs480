@@ -41,11 +41,15 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-.grid:before, .row:before, #calendar:before, #calendar-header:before, .grid:after, .row:after, #calendar:after, #calendar-header:after {
+#calendar:before, #calendar-header:before, #calendar:after, #calendar-header:after {
   display: table;
   content: ""; }
-.grid:after, .row:after, #calendar:after, #calendar-header:after {
+#calendar:after, #calendar-header:after {
   clear: both; }
+
+.task-list li, .all-day-events, .events {
+  white-space: nowrap;
+  overflow: hidden; }
 
 html {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
@@ -77,98 +81,38 @@ h1 {
 li[id*="nav-"] {
   line-height: 24px;
   line-height: 1.5rem; }
+  li[id*="nav-"] i {
+    font-size: 24px;
+    font-size: 1.5rem; }
 
-li[id*="nav-"] i {
-  font-size: 24px;
-  font-size: 1.5rem; }
+.sub-nav-list {
+  font-size: 14px;
+  font-size: 0.875rem; }
 
-.edit {
+.edit-icon {
   color: #ddd; }
-  .edit:hover {
+  .edit-icon:hover {
     color: #444; }
 
-.incomplete .check {
+.check-icon {
   color: #ddd; }
-  .incomplete .check:hover {
+  .check-icon:hover {
     color: #aaa; }
+  .is-complete .check-icon {
+    color: #444;
+    text-decoration: none; }
 
-.complete span {
+.is-complete .task-name {
   color: #aaa;
   text-decoration: line-through; }
-.complete .check {
-  color: #444;
-  text-decoration: none; }
 
 #calendar-month {
   font-size: 14px;
   font-size: 0.875rem; }
 
-.grid {
-  height: 100%; }
-
-.row {
-  width: 100%;
-  height: 100%; }
-
-[class*="col-"] {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  -o-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
-  float: left;
-  width: 100%;
-  margin-left: 0%;
-  min-height: 1px; }
-
-.col-1 {
-  width: 12.5%; }
-
-.col-2 {
-  width: 25%; }
-
-.col-3 {
-  width: 37.5%; }
-
-.col-4 {
-  width: 50%; }
-
-.col-5 {
-  width: 62.5%; }
-
-.col-6 {
-  width: 75%; }
-
-.col-7 {
-  width: 87.5%; }
-
-.col-8 {
-  width: 100%; }
-
-.push-1 {
-  margin-left: 12.5%; }
-
-.push-2 {
-  margin-left: 25%; }
-
-.push-3 {
-  margin-left: 37.5%; }
-
-.push-4 {
-  margin-left: 50%; }
-
-.push-5 {
-  margin-left: 62.5%; }
-
-.push-6 {
-  margin-left: 75%; }
-
-.push-7 {
-  margin-left: 87.5%; }
-
-.push-8 {
-  margin-left: 100%; }
+#calendar-views {
+  font-size: 12px;
+  font-size: 0.75rem; }
 
 * {
   -webkit-box-sizing: border-box;
@@ -185,9 +129,21 @@ body {
   background-color: #ddd; }
 
 h1 {
-  margin-bottom: 5px; }
+  margin-bottom: 10px; }
+
+.disable-preload-transition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important; }
 
 #content-wrapper {
+  -webkit-transition: width 0.3s ease 0.1s;
+  -moz-transition: width 0.3s ease 0.1s;
+  -ms-transition: width 0.3s ease 0.1s;
+  -o-transition: width 0.3s ease 0.1s;
+  transition: width 0.3s ease 0.1s;
   height: 100%; }
 
 .header {
@@ -200,40 +156,75 @@ h1 {
 .header i:hover {
   cursor: pointer; }
 
+#overlay {
+  -webkit-transition: all 0.3s ease-in 0.2s;
+  -moz-transition: all 0.3s ease-in 0.2s;
+  -ms-transition: all 0.3s ease-in 0.2s;
+  -o-transition: all 0.3s ease-in 0.2s;
+  transition: all 0.3s ease-in 0.2s;
+  background-color: #000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1020;
+  opacity: 0;
+  visibility: hidden; }
+
+.is-visible {
+  opacity: 0.7 !important;
+  visibility: visible !important; }
+
 #header-main {
   width: 100%; }
   #header-main i {
-    position: relative;
-    top: 50%;
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     -o-transform: translateY(-50%);
     transform: translateY(-50%);
+    position: relative;
+    top: 50%;
     margin-left: 15px; }
 
 #content {
+  -webkit-transition: all 0.3s ease 0.1s;
+  -moz-transition: all 0.3s ease 0.1s;
+  -ms-transition: all 0.3s ease 0.1s;
+  -o-transition: all 0.3s ease 0.1s;
+  transition: all 0.3s ease 0.1s;
   background-color: #fff;
+  margin-left: 44px;
   width: 100%;
   height: 100%;
   padding: 55px 10px 10px; }
 
+@media screen and (min-width: 570px) {
+  #content {
+    margin-left: 250px; } }
 #sidebar {
+  -webkit-transition: all 0.3s ease 0.1s;
+  -moz-transition: all 0.3s ease 0.1s;
+  -ms-transition: all 0.3s ease 0.1s;
+  -o-transition: all 0.3s ease 0.1s;
+  transition: all 0.3s ease 0.1s;
   position: fixed;
   height: 100%;
+  width: 250px;
   overflow: hidden;
-  z-index: 1020; }
+  z-index: 1030; }
   #sidebar:hover {
     overflow-y: auto; }
 
 #nav {
   padding: 55px 0 10px;
   background-color: #F7F7F7;
-  height: inherit;
-  width: 250px; }
+  height: inherit; }
 
 .is-collapsed {
-  width: 44px; }
+  min-width: 44px !important;
+  width: 44px !important; }
 
 ul[id*="nav-"] {
   margin-bottom: 30px;
@@ -242,34 +233,40 @@ ul[id*="nav-"] {
 
 li[id*="nav-"] {
   padding: 5px 10px;
-  margin: 2px 0;
-  display: block; }
-  li[id*="nav-"] i {
-    vertical-align: middle;
-    margin-right: 8px; }
+  margin: 2px 0; }
   li[id*="nav-"]:hover {
     cursor: pointer;
     background-color: #fff; }
+  li[id*="nav-"] i {
+    vertical-align: middle;
+    margin-right: 9px; }
 
 #header-sidebar {
   padding: 5px;
   background-color: #2d67a8;
   width: inherit; }
   #header-sidebar i {
-    position: relative;
-    top: 50%;
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     -o-transform: translateY(-50%);
-    transform: translateY(-50%); }
+    transform: translateY(-50%);
+    position: relative;
+    top: 50%; }
 
-.is-selected {
+#nav .is-selected {
   background-color: #fff; }
+
+.sub-nav-list {
+  padding: 5px 10px;
+  padding-left: 44px;
+  padding-left: 2.75rem;
+  margin: 2px 0; }
 
 @media screen and (min-width: 768px) {
   .is-collapsed {
-    width: 54px; }
+    min-width: 54px !important;
+    width: 54px !important; }
 
   ul[id*="nav-"] {
     margin-bottom: 30px; }
@@ -282,8 +279,7 @@ li[id*="nav-"] {
   -ms-border-bottom: 1px solid #ddd;
   -o-border-bottom: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-  overflow: hidden; }
+  padding: 10px 0; }
   .task-list li:first-child {
     padding-top: 0; }
   .task-list li:last-child {
@@ -296,38 +292,60 @@ li[id*="nav-"] {
 .task-list i:hover:hover {
   cursor: pointer; }
 
-.check {
+.check-icon {
   margin-right: 10px; }
 
-.edit {
+.edit-icon {
   width: 12px;
   width: 0.75rem;
   text-align: center;
   float: right;
   visibility: hidden; }
-  li:hover .edit {
+  li:hover .edit-icon {
     visibility: visible; }
 
 @media screen and (min-width: 768px) {
   .task-list li {
     padding: 15px 0; }
 
-  .edit {
+  .edit-icon {
     width: 16px;
     width: 1rem; } }
-#calendar-header h1 {
+#month-name {
   float: left; }
-#calendar-header ul {
+
+#calendar-views {
   float: right; }
-#calendar-header li {
-  display: inline-block; }
+  #calendar-views li {
+    display: inline-block; }
+
+.is-today {
+  background: #F0F0F0; }
+
+#calendar-month .is-selected {
+  background: #e0eaf5; }
+
+.all-day-events {
+  width: 100%;
+  height: 7.5px;
+  padding: 0 1px; }
+
+.events {
+  width: 50%;
+  float: right;
+  margin-right: 1px; }
+
+.day-number {
+  width: 20%;
+  margin-left: 1px;
+  padding-left: 2%; }
 
 #calendar-month > ul > li {
   width: 14.28571%;
   float: left;
   margin: -1px 0 0 -1px; }
 
-#day-names li {
+#month-day-names li {
   padding-bottom: 2px; }
 
 #month > li {
@@ -342,31 +360,16 @@ li[id*="nav-"] {
   background-color: #3272BB;
   margin: 1px 0; }
 
-.all-day-events {
-  width: 100%;
-  height: 7.5px;
-  padding: 0 1px; }
-
-.date {
-  width: 20%;
-  margin-left: 1px;
-  padding-left: 2%; }
-
-.events {
-  width: 50%;
-  float: right;
-  margin-right: 1px; }
-
 @media screen and (min-width: 768px) {
-  #month > li {
-    height: 135px; }
-  #month ul li {
-    height: 9px; }
-
   .all-day-events {
     height: 22.5px; }
 
   .events {
-    width: 80%; } }
+    width: 80%; }
+
+  #month > li {
+    height: 135px; }
+  #month ul li {
+    height: 9px; } }
 
 /*# sourceMappingURL=main.css.map */

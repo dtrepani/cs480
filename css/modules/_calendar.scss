@@ -1,76 +1,75 @@
-#calendar {
+#calendar, #calendar-header {
 	@extend %clearfix;
 }
 
-#calendar-header {
-	@extend %clearfix;
+#month-name {
+	float: left;
+}
 
-	h1 {
-		float: left;
-	}
+#calendar-views {
+	float: right;
 
-	& ul {
-		float: right;
-	}
-
-	& li {
+	li {
 		display: inline-block;
 	}
 }
 
+.is-today {
+	background: $color-dim-light;
+}
+
+#calendar-month .is-selected {
+	background: $color-primary-light;
+}
+
+.all-day-events {
+	@extend %one-line;
+	width: 100%;
+	height: $event-height-small*2 + $event-height-small/2;
+	padding: 0 $month-day-padding;
+}
+
+.events {
+	@extend %one-line;
+	width: 50%;
+	float: right;
+	margin-right: $month-day-padding;
+}
+
+.day-number {
+	width: 20%;
+	margin-left: $month-day-padding;
+	padding-left: 2%;
+}
+
+
+// MONTH
+// ----------------------------
 #calendar-month > ul > li {
 	width: $month-day-width;
  	float: left;
 	margin: -1px 0 0 -1px;
 }
 
-#day-names li {
+#month-day-names li {
 	padding-bottom: 2px;
 }
 
 #month {
-	& > li {
+	> li {
 	 	@include property('border', '1px solid #{$color-dim}');
 	 	height: $event-height-small * 15;
 	}
 
-	& ul li {
+	ul li {
 		height: $event-height-small;
 		background-color: $color-primary;
 		margin: 1px 0;
 	}
 }
 
-.all-day-events {
-	width: 100%;
-	height: $event-height-small*2 + $event-height-small/2;
-	padding: 0 $month-day-padding;
-}
-
-.date {
-	width: 20%;
-	margin-left: $month-day-padding;
-	padding-left: 2%;
-}
-
-.events {
-	width: 50%;
-	float: right;
-	margin-right: $month-day-padding;
-}
-
 
 @include breakpoint(small) {
-	#month {
-		& > li {
-	 	height: $event-height * 15;
-		}
-
-		& ul li {
-			height: $event-height;
-		}
-	}
-
 	.all-day-events {
 		height: $event-height*2 + $event-height/2;
 	}
@@ -78,4 +77,15 @@
 	.events {
 		width: 80%;
 	}
+
+	#month {
+		> li {
+	 		height: $event-height * 15;
+		}
+
+		ul li {
+			height: $event-height;
+		}
+	}
+
 }

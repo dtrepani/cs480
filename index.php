@@ -6,27 +6,27 @@ include("header.php");
 
 <h1>Inbox</h1>
 <ul class="task-list">
-	<li class="incomplete">
-		<i class="fa fa-check check"></i>
-		<span>Call mom</span>
-		<i class="fa fa-ellipsis-v edit"></i>
+	<li>
+		<i class="fa fa-check check-icon"></i>
+		<span class="task-name">Call mom</span>
+		<i class="fa fa-ellipsis-v edit-icon"></i>
 	</li>
-	<li class="complete">
-		<i class="fa fa-check check"></i>
-		<span>Meet with person at place with a really, really, really, long task name</span>
-		<i class="fa fa-ellipsis-v edit"></i>
+	<li class="is-complete">
+		<i class="fa fa-check check-icon"></i>
+		<span class="task-name">Meet with person at place with a really, really, really, long task name</span>
+		<i class="fa fa-ellipsis-v edit-icon"></i>
 	</li>
-	<li class="incomplete">
-		<i class="fa fa-check check"></i>
-		<span>Do laundry</span>
-		<i class="fa fa-ellipsis-v edit"></i>
+	<li>
+		<i class="fa fa-check check-icon"></i>
+		<span class="task-name">Do laundry</span>
+		<i class="fa fa-ellipsis-v edit-icon"></i>
 	</li>
 </ul>
 
 <div id="calendar">
 	<div id="calendar-header">
-		<h1>February</h1>
-		<ul id="calendar-view">
+		<h1 id="month-name">February</h1>
+		<ul id="calendar-views">
 			<li>Day</li>
 			<li>Week</li>
 			<li>Month</li>
@@ -34,7 +34,7 @@ include("header.php");
 		</ul>
 	</div>
 	<ul id="calendar-month">
-		<ul id="day-names">
+		<ul id="month-day-names">
 			<li>Sun</li>
 			<li>Mon</li>
 			<li>Tue</li>
@@ -44,30 +44,30 @@ include("header.php");
 			<li>Sat</li>
 		</ul>
 
-		<ul id="month">
+		<ul id="month" class="calendar-view">
 			<li>
 				<ul class="all-day-events">
 					<li></li>
 					<li></li>
 				</ul>
-				<span class="date">1</span>
+				<span class="day-number">1</span>
 				<ul class="events">
 					<li></li>
 					<li></li>
 					<li></li>
 				</ul>
 			</li>
-			<li>
+			<li class="is-today">
 				<ul class="all-day-events">
 					<li></li>
 				</ul>
-				<span class="date">2</span>
+				<span class="day-number">2</span>
 				<ul class="events">
 					<li></li>
 					<li></li>
 					<li></li>
 				</ul>
-				</li>
+			</li>
 			<li></li>
 			<li></li>
 			<li></li>
@@ -90,11 +90,11 @@ include("header.php");
 			<li></li>
 			<li></li>
 
-			<li>
+			<li class="is-selected">
 				<ul class="all-day-events">
 					<li></li>
 				</ul>
-				<span class="date">22</span>
+				<span class="day-number">22</span>
 				<ul class="events">
 					<li></li>
 					<li></li>

@@ -2,10 +2,9 @@
 }
 
 .task-list li {
+	@extend %one-line;
 	@include property('border-bottom', 1px solid $color-dim);
 	padding: 10px 0;
-	//white-space: nowrap;
-	overflow: hidden;
 
 	&:first-child {
 		padding-top: 0;
@@ -22,11 +21,11 @@
 	}
 }
 
-.check {
+.check-icon {
 	margin-right: 10px;
 }
 
-.edit {
+.edit-icon {
 	@include rem('width', $font-small);
 	text-align: center;
 	float: right;
@@ -42,7 +41,7 @@
 		padding: 15px 0;
 	}
 
-	.edit {
+	.edit-icon {
 		@include rem('width', $font-base);
 	}
 }

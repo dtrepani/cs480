@@ -1,8 +1,10 @@
 #sidebar {
+	@include transition('all 0.3s ease 0.1s');
 	position: fixed;
 	height: 100%;
+	width: $sidebar-expanded-width;
 	overflow: hidden;
-	z-index: $z-index-top;
+	z-index: $z-index-sidebar;
 
 	&:hover {
 		overflow-y: auto;
@@ -13,11 +15,11 @@
 	padding: ($header-height + $body-padding) 0 $body-padding;
 	background-color: $color-bg-sidebar;
 	height: inherit;
-	width: $sidebar-expanded-width;
 }
 
 .is-collapsed {
-	width: $sidebar-collapsed-width-small;
+	min-width: $sidebar-collapsed-width-small !important;
+	width: $sidebar-collapsed-width-small !important;
 }
 
 ul[id*="nav-"] {
@@ -29,16 +31,15 @@ ul[id*="nav-"] {
 li[id*="nav-"] {
 	padding: ($body-padding / 2) $body-padding;
 	margin: 2px 0;
-	display: block;
-
-	& i {
-		vertical-align: middle;
-		margin-right: 8px;
-	}
 
 	&:hover {
 		cursor: pointer;
 		background-color: $color-bg-content;
+	}
+
+	i {
+		vertical-align: middle;
+		margin-right: 9px;
 	}
 }
 
@@ -47,18 +48,25 @@ li[id*="nav-"] {
 	background-color: $color-primary-dark;
 	width: inherit;
 
-	& i {
+	i {
 		@include vertical-center();
 	}
 }
 
-.is-selected {
+#nav .is-selected {
 	background-color: $color-bg-content;
+}
+
+.sub-nav-list {
+	padding: ($body-padding / 2) $body-padding;
+	@include rem('padding-left', ($body-padding * 2 + $font-medium));
+	margin: 2px 0;
 }
 
 @include breakpoint(small) {
 	.is-collapsed {
-		width: $sidebar-collapsed-width;
+		min-width: $sidebar-collapsed-width !important;
+		width: $sidebar-collapsed-width !important;
 	}
 
 	ul[id*="nav-"] {

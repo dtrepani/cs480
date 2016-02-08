@@ -1,66 +1,60 @@
 // COLORS
 // ----------------------------
-$color-primary: #3272BB;
-$color-primary-dark: mix($color-primary, black, 90%);
+$color-primary:			#3272BB;
+$color-primary-light:	mix($color-primary, white, 15%);
+$color-primary-dark:	mix($color-primary, black, 90%);
 
-$color-dim: #ddd;
-$color-dim-dark: #aaa;
+$color-dim:			#ddd;
+$color-dim-light:	#F0F0F0;
+$color-dim-dark:	#aaa;
 
-$color-text: #444;
+$color-text:		#444;
 
-$color-bg-content: #fff;
-$color-bg-body: #ddd;
-$color-bg-sidebar: #F7F7F7;
+$color-bg-content:	#fff;
+$color-bg-body:		#ddd;
+$color-bg-sidebar:	#F7F7F7;
 
 // FONT
 // ----------------------------
-$font-stack: 'Open Sans', Helvetica, Arial, sans-serif;
-$font-base: 16px;
-$font-large: 32px;
-$font-medium: 24px;
-$font-small: 12px;
-$font-xsmall: 10px;
+$font-stack:	'Open Sans', Helvetica, Arial, sans-serif;
+$font-large:	32px;
+$font-medium:	24px;
+$font-base:		16px;
+$font-small:	12px;
+$font-xsmall:	10px;
 
 // LAYOUT
 // ----------------------------
-$header-height: 45px;
-$body-padding: 10px;
+$header-height:	45px;
+$body-padding:	10px;
 
-$z-index-bottom: 1000;
-$z-index-middle: 1010;
-$z-index-top: 1020;
+$z-index-header:	1010;
+$z-index-overlay:	1020;
+$z-index-sidebar:	1030;
 
 // SIDEBAR
 // ----------------------------
-$sidebar-expanded-width: 250px;
-$sidebar-collapsed-width-small: $font-medium + ($body-padding * 2);
-$sidebar-collapsed-width: $font-medium + ($body-padding * 3);
+$sidebar-expanded-width:		250px;
+$sidebar-collapsed-width-small:	$font-medium + ($body-padding * 2);
+$sidebar-collapsed-width:		$font-medium + ($body-padding * 3);
 
 // ICONS
 // ----------------------------
-$icon-width: 30px;
-$icon-height: $icon-width;
-$icon-check-complete:	0 0;
-$icon-check-incomplete:	-$icon-width 0;
-$icon-ellipsis: 		-$icon-width*2 0;
+$icon-width:	30px;
+$icon-height:	$icon-width;
 
 // CALENDAR
 // ----------------------------
-$month-day-width: 14.28571%;
-$month-day-padding: 1px;
-$event-height-small: 3px;
-$event-height: 9px;
-
-// GRID
-// ----------------------------
-$total-columns: 8;
-$gutter-width: 0%;
-$col-width: (100% - ($gutter-width * ($total-columns - 1))) / $total-columns;
+$month-day-width:		100% / 7;
+$month-day-padding:		1px;
+$event-height-small:	3px;
+$event-height:			9px;
 
 // BREAKPOINTS
 // ----------------------------
 $breakpoints: (
-	small: 768px,
-	medium: 960px,
-	large: 1200px
+	xsmall:	570px,
+	small:	768px,
+	medium:	960px,
+	large:	1200px
 );

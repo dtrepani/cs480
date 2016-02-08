@@ -8,21 +8,13 @@
 	#{$property}: #{$value};
 }
 
-@mixin opacity($opacity) {
-	@include property('opacity', $opacity);
-	filter: alpha(opacity=$opacity * 100);
-}
-
-@mixin transform($params...) {
-	@include property('transform', $params);
-}
-
-@mixin transition($params...) {
+@mixin transition($params) {
 	@include property('transition', $params);
 }
 
-@mixin animation($params...) {
-	@include property('animation', $params);
+@mixin opacity($opacity) {
+	@include property('opacity', $opacity);
+	filter: alpha(opacity=$opacity * 100);
 }
 
 @mixin keyframes($animation-name) {
@@ -45,9 +37,9 @@
 }
 
 @mixin vertical-center() {
+	@include property('transform', 'translateY(-50%)');
 	position: relative;
 	top: 50%;
-	@include transform(translateY(-50%));
 }
 
 @mixin breakpoint($breakpoint) {
@@ -58,14 +50,4 @@
 	} @else {
 		@warn "No such breakpoint '#{$breakpoint}' exists.";
 	}
-}
-
-// Functions
-// ----------------------------
-@function remove-units($number) {
-  @return $number / ($number * 0 + 1);
-}
-
-@function get-row-width($col-width, $gutter) {
-	@return (($total-columns * $col-width) + ($gutter * ($total-columns - 1)));
 }

@@ -39,15 +39,19 @@ h1 {
 
 li[id*="nav-"] {
 	@include rem('line-height', $font-medium);
+
+	i {
+		@include font-size($font-medium);
+	}
 }
 
-li[id*="nav-"] i {
-	@include font-size($font-medium);
+.sub-nav-list {
+	@include font-size(14px);
 }
 
 // LISTS
 // ----------------------------
-.edit {
+.edit-icon {
 	color: $color-dim;
 
 	&:hover {
@@ -55,23 +59,23 @@ li[id*="nav-"] i {
 	}
 }
 
-.incomplete .check {
+.check-icon {
 	color: $color-dim;
 
 	&:hover {
 		color: $color-dim-dark;
 	}
-}
 
-.complete {
-	& span {
-		color: $color-dim-dark;
-		text-decoration: line-through;
-	}
-
-	& .check {
+	.is-complete & {
 		color: $color-text;
 		text-decoration: none;
+	}
+}
+
+.is-complete {
+	.task-name {
+		color: $color-dim-dark;
+		text-decoration: line-through;
 	}
 }
 
@@ -79,4 +83,8 @@ li[id*="nav-"] i {
 // ----------------------------
 #calendar-month {
 	@include font-size(14px);
+}
+
+#calendar-views {
+	@include font-size($font-small);
 }

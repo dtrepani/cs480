@@ -9,8 +9,7 @@
 	}
 }
 
-%icons {
-	background-image: url("../img/icons.png");
-	width: $icon-width;
-	height: $icon-height;
+%one-line {
+	white-space: nowrap;
+	overflow: hidden;
 }
