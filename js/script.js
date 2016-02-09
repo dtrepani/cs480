@@ -43,12 +43,10 @@ var selectDay = function() {
 
 
 function toggleOverlay() {
-	if($(window).outerWidth() <= breakpoints.xsmall) {
-		if($('#sidebar').hasClass('is-collapsed')) {
-			$('#overlay').removeClass('is-visible');
-		} else {
-			$('#overlay').addClass('is-visible');
-		}
+	if($('#sidebar').hasClass('is-collapsed')) {
+		$('#overlay').removeClass('is-visible');
+	} else if( !$('#sidebar').hasClass('is-collapsed') && $(window).outerWidth() <= breakpoints.xsmall ) {
+		$('#overlay').addClass('is-visible');
 	}
 }
 

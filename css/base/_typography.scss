@@ -53,17 +53,8 @@ li[id*="nav-"] {
 .sub-nav-list {
 	@include font-size(14px);
 
-	li a {
-		display: block;
-		border: 1px solid red;
-		vertical-align: bottom;
-	}
-
 	li i {
 		@include font-size($font-small);
-		vertical-align: middle;
-		border: 1px solid red;
-		//@include rem('line-height', '30px');
 	}
 }
 

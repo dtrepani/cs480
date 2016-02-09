@@ -30,7 +30,7 @@
 							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Personal </a></li>
 							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Appointments </a></li>
 							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Classes </a></li>
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Work </a></li>
+							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> <span>Work</span> </a></li>
 						</ul>
 					</li>
 				</ul>

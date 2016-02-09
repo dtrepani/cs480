@@ -42,7 +42,7 @@ ul[id*="nav-"] {
 	white-space: nowrap;
 }
 
-li[id*="nav-"] a, li[id*="nav-"] span {
+li[id*="nav-"] a, li[id*="nav-"] > span {
 	display: block;
 	padding: ($body-padding / 2) $body-padding;
 	margin: 2px 0;
@@ -62,6 +62,12 @@ li[id*="nav-"] a, li[id*="nav-"] span {
 	padding: ($body-padding / 4) $body-padding;
 	@include rem('padding-left', ($body-padding * 3 + $font-medium));
 	margin: 2px 0;
+
+	i {
+		@include rem('margin-bottom', 2.5px);
+		vertical-align: middle;
+		line-height: inherit;
+	}
 }
 
 @include breakpoint(small) {

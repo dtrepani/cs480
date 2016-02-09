@@ -92,15 +92,9 @@ li[id*="nav-"] {
 .sub-nav-list {
   font-size: 14px;
   font-size: 0.875rem; }
-  .sub-nav-list li a {
-    display: block;
-    border: 1px solid red;
-    vertical-align: bottom; }
   .sub-nav-list li i {
     font-size: 12px;
-    font-size: 0.75rem;
-    vertical-align: middle;
-    border: 1px solid red; }
+    font-size: 0.75rem; }
 
 .task-list li {
   line-height: 24px;
@@ -259,14 +253,14 @@ ul[id*="nav-"] {
   vertical-align: middle;
   white-space: nowrap; }
 
-li[id*="nav-"] a, li[id*="nav-"] span {
+li[id*="nav-"] a, li[id*="nav-"] > span {
   display: block;
   padding: 5px 10px;
   margin: 2px 0; }
-  li[id*="nav-"] a:hover, li[id*="nav-"] span:hover {
+  li[id*="nav-"] a:hover, li[id*="nav-"] > span:hover {
     cursor: pointer;
     background-color: #fff; }
-  li[id*="nav-"] a i, li[id*="nav-"] span i {
+  li[id*="nav-"] a i, li[id*="nav-"] > span i {
     vertical-align: middle;
     margin-right: 9px; }
 
@@ -275,6 +269,11 @@ li[id*="nav-"] a, li[id*="nav-"] span {
   padding-left: 54px;
   padding-left: 3.375rem;
   margin: 2px 0; }
+  .sub-nav-list li a i {
+    margin-bottom: 2.5px;
+    margin-bottom: 0.15625rem;
+    vertical-align: middle;
+    line-height: inherit; }
 
 @media screen and (min-width: 768px) {
   .is-collapsed {
