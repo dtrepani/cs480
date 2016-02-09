@@ -1,12 +1,9 @@
-.task-list {
-}
-
 .task-list li {
 	@include property('border-bottom', 1px solid $color-dim);
+	@include rem('padding', 10px 0);
 	display: table;
 	table-layout: fixed;
 	overflow: hidden;
-	@include rem('padding', 10px 0);
 	width: 100%;
 
 	&:last-child {
@@ -22,18 +19,5 @@
 		@extend %one-line;
 		display: table-cell;
 		text-overflow: ellipsis;
-	}
-}
-
-.check-icon {
-	margin-right: 10px;
-}
-
-.edit-icon {
-	text-align: center;
-	visibility: hidden;
-
-	li:hover & {
-		visibility: visible;
 	}
 }

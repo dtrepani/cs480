@@ -1,0 +1,27 @@
+.check-icon {
+	margin-right: 10px;
+}
+
+.edit-icon {
+	text-align: center;
+	visibility: hidden;
+
+	li:hover & {
+		visibility: visible;
+	}
+}
+
+@each $color-name, $color-hex in $icon-colors {
+	.square-icon-#{$color-name} {
+		@extend %square-icon;
+		background-color: $color-hex;
+
+		.sub-nav-list li a:hover & {
+			background-color: $color-hex;
+		}
+	}
+}
+
+[class*="square-icon-"].disabled {
+	background-color: initial;
+}

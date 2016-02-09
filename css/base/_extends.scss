@@ -13,3 +13,12 @@
 	white-space: nowrap;
 	overflow-x: hidden;
 }
+
+%square-icon {
+	@include rem('width', $font-base);
+	@include rem('height', $font-base);
+	@include rem('margin-right', 10px);
+	@include property('border', 1px solid $color-dim);
+	display: inline-block;
+	vertical-align: middle;
+}

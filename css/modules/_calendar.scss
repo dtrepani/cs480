@@ -27,6 +27,14 @@
 	width: 100%;
 	height: $event-height-small * 3 + $event-height-small / 2;
 	padding: 0 $month-day-padding;
+
+	@include breakpoint(small) {
+		height: $event-height-medium * 2 + $event-height-medium / 2;
+	}
+
+	@include breakpoint(large) {
+		height: $event-height-large * 2 + $event-height-large / 2;
+	}
 }
 
 .events {
@@ -56,12 +64,28 @@
 	> li {
 	 	@include property('border', 1px solid #{$color-dim});
 	 	height: $event-height-small * 15;
+
+	 	@include breakpoint(small) {
+	 		height: $event-height-medium * 15;
+	 	}
+
+	 	@include breakpoint(large) {
+	 		height: $event-height-large * 15;
+	 	}
 	}
 
 	ul li {
 		height: $event-height-small;
 		background-color: $color-primary;
 		margin: 1px 0;
+
+	 	@include breakpoint(small) {
+			height: $event-height-medium;
+		}
+
+		@include breakpoint(large) {
+			height: $event-height-large;
+		}
 	}
 }
 
@@ -72,37 +96,5 @@
 
 	.day-number, .events {
 		display: table-cell;
-	}
-}
-
-@include breakpoint(small) {
-	.all-day-events {
-		height: $event-height-medium * 2 + $event-height-medium / 2;
-	}
-
-	#month {
-		> li {
-	 		height: $event-height-medium * 15;
-		}
-
-		ul li {
-			height: $event-height-medium;
-		}
-	}
-}
-
-@include breakpoint(large) {
-	.all-day-events {
-		height: $event-height-large * 2 + $event-height-large / 2;
-	}
-
-	#month {
-		> li {
-	 		height: $event-height-large * 15;
-		}
-
-		ul li {
-			height: $event-height-large;
-		}
 	}
 }

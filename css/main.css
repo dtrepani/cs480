@@ -51,6 +51,21 @@ table {
   white-space: nowrap;
   overflow-x: hidden; }
 
+.square-icon-white, .square-icon-silver, .square-icon-gray, .square-icon-black, .square-icon-red, .square-icon-maroon, .square-icon-yellow, .square-icon-olive, .square-icon-lime, .square-icon-green, .square-icon-aqua, .square-icon-teal, .square-icon-blue, .square-icon-navy, .square-icon-fuchsia, .square-icon-purple {
+  width: 16px;
+  width: 1rem;
+  height: 16px;
+  height: 1rem;
+  margin-right: 10px;
+  margin-right: 0.625rem;
+  -webkit-border: 1px solid #ddd;
+  -moz-border: 1px solid #ddd;
+  -ms-border: 1px solid #ddd;
+  -o-border: 1px solid #ddd;
+  border: 1px solid #ddd;
+  display: inline-block;
+  vertical-align: middle; }
+
 html {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-size: 12px; }
@@ -95,6 +110,9 @@ li[id*="nav-"] {
   .sub-nav-list li i {
     font-size: 12px;
     font-size: 0.75rem; }
+
+[class*="square-icon-"].disabled + span {
+  color: #888; }
 
 .task-list li {
   line-height: 24px;
@@ -174,9 +192,7 @@ i {
   -o-transition: all 0.3s ease-in 0.2s;
   transition: all 0.3s ease-in 0.2s;
   background-color: #000;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed;
   width: 100%;
   height: 100%;
   z-index: 1020;
@@ -216,6 +232,7 @@ i {
   -ms-transition: all 0.5s ease 0.1s;
   -o-transition: all 0.5s ease 0.1s;
   transition: all 0.5s ease 0.1s;
+  background-color: #F7F7F7;
   position: fixed;
   height: 100%;
   width: 250px;
@@ -223,6 +240,14 @@ i {
   z-index: 1030; }
   #sidebar:hover {
     overflow-y: auto; }
+
+.is-collapsed {
+  min-width: 44px !important;
+  width: 44px !important; }
+  @media screen and (min-width: 768px) {
+    .is-collapsed {
+      min-width: 54px !important;
+      width: 54px !important; } }
 
 #header-sidebar {
   padding: 5px;
@@ -239,28 +264,23 @@ i {
 
 #nav {
   padding: 55px 0 10px;
-  background-color: #F7F7F7;
   height: inherit; }
   #nav .is-selected {
     background-color: #fff; }
-
-.is-collapsed {
-  min-width: 44px !important;
-  width: 44px !important; }
 
 ul[id*="nav-"] {
   margin-bottom: 30px;
   vertical-align: middle;
   white-space: nowrap; }
 
-li[id*="nav-"] a, li[id*="nav-"] > span {
+li[id*="nav-"] a, li[id*="nav-"] > div {
   display: block;
   padding: 5px 10px;
   margin: 2px 0; }
-  li[id*="nav-"] a:hover, li[id*="nav-"] > span:hover {
+  li[id*="nav-"] a:hover, li[id*="nav-"] > div:hover {
     cursor: pointer;
     background-color: #fff; }
-  li[id*="nav-"] a i, li[id*="nav-"] > span i {
+  li[id*="nav-"] a i, li[id*="nav-"] > div i {
     vertical-align: middle;
     margin-right: 9px; }
 
@@ -275,21 +295,109 @@ li[id*="nav-"] a, li[id*="nav-"] > span {
     vertical-align: middle;
     line-height: inherit; }
 
-@media screen and (min-width: 768px) {
-  .is-collapsed {
-    min-width: 54px !important;
-    width: 54px !important; } }
+.check-icon {
+  margin-right: 10px; }
+
+.edit-icon {
+  text-align: center;
+  visibility: hidden; }
+  li:hover .edit-icon {
+    visibility: visible; }
+
+.square-icon-white {
+  background-color: #ffffff; }
+  .sub-nav-list li a:hover .square-icon-white {
+    background-color: #ffffff; }
+
+.square-icon-silver {
+  background-color: #c0c0c0; }
+  .sub-nav-list li a:hover .square-icon-silver {
+    background-color: #c0c0c0; }
+
+.square-icon-gray {
+  background-color: #808080; }
+  .sub-nav-list li a:hover .square-icon-gray {
+    background-color: #808080; }
+
+.square-icon-black {
+  background-color: #000000; }
+  .sub-nav-list li a:hover .square-icon-black {
+    background-color: #000000; }
+
+.square-icon-red {
+  background-color: #ff0000; }
+  .sub-nav-list li a:hover .square-icon-red {
+    background-color: #ff0000; }
+
+.square-icon-maroon {
+  background-color: #800000; }
+  .sub-nav-list li a:hover .square-icon-maroon {
+    background-color: #800000; }
+
+.square-icon-yellow {
+  background-color: #fff000; }
+  .sub-nav-list li a:hover .square-icon-yellow {
+    background-color: #fff000; }
+
+.square-icon-olive {
+  background-color: #808000; }
+  .sub-nav-list li a:hover .square-icon-olive {
+    background-color: #808000; }
+
+.square-icon-lime {
+  background-color: #00ff00; }
+  .sub-nav-list li a:hover .square-icon-lime {
+    background-color: #00ff00; }
+
+.square-icon-green {
+  background-color: #008000; }
+  .sub-nav-list li a:hover .square-icon-green {
+    background-color: #008000; }
+
+.square-icon-aqua {
+  background-color: #00ffff; }
+  .sub-nav-list li a:hover .square-icon-aqua {
+    background-color: #00ffff; }
+
+.square-icon-teal {
+  background-color: #008080; }
+  .sub-nav-list li a:hover .square-icon-teal {
+    background-color: #008080; }
+
+.square-icon-blue {
+  background-color: #0000ff; }
+  .sub-nav-list li a:hover .square-icon-blue {
+    background-color: #0000ff; }
+
+.square-icon-navy {
+  background-color: #000080; }
+  .sub-nav-list li a:hover .square-icon-navy {
+    background-color: #000080; }
+
+.square-icon-fuchsia {
+  background-color: #ff00ff; }
+  .sub-nav-list li a:hover .square-icon-fuchsia {
+    background-color: #ff00ff; }
+
+.square-icon-purple {
+  background-color: #800080; }
+  .sub-nav-list li a:hover .square-icon-purple {
+    background-color: #800080; }
+
+[class*="square-icon-"].disabled {
+  background-color: initial; }
+
 .task-list li {
   -webkit-border-bottom: 1px solid #ddd;
   -moz-border-bottom: 1px solid #ddd;
   -ms-border-bottom: 1px solid #ddd;
   -o-border-bottom: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
+  padding: 10px 0px;
+  padding: 0.625rem 0rem;
   display: table;
   table-layout: fixed;
   overflow: hidden;
-  padding: 10px 0px;
-  padding: 0.625rem 0rem;
   width: 100%; }
   .task-list li:last-child {
     -webkit-border-bottom: none;
@@ -304,15 +412,6 @@ li[id*="nav-"] a, li[id*="nav-"] > span {
   .task-list li .task-name {
     display: table-cell;
     text-overflow: ellipsis; }
-
-.check-icon {
-  margin-right: 10px; }
-
-.edit-icon {
-  text-align: center;
-  visibility: hidden; }
-  li:hover .edit-icon {
-    visibility: visible; }
 
 #month-name {
   float: left; }
@@ -332,6 +431,12 @@ li[id*="nav-"] a, li[id*="nav-"] > span {
   width: 100%;
   height: 10.5px;
   padding: 0 1px; }
+  @media screen and (min-width: 768px) {
+    .all-day-events {
+      height: 12.5px; } }
+  @media screen and (min-width: 1200px) {
+    .all-day-events {
+      height: 22.5px; } }
 
 .events {
   width: 100%; }
@@ -356,10 +461,22 @@ li[id*="nav-"] a, li[id*="nav-"] > span {
   -o-border: 1px solid #ddd;
   border: 1px solid #ddd;
   height: 45px; }
+  @media screen and (min-width: 768px) {
+    #month > li {
+      height: 75px; } }
+  @media screen and (min-width: 1200px) {
+    #month > li {
+      height: 135px; } }
 #month ul li {
   height: 3px;
   background-color: #3272BB;
   margin: 1px 0; }
+  @media screen and (min-width: 768px) {
+    #month ul li {
+      height: 5px; } }
+  @media screen and (min-width: 1200px) {
+    #month ul li {
+      height: 9px; } }
 
 .month-day-row {
   display: table;
@@ -367,22 +484,5 @@ li[id*="nav-"] a, li[id*="nav-"] > span {
   padding: 0 1px; }
   .month-day-row .day-number, .month-day-row .events {
     display: table-cell; }
-
-@media screen and (min-width: 768px) {
-  .all-day-events {
-    height: 12.5px; }
-
-  #month > li {
-    height: 75px; }
-  #month ul li {
-    height: 5px; } }
-@media screen and (min-width: 1200px) {
-  .all-day-events {
-    height: 22.5px; }
-
-  #month > li {
-    height: 135px; }
-  #month ul li {
-    height: 9px; } }
 
 /*# sourceMappingURL=main.css.map */

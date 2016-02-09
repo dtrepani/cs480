@@ -19,41 +19,35 @@
 			<nav id="nav" role="navigation">
 				<ul id="nav-calendar-list">
 					<li id="nav-calendar" class="is-selected">
-						<a href="#"> <i class="fa fa-calendar fa-fw"></i> Calendar </a>
+						<a href="#"> <i class="fa fa-calendar fa-fw"></i> <span>Calendar</span> </a>
 					</li>
 					<li id="nav-my-calendars" class="sub-nav">
-						<span>
-							<i class="fa fa-calendar-o fa-fw"></i>
-							My Calendars
-						</span>
+						<div><i class="fa fa-calendar-o fa-fw"></i> <span>My Calendars</span> </div>
 						<ul class="sub-nav-list">
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Personal </a></li>
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Appointments </a></li>
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Classes </a></li>
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> <span>Work</span> </a></li>
+							<li><a href="#"> <div class="square-icon-maroon disabled"></div> <span>Personal</span> </a></li>
+							<li><a href="#"> <div class="square-icon-aqua"></div> <span>Appointments</span> </a></li>
+							<li><a href="#"> <div class="square-icon-yellow"></div> <span>Classes</span> </a></li>
+							<li><a href="#"> <div class="square-icon-lime"></div> <span>Work</span> </a></li>
 						</ul>
 					</li>
 				</ul>
 
 				<ul id="nav-task-list">
 					<li id="nav-inbox">
-						<a href="#"> <i class="fa fa-inbox fa-fw"></i> Inbox </a>
+						<a href="#"> <i class="fa fa-inbox fa-fw"></i> <span>Inbox</span> </a>
 					</li>
 					<li id="nav-today">
-						<a href="#"> <i class="fa fa-list fa-fw"></i> Today </a>
+						<a href="#"> <i class="fa fa-list fa-fw"></i> <span>Today</span> </a>
 					</li>
 					<li id="nav-7-days">
-						<a href="#"> <i class="fa fa-list fa-fw"></i> Next 7 Days </a>
+						<a href="#"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
 					</li>
 					<li id="nav-my-labels" class="sub-nav">
-						<span>
-							<i class="fa fa-list-alt fa-fw"></i>
-							My Labels
-						</span>
+						<div><i class="fa fa-list-alt fa-fw"></i> <span>My Labels</span> </div>
 						<ul class="sub-nav-list">
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Personal </a></li>
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Shopping </a></li>
-							<li><a href="#"> <i class="fa fa-circle fa-fw"></i> Project </a></li>
+							<li><a href="#"> <div class="square-icon-purple"></div> <span>Personal</span> </a></li>
+							<li><a href="#"> <div class="square-icon-blue"></div> <span>Shopping</span> </a></li>
+							<li><a href="#"> <div class="square-icon-red"></div> Project</span> </a></li>
 						</ul>
 					</li>
 				</ul>

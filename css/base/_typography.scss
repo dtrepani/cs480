@@ -58,6 +58,10 @@ li[id*="nav-"] {
 	}
 }
 
+[class*="square-icon-"].disabled + span {
+	color: $color-dim-darker;
+}
+
 // LISTS
 // ----------------------------
 .task-list li {

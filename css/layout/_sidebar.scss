@@ -1,5 +1,6 @@
 #sidebar {
 	@include transition('all #{$animation-speed} ease #{$ease-speed}');
+	background-color: $color-bg-sidebar;
 	position: fixed;
 	height: 100%;
 	width: $sidebar-expanded-width;
@@ -8,6 +9,16 @@
 
 	&:hover {
 		overflow-y: auto;
+	}
+}
+
+.is-collapsed {
+	min-width: $sidebar-collapsed-width-small !important;
+	width: $sidebar-collapsed-width-small !important;
+
+	@include breakpoint(small) {
+		min-width: $sidebar-collapsed-width !important;
+		width: $sidebar-collapsed-width !important;
 	}
 }
 
@@ -23,17 +34,11 @@
 
 #nav {
 	padding: ($header-height + $body-padding) 0 $body-padding;
-	background-color: $color-bg-sidebar;
 	height: inherit;
 
 	.is-selected {
  		background-color: $color-bg-content;
 	}
-}
-
-.is-collapsed {
-	min-width: $sidebar-collapsed-width-small !important;
-	width: $sidebar-collapsed-width-small !important;
 }
 
 ul[id*="nav-"] {
@@ -42,7 +47,7 @@ ul[id*="nav-"] {
 	white-space: nowrap;
 }
 
-li[id*="nav-"] a, li[id*="nav-"] > span {
+li[id*="nav-"] a, li[id*="nav-"] > div {
 	display: block;
 	padding: ($body-padding / 2) $body-padding;
 	margin: 2px 0;
@@ -67,12 +72,5 @@ li[id*="nav-"] a, li[id*="nav-"] > span {
 		@include rem('margin-bottom', 2.5px);
 		vertical-align: middle;
 		line-height: inherit;
-	}
-}
-
-@include breakpoint(small) {
-	.is-collapsed {
-		min-width: $sidebar-collapsed-width !important;
-		width: $sidebar-collapsed-width !important;
 	}
 }
