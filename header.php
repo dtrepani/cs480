@@ -23,7 +23,7 @@
 					</li>
 					<li id="nav-my-calendars" class="sub-nav">
 						<div><i class="fa fa-calendar-o fa-fw"></i> <span>My Calendars</span> </div>
-						<ul class="sub-nav-list">
+						<ul id="sub-nav-calendars" class="sub-nav-list">
 							<li><a href="#"> <div class="square-icon-maroon disabled"></div> <span>Personal</span> </a></li>
 							<li><a href="#"> <div class="square-icon-aqua"></div> <span>Appointments</span> </a></li>
 							<li><a href="#"> <div class="square-icon-yellow"></div> <span>Classes</span> </a></li>
@@ -37,14 +37,14 @@
 						<a href="#"> <i class="fa fa-inbox fa-fw"></i> <span>Inbox</span> </a>
 					</li>
 					<li id="nav-today">
-						<a href="#"> <i class="fa fa-list fa-fw"></i> <span>Today</span> </a>
+						<a href="#"> <i class="fa fa-check-square-o fa-fw"></i> <span>Today</span> </a>
 					</li>
 					<li id="nav-7-days">
 						<a href="#"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
 					</li>
 					<li id="nav-my-labels" class="sub-nav">
-						<div><i class="fa fa-list-alt fa-fw"></i> <span>My Labels</span> </div>
-						<ul class="sub-nav-list">
+						<div><i class="fa fa-tag fa-fw"></i> <span>My Labels</span> </div>
+						<ul id="sub-nav-labels" class="sub-nav-list">
 							<li><a href="#"> <div class="square-icon-purple"></div> <span>Personal</span> </a></li>
 							<li><a href="#"> <div class="square-icon-blue"></div> <span>Shopping</span> </a></li>
 							<li><a href="#"> <div class="square-icon-red"></div> Project</span> </a></li>

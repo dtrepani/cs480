@@ -25,7 +25,7 @@ var resizeDivs = function() {
 	});
 };
 
-var sidebarToggle = function() {
+var toggleSidebar = function() {
 	$('#sidebar').toggleClass('is-collapsed');
 
 	if($('#sidebar').hasClass('is-collapsed')) {
@@ -39,6 +39,10 @@ var sidebarToggle = function() {
 var selectDay = function() {
 	$('.calendar-view .is-selected').toggleClass('is-selected');
 	$(this).toggleClass('is-selected');
+};
+
+var toggleComplete = function() {
+	$(this).parent().toggleClass('is-complete');
 };
 
 
@@ -69,7 +73,7 @@ function collapseSidebarWhenClickedOutside(event) {
 	if(	($(window).outerWidth() <= breakpoints.xsmall)
 		&& ($(event.target).closest('#sidebar').length == 0)
 		&& (!$('#sidebar').hasClass('is-collapsed')) ) {
-		sidebarToggle();
+		toggleSidebar();
 	}
 }
 
@@ -89,14 +93,14 @@ function subNavClicks() {
 
 	$('.sub-nav > div').click(function() {
 		if($('#sidebar').hasClass('is-collapsed')) {
-			sidebarToggle();
+			toggleSidebar();
 			$(this).siblings('.sub-nav-list').slideDown();
 		} else {
 			$(this).siblings('.sub-nav-list').slideToggle();
 		}
 	});
 
-	$('.sub-nav-list li a').click(function() {
+	$('#sub-nav-calendars li a').click(function() {
 		$(this).children('[class*="square-icon-"]').toggleClass('disabled');
 	});
 }
@@ -105,8 +109,13 @@ function calendarClicks() {
 	$('#month li').click(selectDay);
 }
 
+function taskClicks() {
+	$('.task-list .check-icon').click(toggleComplete);
+}
+
 function clicksInit() {
-	$('#sidebar-toggle').click(sidebarToggle);
+	$('#sidebar-toggle').click(toggleSidebar);
+	taskClicks();
 	calendarClicks();
 	documentClick();
 	subNavClicks();
@@ -114,7 +123,7 @@ function clicksInit() {
 
 function sidebarInit() {
 	if($(window).outerWidth() > breakpoints.small) {
-		sidebarToggle();
+		toggleSidebar();
 	}
 }
 
