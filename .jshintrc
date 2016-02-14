@@ -1,6 +1,8 @@
 {
 	"jquery":	true,
-	"strict":	true,
+	"strict":	"global",
 	"undef":	true,
-	"unused":	true
+	"unused":	true,
+	"browser":	true,
+	"undef": 	true
 }

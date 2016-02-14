@@ -1,7 +1,0 @@
-TODO:
-
-	Calendars only available on Calendar page
-	Media queries to ems
-	Add search box
-	Menu toggle turns into x when expanded
-

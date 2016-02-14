@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Senior Project";
 
-include("header.php");
+include("app/header.php");
 ?>
 
 <h1>Inbox</h1>
@@ -125,4 +125,4 @@ include("header.php");
 	</ul>
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("app/footer.php"); ?>
