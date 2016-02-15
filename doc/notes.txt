@@ -5,11 +5,12 @@ TODO:
 	JS
 		Calendars only available on Calendar page
 		Popovers
+		Remove jQuery include in header.php
 
 SETUP:
 	Familiarize self with MVC
 	Plan app
-	Setup AngularJS
+	AngularJS Route?
 	Setup QUint
 	!! Remove Browserify if don't end up needing
 
