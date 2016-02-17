@@ -8,6 +8,7 @@ TODO:
 		Remove jQuery include in header.php
 
 SETUP:
+	Uninstall jQuery
 	Plan app
 	https://github.com/jakemmarsh/angularjs-gulp-browserify-boilerplate
 
