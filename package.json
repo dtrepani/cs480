@@ -19,9 +19,9 @@
   },
   "homepage": "https://github.com/finajo/cs480#readme",
   "devDependencies": {
+    "angular": "^1.5.0",
     "angular-mocks": "^1.5.0",
     "angular-route": "^1.5.0",
-    "angularjs": "0.0.1",
     "font-awesome": "^4.5.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
