@@ -8,11 +8,14 @@ TODO:
 		Remove jQuery include in header.php
 
 SETUP:
-	Familiarize self with MVC
 	Plan app
-	AngularJS Route?
-	Setup QUint
-	!! Remove Browserify if don't end up needing
+	https://github.com/jakemmarsh/angularjs-gulp-browserify-boilerplate
 
 REMEMBER:
 	Out-sourced files (FA and AngularJS) is for previously-cached versions
+
+CONSTRUCTION:
+	Controllers
+	Directives
+	Services
+	Filters

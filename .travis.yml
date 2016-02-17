@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+	- "0.10"
+
+before_script:
+	- export DISPLAY=:99.0
+	- sh -e /etc/init.d/xvfb start
+	- npm start > /dev/null &
+	- npm run update-webdriver
+
+script:
+	- node_modules/.bin/karma start karma.conf.js --single-run
+	- node_modules/.bin/protractor e2e-tests/protractor.conf.js --browser=firefox
