@@ -2,6 +2,6 @@
 
 describe('Test',function() {
 	it('should succeed',function() {
-		expect(true).to.be(true);
+		expect(true).toBe(true);
 	});
 });
