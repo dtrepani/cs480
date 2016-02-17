@@ -7,7 +7,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - webdriver-manager update
   - webdriver-manager start 2>&1 &
-  - sleep 1
+  - sleep 3
 
 script:
   - node_modules/.bin/karma start test/karma.conf.js --single-run
