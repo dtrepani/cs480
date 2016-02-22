@@ -16,17 +16,17 @@ var phpcs		= require('gulp-phpcs'),
 	phpunit		= require('gulp-phpunit');
 
 var filePaths = {
-	scss: ['app/scss/*.scss'],
-	scssWatch: ['app/scss/**/*.scss'],
-	js: ['app/js/**/*.js', '!app/js/main*.js'],
-	php: ['app/*.php', '!vendor/**/*.php', '!test/**/*.php'],
+	scss: ['client/content/scss/*.scss'],
+	scssWatch: ['client/content/scss/**/*.scss'],
+	js: ['client/app/**/*.js', '!client/app/main*.js'],
+	php: ['client/**/*.php', '!vendor/**/*.php', '!test/**/*.php'],
 	phpTest: ['test/**/*.php']
 };
 
 var dirPaths = {
-	js: 'app/js/',
-	css: 'app/css/',
-	php: 'app/'
+	js: 'app/',
+	css: 'client/content/css/',
+	php: 'client/'
 };
 
 gulp.task('css', function() {
@@ -76,7 +76,8 @@ gulp.task('watch', function() {
 	gulp.watch(filePaths.scssWatch, ['css']);
 	gulp.watch(filePaths.js, ['jshint', 'js']);
 	gulp.watch(filePaths.php, ['phpcs']);
-	gulp.watch(filePaths.phpTest, ['phpunit']);
 });
 
-gulp.task('default', ['css', 'jshint', 'js', 'phpcs', 'phpunit', 'watch']);
+gulp.task('test', ['phpunit']);
+
+gulp.task('default', ['css', 'jshint', 'js', 'phpcs', 'watch']);

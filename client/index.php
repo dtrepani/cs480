@@ -1,4 +1,4 @@
-<?php require_once "header.html"; ?>
+<?php require_once "app/layout/header.html"; ?>
 
 <h1>Inbox</h1>
 <ul class="task-list">
@@ -124,4 +124,4 @@
 	</ul>
 </div>
 
-<?php require_once "footer.html"; ?>
+<?php require_once "app/layout/footer.html"; ?>
