@@ -6,14 +6,25 @@ TODO:
 		Calendars only available on Calendar page
 		Popovers
 		Remove jQuery include in header.php
+	PHP
+		Set utf8mb4 on PDO connection and database + tables?
+		Secure PHP http://code.tutsplus.com/tutorials/5-helpful-tips-for-creating-secure-php-applications--net-2260
+		Sanitize input in PHP (including login info)
+		Validate cookie data
+		PHPDoc
 
 SETUP:
 	Uninstall jQuery
-	Plan app
+	Uninstall gulp-notify?
+	PHPUnit
+	Cache?
 	https://github.com/jakemmarsh/angularjs-gulp-browserify-boilerplate
 
 REMEMBER:
 	Out-sourced files (FA and AngularJS) is for previously-cached versions
+	Turn error reporting off for PHP when final product is done; set these:
+		display_errors = Off
+		display_startup_errors = Off
 
 CONSTRUCTION:
 	Controllers
