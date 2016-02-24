@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Test',function() {
+describe('Test Suite',function() {
 	it('should succeed',function() {
 		expect(true).toBe(true);
 	});

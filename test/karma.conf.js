@@ -11,11 +11,11 @@ module.exports = function(config) {
 		'node_modules/angular/angular.js',
 		'node_modules/angular-route/angular-route.js',
 		'node_modules/angular-mocks/angular-mocks.js',
-		'app/js/main.js',
-		'test/unit/**/*.js',
+		'client/app/main.js',
+		'test/unit/**/*.js'
 	],
 
-	reporters: ['progress'],
+	reporters: ['spec'],
 
 	port: 9876,
 
@@ -25,7 +25,7 @@ module.exports = function(config) {
 
 	autoWatch: true,
 
-	browsers: ['Firefox'],
+	browsers: ['PhantomJS'],
 
 	singleRun: false,
 
@@ -33,7 +33,10 @@ module.exports = function(config) {
 
 	plugins : [
 		'karma-firefox-launcher',
-		'karma-jasmine',
+		'karma-phantomjs-launcher',
+		'karma-spec-reporter',
+		'karma-jasmine'
 	]
-  })
-}
+
+  });
+};

@@ -2,9 +2,11 @@
   "jquery": true,
   "node": true,
   "jasmine": true,
-  //"strict": "global",
   "undef":  true,
   "unused": true,
   "browser":true,
-  "undef":  true
+  "undef":  true,
+  "globals": {
+  	"angular": true
+  }
 }

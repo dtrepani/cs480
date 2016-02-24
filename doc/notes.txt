@@ -14,9 +14,8 @@ TODO:
 		PHPDoc
 
 SETUP:
-	Uninstall jQuery
-	Uninstall gulp-notify?
-	PHPUnit
+	Uninstall jQuery?
+	Uninstall chalk and gutil?
 	Cache?
 	https://github.com/jakemmarsh/angularjs-gulp-browserify-boilerplate
 
