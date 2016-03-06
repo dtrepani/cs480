@@ -1,5 +1,5 @@
 <?php
-namespace Test\Unit\Tmp;
+namespace App\Test\Unit\Tmp;
 
 class TmpTest extends PHPUnit_Framework_TestCase
 {

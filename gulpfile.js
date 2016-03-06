@@ -12,14 +12,14 @@ var dirPaths = {
 	js: 'client/app/',
 	css: 'client/content/css/',
 	scss: 'client/content/scss/',
-	php: 'client/'
+	php: './'
 };
 
 var fileTestPaths = {
-	js: ['test/**/*.js'],
-	jsUnit: ['test/unit/**/*.js'],
-	jsE2E: ['test/e2e/**/*.js'],
-	php: ['test/**/*.php']
+	js: 'test/**/*.js',
+	jsUnit: 'test/unit/**/*.js',
+	jsE2E: 'test/e2e/**/*.js',
+	php: 'test/**/*.php'
 };
 
 var filePaths = {
@@ -37,7 +37,8 @@ var filePaths = {
 	php: [
 		dirPaths.php + '**/*.php',
 		fileTestPaths.php + '',
-		'!vendor/**/*.php'
+		'!vendor/**/*.php',
+		'!node_modules/**/*.php'
 	]
 };
 
