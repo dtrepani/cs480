@@ -1,0 +1,129 @@
+CREATE TABLE IF NOT EXISTS user (
+	id 				INT				NOT NULL AUTO_INCREMENT,
+	name 			VARCHAR(32)		NOT NULL,
+	password		VARCHAR(512)	NOT NULL,
+	admin			BOOLEAN DEFAULT FALSE,
+	theme			ENUM('light', 'dark') DEFAULT 'light',
+	week_start		ENUM('su', 'mo') DEFAULT 'so',
+	time_zone		INT,
+	avatar			TEXT,
+	email			VARCHAR(64),
+	phone_number	INT,
+	notify_email	BOOLEAN,
+	notify_text		BOOLEAN,
+	PRIMARY KEY (id),
+	UNIQUE KEY (name)
+);
+
+CREATE TABLE IF NOT EXISTS session (
+	id 				VARCHAR(32)	NOT NULL,
+	user_id 		INT 		NOT NULL,
+	ip_address		VARCHAR(16),
+	last_accessed	DATETIME,
+	data 			TEXT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS calendar (
+	id 				INT			NOT NULL AUTO_INCREMENT,
+	user_id			INT 		NOT NULL,
+	name 			VARCHAR(64)	NOT NULL,
+	visible			BOOLEAN DEFAULT true,
+	PRIMARY KEY (id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS event (
+	id 					INT				NOT NULL AUTO_INCREMENT,
+	calendar_id			INT 			NOT NULL,
+	activity_prefs_id	INT				NOT NULL,
+	summary				VARCHAR(256)	NOT NULL,
+	created				DATETIME		NOT NULL,
+	dt_start 			DATETIME,
+	dt_end				DATETIME,
+	description			TEXT,
+	location			VARCHAR(256),
+	PRIMARY KEY (id),
+	FOREIGN KEY (calendar_id) REFERENCES calendar(id),
+	FOREIGN KEY (activity_prefs_id) REFERENCES activity_prefs(id)
+);
+
+CREATE TABLE IF NOT EXISTS label (
+	id 				INT			NOT NULL AUTO_INCREMENT,
+	user_id			INT 		NOT NULL,
+	name 			VARCHAR(64)	NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS task (
+	id 					INT				NOT NULL AUTO_INCREMENT,
+	label_id			INT 			NOT NULL,
+	activity_prefs_id	INT				NOT NULL,
+	summary 			VARCHAR(256)	NOT NULL,
+	due 				DATETIME,
+	completed			BOOLEAN DEFAULT false,
+	picture				TEXT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (label_id) REFERENCES label(id),
+	FOREIGN KEY (activity_prefs_id) REFERENCES activity_prefs(id)
+);
+
+CREATE TABLE IF NOT EXISTS subtask (
+	id 				INT				NOT NULL AUTO_INCREMENT,
+	task_id			INT 			NOT NULL,
+	summary 		VARCHAR(256)	NOT NULL,
+	completed		BOOLEAN DEFAULT false,
+	PRIMARY KEY (id),
+	FOREIGN KEY (task_id) REFERENCES task(id)
+);
+
+CREATE TABLE IF NOT EXISTS activity_prefs (
+	id 				INT			NOT NULL AUTO_INCREMENT,
+	recurrence_id	INT,
+	created			DATETIME	NOT NULL,
+	color 			VARCHAR(32),
+	note 			TEXT,
+	reminder 		DATETIME,
+	priority		ENUM('low', 'normal', 'high') DEFAULT 'normal',
+	PRIMARY KEY (id),
+	FOREIGN KEY (recurrence_id) REFERENCES recurrence(id),
+);
+
+CREATE TABLE IF NOT EXISTS recurrence (
+	id 				INT		NOT NULL AUTO_INCREMENT,
+	freq			ENUM('secondly', 'minutely', 'hourly', 'monthly', 'yearly') DEFAULT 'daily',
+	until			DATETIME,
+	count 			INT,
+	interval		INT		NOT NULL DEFAULT 1,
+	# by_(?!set_pos).* are stored in serialized arrays
+	by_second		TEXT,
+	by_minute		TEXT,
+	by_hour			TEXT,
+	by_day			TEXT,
+	by_month_day	TEXT,
+	by_year_day		TEXT,
+	by_week_no		TEXT,
+	by_month 		TEXT,
+	by_set_pos		INT,
+	PRIMARY KEY (id),
+);
+
+CREATE TABLE IF NOT EXISTS calendar_user (
+	id 				INT		NOT NULL AUTO_INCREMENT,
+	calendar_id		INT		NOT NULL,
+	user_id 		INT		NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (calendar_id) REFERENCES calendar(id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS label_user (
+	id 				INT		NOT NULL AUTO_INCREMENT,
+	label_id		INT		NOT NULL,
+	user_id 		INT		NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (label_id) REFERENCES label(id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);

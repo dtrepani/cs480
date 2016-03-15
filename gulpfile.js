@@ -9,9 +9,9 @@ $.util.colors.enabled		= true;
 $.util.colors.supportsColor	= true;
 
 var dirPaths = {
-	js: 'client/app/',
-	css: 'client/content/css/',
-	scss: 'client/content/scss/',
+	js: 'app/js/',
+	css: 'app/content/css/',
+	scss: 'app/content/scss/',
 	php: './'
 };
 
