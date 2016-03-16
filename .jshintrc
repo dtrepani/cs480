@@ -3,7 +3,6 @@
   "node": true,
   "jasmine": true,
   "undef":  true,
-  "unused": true,
   "browser":true,
   "undef":  true,
   "globals": {

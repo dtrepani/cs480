@@ -3,7 +3,7 @@ namespace App\Api\DatabaseClass;
 
 class Database
 {
-    private $conn = null;
+    protected $conn = null;
 
     public function __construct()
     {

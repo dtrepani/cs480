@@ -9,7 +9,7 @@ $.util.colors.enabled		= true;
 $.util.colors.supportsColor	= true;
 
 var dirPaths = {
-	js: 'app/js/',
+	js: 'app/',
 	css: 'app/content/css/',
 	scss: 'app/content/scss/',
 	php: './'
@@ -23,16 +23,18 @@ var fileTestPaths = {
 };
 
 var filePaths = {
-	scss: [dirPaths.scss + 'main.scss'],
+	scss: [dirPaths.scss + 'app.scss'],
 	scssWatch: [dirPaths.scss + '**/*.scss'], // Watch for changes in any of the scss partials.
 	js: [
 		dirPaths.js + '**/*.js',
-		'!' + dirPaths.js + 'main*.js'
+		'!' + dirPaths.js + 'app.js',
+		'!' + dirPaths.js + 'app.min.js'
 	],
 	jsWithTest: [
 		dirPaths.js + '**/*.js',
 		fileTestPaths.js + '',
-		'!' + dirPaths.js + 'main*.js'
+		'!' + dirPaths.js + 'app.js',
+		'!' + dirPaths.js + 'app.min.js'
 	],
 	php: [
 		dirPaths.php + '**/*.php',
@@ -42,40 +44,41 @@ var filePaths = {
 	]
 };
 
+var onError = $.notify.onError('<%= error.message %>');
+
 gulp.task('css', function() {
 	gulp.src(filePaths.scss)
-		.pipe($.plumber(onError))
+		.pipe($.plumber({errorHandler: onError}))
 		.pipe($.sass())
 		.pipe(gulp.dest(dirPaths.css))
 		.pipe($.rename({extname: '.min.css'}))
 		.pipe($.cssnano())
-		.pipe(gulp.dest(dirPaths.css));
+		.pipe(gulp.dest(dirPaths.css))
 });
 
 gulp.task('jshint', function() {
 	gulp.src(filePaths.jsWithTest)
-		.pipe($.plumber(onError))
+		.pipe($.plumber({errorHandler: onError}))
 		.pipe($.jshint('.jshintrc'))
 		.pipe($.jshint.reporter('jshint-stylish'))
-		.on('error', onError);
 });
 
 gulp.task('js', function() {
 	gulp.src(filePaths.js)
-		.pipe($.plumber(onError))
-		.pipe($.concat('main.js'))
+		.pipe($.plumber({errorHandler: onError}))
+		.pipe($.concat('app.js'))
 		.pipe(gulp.dest(dirPaths.js))
 		.pipe($.rename({extname: '.min.js'}))
 		.pipe($.ngAnnotate())
 		.pipe($.sourcemaps.init())
 		.pipe($.uglify())
 		.pipe($.sourcemaps.write())
-		.pipe(gulp.dest(dirPaths.js));
+		.pipe(gulp.dest(dirPaths.js))
 });
 
 gulp.task('phpcs', function() {
 	gulp.src(filePaths.php)
-		.pipe($.plumber(onError))
+		.pipe($.plumber({errorHandler: onError}))
 		.pipe($.phpcs({
 			bin: 'vendor\\bin\\phpcs.bat',
 			colors: true
@@ -85,7 +88,7 @@ gulp.task('phpcs', function() {
 
 gulp.task('phpcbf', function() {
 	gulp.src(filePaths.php)
-		.pipe($.plumber(onError))
+		.pipe($.plumber({errorHandler: onError}))
 		.pipe($.phpcbf({
 			bin: 'vendor\\bin\\phpcbf.bat',
 			colors: true
@@ -128,10 +131,4 @@ gulp.task('watchTest', function() {
 	gulp.watch(fileTestPaths.php, ['phpunit']);
 });
 
-gulp.task('default', ['css', 'jshint', 'js', 'phpcs', 'watch']);
-
-var onError = function(err) {
-	$.util('triggered');
-	$.util.log($.util.colors.green(err));
-	this.end();
-};
+gulp.task('default', ['css', 'jshint', 'js', /*'phpcs',*/ 'watch']);
