@@ -19,6 +19,10 @@ i {
 	cursor: pointer;
 }
 
+.wrapper {
+	height: 100%;
+}
+
 .disable-preload-transition {
 	@include transition('none !important');
 }
@@ -66,5 +70,10 @@ i {
 	background-color: $color-bg-content;
 	width: 100%;
 	height: 100%;
+	margin-left: $sidebar-collapsed-width-small;
 	padding: ($header-height + $body-padding) $body-padding $body-padding;
+
+	@include breakpoint(small) {
+		margin-left: $sidebar-collapsed-width;
+	}
 }

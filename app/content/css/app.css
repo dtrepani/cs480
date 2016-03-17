@@ -129,11 +129,11 @@ li[id*="nav-"] {
   color: #ddd; }
   .check-icon:hover {
     color: #aaa; }
-  .is-complete .check-icon {
+  .complete .check-icon {
     color: #444;
     text-decoration: none; }
 
-.is-complete .task-name {
+.complete .task-name {
   color: #aaa;
   text-decoration: line-through; }
 
@@ -164,6 +164,9 @@ h1 {
 
 i {
   cursor: pointer; }
+
+.wrapper {
+  height: 100%; }
 
 .disable-preload-transition {
   -webkit-transition: none !important;
@@ -226,7 +229,11 @@ i {
   background-color: #fff;
   width: 100%;
   height: 100%;
+  margin-left: 44px;
   padding: 55px 10px 10px; }
+  @media screen and (min-width: 768px) {
+    #content {
+      margin-left: 54px; } }
 
 #sidebar {
   -webkit-transition: all 0.5s ease 0.1s;
@@ -243,11 +250,11 @@ i {
   #sidebar:hover {
     overflow-y: auto; }
 
-.is-collapsed {
+.collapsed {
   min-width: 44px !important;
   width: 44px !important; }
   @media screen and (min-width: 768px) {
-    .is-collapsed {
+    .collapsed {
       min-width: 54px !important;
       width: 54px !important; } }
 
@@ -267,7 +274,7 @@ i {
 #nav {
   padding: 55px 0 10px;
   height: inherit; }
-  #nav .is-selected {
+  #nav .selected {
     background-color: #fff; }
 
 ul[id*="nav-"] {
@@ -423,10 +430,10 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
   #calendar-views li {
     display: inline-block; }
 
-.is-today {
+.today {
   background: #F0F0F0; }
 
-#calendar-month .is-selected {
+#calendar-month .selected {
   background: #ebf1f8; }
 
 .all-day-events {

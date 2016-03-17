@@ -83,13 +83,13 @@ li[id*="nav-"] {
 		color: $color-dim-dark;
 	}
 
-	.is-complete & {
+	.complete & {
 		color: $color-text;
 		text-decoration: none;
 	}
 }
 
-.is-complete .task-name {
+.complete .task-name {
 	color: $color-dim-dark;
 	text-decoration: line-through;
 }

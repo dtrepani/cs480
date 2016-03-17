@@ -12,7 +12,7 @@
 	}
 }
 
-.is-collapsed {
+.collapsed {
 	min-width: $sidebar-collapsed-width-small !important;
 	width: $sidebar-collapsed-width-small !important;
 
@@ -36,7 +36,7 @@
 	padding: ($header-height + $body-padding) 0 $body-padding;
 	height: inherit;
 
-	.is-selected {
+	.selected {
  		background-color: $color-bg-content;
 	}
 }
