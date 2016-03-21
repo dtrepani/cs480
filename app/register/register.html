@@ -12,15 +12,14 @@
 	<div class="input-group">
 		<label>Password</label><br/>
 		<input	type="password" placeholder="Password" name="password1"
-				ng-model="vm.userpassword1" minlength="6" maxlength="32" /><br/>
+				ng-model="vm.userpassword1" minlength="6" /><br/>
 		<p ng-show="registerForm.password1.$error.required && !registerForm.name.$pristine">Password is required.</p>
 		<p ng-show="registerForm.password1.$error.minlength">Password is too short.</p>
-		<p ng-show="registerForm.password1.$error.maxlength">Password is too long.</p>
 	</div>
 	<div class="input-group">
 		<label>Confirm Password</label><br/>
 		<input	type="password" placeholder="Retype Password" name="password2"
-				ng-model="vm.user.password2" minlength="6" maxlength="32" required sp-compare-to="registerForm.password1" /><br/>
+				ng-model="vm.user.password2" minlength="6" required sp-compare-to="registerForm.password1" /><br/>
 		<p ng-show="registerForm.password2.$error.spCompareTo">Passwords do not match.</p>
 	</div>
 

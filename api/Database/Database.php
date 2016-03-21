@@ -1,9 +1,10 @@
 <?php
-namespace App\Api\DatabaseClass;
+namespace App\Api\Database;
 
 class Database
 {
-    protected $conn = null;
+    private $conn = null;
+    private $statement = null;
 
     public function __construct()
     {
@@ -14,6 +15,24 @@ class Database
     public function beginTransaction()
     {
         return $this->$conn->beginTransaction();
+    }
+
+    /**
+    * Sanitize input using given bindings.
+    *
+    * @param string[][] $bindings Parameters of statement that need to be bound.
+    */
+    private function bindValues($bindings)
+    {
+        if ($bindings) {
+            foreach ($bindings as $bindingParam => $bindingValue) {
+                $statement->bindValue(
+                    $bindingParam,
+                    $bindingValue,
+                    getValueType($bindingValue)
+                );
+            }
+        }
     }
 
     /** @return bool Success or failure. */
@@ -35,8 +54,7 @@ class Database
                 )
             );
         } catch (PDOException $e) {
-            echo 'ERROR: ' . $e->getMessage();
-            die();
+            echo 'Error: ' . $e->getMessage();
         }
     }
 
@@ -70,7 +88,7 @@ class Database
     /**
     * Query the database and sanitize any given input.
     *
-    * @param    string      $aQuery     Query statement.
+    * @param    string      $query      Query statement.
     * @param    string[][]  $bindings   Parameters of statement that need to be bound.
     * @param    bool        $singleRow  Get a single row.
     * @param    int         $fetchStyle Fetch style.
@@ -79,23 +97,19 @@ class Database
     * @return   mixed[]|false           Results of query or false on failure.
     */
     public function query(
-        $aQuery,
+        $query,
         $bindings,
         $singleRow = false,
         $fetchStyle = PDO::FETCH_ASSOC,
         $fetchArgs = null
     ) {
-        $statement = $this->$conn->prepare($aQuery);
+        $statement = $this->$conn->prepare($query);
 
-        if ($bindings) {
-            foreach ($bindings as $bindingParam => $bindingValue) {
-                $statement->bindValue(
-                    $bindingParam,
-                    $bindingValue,
-                    getValueType($bindingValue)
-                );
-            }
+        if ($bindings->password) {
+            $bindings->password = password_hash($bindings->password, PASSWORD_DEFAULT);
         }
+
+        bindValues($bindings);
 
         $statement->execute();
 

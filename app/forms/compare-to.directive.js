@@ -10,24 +10,29 @@
 		.directive('spCompareTo', compareTo);
 
 	function compareTo() {
-		return {
+		var directive = {
 			require: 'ngModel',
 			scope: {
 				otherModel: '=spCompareTo'
 			},
 			link: link
 		};
+		return directive;
 
 		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
 			ngModel.$validators.spCompareTo = compareValues;
-
-			scope.$watchCollection('otherModel', validateOnChange);
+			element.on('$destroy', cleanUp);
 
 			function compareValues(viewValue) {
 				return (viewValue === scope.otherModel.$viewValue);
 			}
 
-			function validateOnChange() {
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function validateOnChange(newValue, oldValue) {
 				ngModel.$validate();
 			}
 		}

@@ -120,7 +120,7 @@ gulp.task('watch', function() {
 	gulp.watch(filePaths.scssWatch, ['css']);
 	gulp.watch(filePaths.js, ['js']);
 	gulp.watch(filePaths.jsWithTest, ['jshint']);
-	gulp.watch(filePaths.php, ['phpcs']);
+	//gulp.watch(filePaths.php, ['phpcs']);
 });
 
 gulp.task('test', ['phpunit', 'karma', 'protractor']);

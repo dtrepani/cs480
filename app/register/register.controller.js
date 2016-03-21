@@ -5,12 +5,14 @@
 		.module('app')
 		.controller('RegisterController', RegisterController);
 
-	function RegisterController() {
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
 		var vm = this;
 
 		vm.register = register;
 
 		function register() {
+			registerService.register(vm.user);
 		}
 	}
 })();

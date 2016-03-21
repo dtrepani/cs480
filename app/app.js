@@ -47,6 +47,17 @@
 (function() {
 	'use strict';
 
+	angular
+		.module('app')
+		.controller('DashboardController', DashboardController);
+
+	function DashboardController() {
+
+	}
+})();
+(function() {
+	'use strict';
+
 	/**
 	* Compare an input field to another field, determined by the dev.
 	*/
@@ -56,38 +67,32 @@
 		.directive('spCompareTo', compareTo);
 
 	function compareTo() {
-		return {
+		var directive = {
 			require: 'ngModel',
 			scope: {
 				otherModel: '=spCompareTo'
 			},
 			link: link
 		};
+		return directive;
 
 		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
 			ngModel.$validators.spCompareTo = compareValues;
-
-			scope.$watchCollection('otherModel', validateOnChange);
+			element.on('$destroy', cleanUp);
 
 			function compareValues(viewValue) {
 				return (viewValue === scope.otherModel.$viewValue);
 			}
 
-			function validateOnChange() {
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function validateOnChange(newValue, oldValue) {
 				ngModel.$validate();
 			}
 		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('DashboardController', DashboardController);
-
-	function DashboardController() {
-
 	}
 })();
 (function() {
@@ -108,15 +113,56 @@
 		.module('app')
 		.controller('RegisterController', RegisterController);
 
-	function RegisterController() {
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
 		var vm = this;
 
 		vm.register = register;
 
 		function register() {
+			registerService.register(vm.user);
 		}
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('registerService', registerService);
+
+	registerService.$inject = ['$http', '$location', '$log'];
+	function registerService($http, $location, $log) {
+		return {
+			registerUser: registerUser
+		};
+
+		function registerUser(user) {
+			return $http({
+				method: 'post',
+				url: 'api/database/create-entry.php',
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				data: {
+					type: 'PERSON',
+					name: user.name,
+					password: user.password,
+					email: user.email
+				}
+			})
+				.then(registerUserComplete)
+				.catch(registerUserFailed);
+
+			function registerUserComplete(response) {
+				return response.data;
+			}
+
+			function registerUserFailed(error) {
+				$log.error(error);
+			}
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
