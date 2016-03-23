@@ -1,6 +1,8 @@
 <?php
 namespace App\Api\Database;
 
+require_once('../../vendor/autoload.php');
+
 class Database
 {
     private $conn = null;
@@ -8,6 +10,7 @@ class Database
 
     public function __construct()
     {
+        var_dump('PDO: ' . extension_loaded('pdo')); // TODO: Remove
         $this->connect();
     }
 

@@ -9,10 +9,10 @@
 	function RegisterController(registerService) {
 		var vm = this;
 
-		vm.register = register;
+		vm.registerUser = registerUser;
 
-		function register() {
-			registerService.register(vm.user);
+		function registerUser() {
+			registerService.registerUser(vm.user);
 		}
 	}
 })();

@@ -1,14 +1,16 @@
 <?php
 namespace App\Api\Database;
 
-require_once 'vendor/autoload.php';
+require_once('../ArrayManipulation.php');
+require_once('Database.php');
 
 use App\Api as Api;
 
-$request = json_decode(file_get_contents('php://input'));
+$request = json_decode(file_get_contents('php://input'), true);
 
-$items = $colNames = $bindings = null;
-setQueryStrings();
+$items = $request;
+$colNames = $bindings = null;
+setQueryStrings($items, $colNames, $bindings);
 $bindingMap = Api\addPrefixToKeys($items);
 
 $db = new Database();
@@ -19,9 +21,9 @@ $db->query(
 
 // TODO: echo success or failure
 
-function setQueryStrings()
+function setQueryStrings(&$items, &$colNames, &$bindings)
 {
-    $items = array_slice($request, 1);
+    array_shift($items);
     $colNames = Api\toStringList($items);
     $bindings = Api\toStringList($items, ':');
 }

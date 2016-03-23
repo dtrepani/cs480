@@ -14,7 +14,7 @@
 		function registerUser(user) {
 			return $http({
 				method: 'post',
-				url: 'api/Database/CreateItem.php',
+				url: '../api/Database/CreateItem.php',
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 				data: {
 					type: 'PERSON',
