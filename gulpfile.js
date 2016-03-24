@@ -98,7 +98,7 @@ gulp.task('phpcbf', function() {
 
 gulp.task('phpunit', function() {
 	gulp.src(fileTestPaths.php)
-		.pipe($.phpunit('vendor\\bin\\phpunit.bat', {
+		.pipe($.phpunit('vendor\\bin\\phpunit', {
 			colors: 'enabled',
 			configurationFile: 'test/phpunit.xml'
 		}));

@@ -1,7 +1,7 @@
 <?php
 namespace App\Api\Database;
 
-require_once('../../vendor/autoload.php');
+use PDO;
 
 class Database
 {
@@ -10,7 +10,6 @@ class Database
 
     public function __construct()
     {
-        var_dump('PDO: ' . extension_loaded('pdo')); // TODO: Remove
         $this->connect();
     }
 
@@ -47,8 +46,8 @@ class Database
     public function connect()
     {
         try {
-            $conn = new PDO(
-                'mysql:host=127.0.0.1;dbname=test;charset=utf8mb4',
+            $conn = new \PDO(
+                'mysql:host=localhost;dbname=djt_test;charset=utf8mb4',
                 'root',
                 '',
                 array(
