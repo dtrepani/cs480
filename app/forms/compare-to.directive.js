@@ -24,12 +24,12 @@
 			ngModel.$validators.spCompareTo = compareValues;
 			element.on('$destroy', cleanUp);
 
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
 			function cleanUp() {
 				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
 			}
 
 			function validateOnChange(newValue, oldValue) {

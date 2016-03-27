@@ -1,9 +1,9 @@
 <?php
-namespace App\Test\Unit;
+namespace SP\Test\Unit;
 
-require_once realpath(dirname(dirname(dirname(__FILE__)))).'\api\ArrayManipulation.php';
+require_once __DIR__.'/../../app/api/arrayManipulation.php';
 
-use \App\Api as Api;
+use SP\App\Api as Api;
 
 class ArrayToStringListTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,13 +14,23 @@ class ArrayToStringListTest extends \PHPUnit_Framework_TestCase
         $this->testArray = array('a'=>'1', 'b'=>'2', 'c'=>'3');
     }
 
-    public function testToStringList()
-    {
-        $this->assertEquals(Api\toStringList($this->testArray), 'a, b, c');
-    }
-
     public function testAddPrefixToKeys()
     {
         $this->assertEquals(Api\addPrefixToKeys($this->testArray), array(':a'=>'1', ':b'=>'2', ':c'=>'3'));
+    }
+
+    public function testToBindingSetList()
+    {
+        $this->assertEquals(
+            Api\toBindingSetList($this->testArray),
+            'a = :a, b = :b, c = :c'
+        );
+    }
+
+    public function testToQueryLists()
+    {
+        $lists = Api\toQueryLists($this->testArray);
+        $this->assertEquals($lists['columns'], 'a, b, c');
+        $this->assertEquals($lists['bindings'], ':a, :b, :c');
     }
 }

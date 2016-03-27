@@ -1,18 +1,18 @@
 <?php
 namespace App\Test\Unit\Database;
 
-// class DatabaseClassTest extends PHPUnit_Extensions_Database_TestCase
+// class DatabaseTest extends PHPUnit_Extensions_Database_TestCase
 // {
 //     private $conn = null;
 
 //     public function getConnection()
 //     {
-//         $conn = new PDO(
+//         $this->conn = new PDO(
 //             'mysql:host=127.0.0.1;dbname=test;charset=utf8mb4',
 //             'root',
 //             ''
 //         );
-//         return $this->createDefaultDBConnection($conn, 'test');
+//         return $this->createDefaultDBConnection($this->conn, 'test');
 //     }
 
 //     public function getDataSet()

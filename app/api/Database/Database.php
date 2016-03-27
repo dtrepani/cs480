@@ -1,12 +1,12 @@
 <?php
-namespace App\Api\Database;
+namespace SP\App\Api\Database;
 
 use PDO;
 
 class Database
 {
-    private $conn = null;
-    private $statement = null;
+    private $conn;
+    private $statement;
 
     public function __construct()
     {
@@ -16,7 +16,7 @@ class Database
     /** @return bool Success or failure. */
     public function beginTransaction()
     {
-        return $this->$conn->beginTransaction();
+        return $this->conn->beginTransaction();
     }
 
     /**
@@ -28,10 +28,10 @@ class Database
     {
         if ($bindings) {
             foreach ($bindings as $bindingParam => $bindingValue) {
-                $statement->bindValue(
+                $this->statement->bindValue(
                     $bindingParam,
                     $bindingValue,
-                    getValueType($bindingValue)
+                    $this->getValueType($bindingValue)
                 );
             }
         }
@@ -40,14 +40,14 @@ class Database
     /** @return bool Success or failure. */
     public function cancelTransaction()
     {
-        return $this->$conn->rollBack();
+        return $this->conn->rollBack();
     }
 
     public function connect()
     {
         try {
-            $conn = new \PDO(
-                'mysql:host=localhost;dbname=djt_test;charset=utf8mb4',
+            $this->conn = new \PDO(
+                'mysql:host=localhost;dbname=test;charset=utf8mb4',
                 'root',
                 '',
                 array(
@@ -55,15 +55,15 @@ class Database
                     PDO::ATTR_PERSISTENT => false
                 )
             );
-        } catch (PDOException $e) {
-            echo 'Error: ' . $e->getMessage();
+        } catch (\PDOException $e) {
+            return 'ERROR: ' . $e->getMessage();
         }
     }
 
     /** @return bool Success or failure. */
     public function endTransaction()
     {
-        return $this->$conn->commit();
+        return $this->conn->commit();
     }
 
     /**
@@ -88,6 +88,35 @@ class Database
     }
 
     /**
+    * Get the results of a query based on the given command and parameters.
+    *
+    * @param    string      $query      Query statement.
+    * @param    bool        $singleRow  Get a single row.
+    * @param    int         $fetchStyle Fetch style.
+    * @param    int         $fetchArgs  Arguments to fetch style.
+    *
+    * @return   mixed[]|false           Results of query or false on failure.
+    */
+    private function sendResults(
+        $query,
+        $singleRow = false,
+        $fetchStyle = PDO::FETCH_ASSOC,
+        $fetchArgs = null
+    ) {
+        $cmd = strtoupper(strstr($query, ' ', true));
+
+        if ($cmd === 'DELETE' || $cmd === 'INSERT' || $cmd === 'UPDATE') {
+            return $this->statement->rowCount();
+        }
+
+        if ($singleRow) {
+            return $this->statement->fetch();
+        }
+
+        return $this->statement->fetchAll($fetchStyle, $fetchArgs);
+    }
+
+    /**
     * Query the database and sanitize any given input.
     *
     * @param    string      $query      Query statement.
@@ -100,25 +129,23 @@ class Database
     */
     public function query(
         $query,
-        $bindings,
+        $bindings = array(),
         $singleRow = false,
         $fetchStyle = PDO::FETCH_ASSOC,
         $fetchArgs = null
     ) {
-        $statement = $this->$conn->prepare($query);
+        try {
+            $this->statement = $this->conn->prepare($query);
 
-        if ($bindings->password) {
-            $bindings->password = password_hash($bindings->password, PASSWORD_DEFAULT);
+            if (!empty($bindings)) {
+                $this->bindValues($bindings);
+            }
+
+            $this->statement->execute();
+
+            return $this->sendResults($query, $singleRow, $fetchStyle, $fetchArgs);
+        } catch (\PDOException $e) {
+            return 'ERROR: ' . $e->getMessage();
         }
-
-        bindValues($bindings);
-
-        $statement->execute();
-
-        if ($singleRow) {
-            return $statement->fetch();
-        }
-
-        return $statement->fetchAll($fetchStyle, $fetchArgs);
     }
 }

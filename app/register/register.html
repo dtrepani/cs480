@@ -1,4 +1,4 @@
-<form	name="registerForm" ng-submit="vm.registerUser()"
+<form	name="registerForm" ng-submit="registerForm.$valid && vm.registerUser()"
 		ng-model-options="{ updateOn: 'blur' }" novalidate>
 	<div class="input-group">
 		<label>Username</label><br/>
@@ -19,7 +19,7 @@
 	<div class="input-group">
 		<label>Confirm Password</label><br/>
 		<input	type="password" placeholder="Retype Password" name="password2"
-				ng-model="vm.user.password2" minlength="6" required sp-compare-to="registerForm.password" /><br/>
+				ng-model="vm.password2" minlength="6" required sp-compare-to="registerForm.password" /><br/>
 		<p ng-show="registerForm.password2.$error.spCompareTo">Passwords do not match.</p>
 	</div>
 
@@ -31,5 +31,4 @@
 	</div>
 
 	<input type="submit" value="Register" />
-	<pre>REMEMBER TO RE-ENABLE VALIDATE FORM ON SUBMIT</pre>
 </form>

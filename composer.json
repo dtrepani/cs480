@@ -5,9 +5,9 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "",
-            "App\\Api\\": "api/",
-            "App\\Test\\Unit\\": "test/unit/"
+            "SP\\": "",
+            "SP\\App\\Api\\": "app/api/",
+            "SP\\Test\\Unit\\": "test/unit/"
         }
     }
 }

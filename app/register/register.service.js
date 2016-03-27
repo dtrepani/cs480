@@ -12,21 +12,12 @@
 		};
 
 		function registerUser(user) {
-			return $http({
-				method: 'post',
-				url: 'api/Database/CreateItem.php',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				data: {
-					type: 'PERSON',
-					name: user.name,
-					password: user.password,
-					email: user.email
-				}
-			})
+			return $http.post('api/createUser.php', user)
 				.then(registerUserComplete)
 				.catch(registerUserFailed);
 
 			function registerUserComplete(response) {
+				console.log(response.data);
 				return response.data;
 			}
 

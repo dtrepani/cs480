@@ -1,30 +1,5 @@
 <?php
-namespace App\Api;
-
-/**
-* Convert an array's keys to a string list in the format of 'x, y, z'
-*
-* @param    string[][]  $array   Array to be converted to a string list.
-* @param    string      $prefix  Prefix to a key. Useful for bindings.
-*
-* @return   string      $stringList
-*/
-function toStringList($array, $prefix = '')
-{
-    $stringList = '';
-    $keyArray = array_keys($array);
-    $lastKey = end($keyArray);
-
-    foreach ($keyArray as $key) {
-        $stringList .= $prefix . $key;
-
-        if (!($key === $lastKey)) {
-            $stringList .= ', ';
-        }
-    }
-
-    return $stringList;
-}
+namespace SP\App\Api;
 
 /**
 * Add a prefix to every key in an array.
@@ -44,4 +19,47 @@ function addPrefixToKeys($array, $prefix = ':')
     }
 
     return $prefixedArray;
+}
+
+/**
+* Convert an array's keys to a list in the form of 'x = :x, y = :y'.
+* Used for update queries.
+*
+* @param    string[][]  $array  Array to be converted to a string list.
+*
+* @return   string              List in the form of 'x = :x, y = :y, z = :z'.
+*/
+function toBindingSetList($array)
+{
+    $bindingSetList = '';
+    $keyArray = array_keys($array);
+    $lastKey = end($keyArray);
+
+    foreach ($keyArray as $key) {
+        $bindingSetList .= "$key = :$key";
+
+        if (!($key === $lastKey)) {
+            $bindingSetList .= ', ';
+        }
+    }
+
+    return $bindingSetList;
+}
+
+/**
+* Convert an array's keys to lists needed in some query statements.
+* Need two lists of array keys, one without prefixes and one with the prefix ':'.
+*
+* @param    string[][]    $bindings     Array to make the lists out of.
+*
+* @return   string[][]                  'columns' in the form of 'x, y, z' and
+*                                       'bindings' in the form of ':x, :y, :z'.
+*/
+function toQueryLists($bindings)
+{
+    $colNames = array_keys($bindings);
+    $colNameList = implode(', ', $colNames);
+    $bindingList = ':' . implode(', :', $colNames);
+
+    return array('columns' => $colNameList, 'bindings' => $bindingList);
 }

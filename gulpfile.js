@@ -81,7 +81,8 @@ gulp.task('phpcs', function() {
 		.pipe($.plumber({errorHandler: onError}))
 		.pipe($.phpcs({
 			bin: 'vendor\\bin\\phpcs.bat',
-			colors: true
+			colors: true,
+			standard: 'PSR2'
 		}))
 		.pipe($.phpcs.reporter('log'));
 });
