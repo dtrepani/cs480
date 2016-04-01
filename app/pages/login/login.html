@@ -1,14 +1,17 @@
-<form name="loginForm" ng-submit="vm.login()" role="form" novalidate>
+<form name="loginForm" ng-submit="vm.login()" novalidate>
 	<div class="input-group">
 		<span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-		<input	type="text" placeholder="Username" name="name" ng-model="user.name"
-				ng-model-options="{ updateOn: 'blur' }" required /><br/>
+		<input	type="text" placeholder="Username" name="name" ng-model="vm.user.name"
+				 required /><br/>
 	</div>
 	<div class="input-group">
 		<span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
 		<input	type="password" placeholder="Password" name="password"
-				ng-model="user.password" ng-model-options="{ updateOn: 'blur' }" required /><br/>
+				ng-model="vm.user.password" required /><br/>
 	</div>
 
 	<input type="submit" value="Login" />
+	<i ng-if="vm.loading" class="fa fa-spinner fa-pulse"></i>
 </form>
+
+<p>{{ vm.error }}</p>

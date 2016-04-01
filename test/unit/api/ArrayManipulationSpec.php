@@ -1,7 +1,7 @@
 <?php
-namespace SP\Test\Unit;
+namespace SP\Test\Unit\Api;
 
-require_once __DIR__.'/../../app/api/arrayManipulation.php';
+require_once __DIR__.'/../../../app/api/arrayManipulation.php';
 
 use SP\App\Api as Api;
 

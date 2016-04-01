@@ -38,12 +38,12 @@ class Database
     }
 
     /** @return bool Success or failure. */
-    public function cancelTransaction()
+    public function commit()
     {
-        return $this->conn->rollBack();
+        return $this->conn->commit();
     }
 
-    public function connect()
+    private function connect()
     {
         try {
             $this->conn = new \PDO(
@@ -56,14 +56,8 @@ class Database
                 )
             );
         } catch (\PDOException $e) {
-            return 'ERROR: ' . $e->getMessage();
+            return array('success' => false, 'result' => $e->getMessage());
         }
-    }
-
-    /** @return bool Success or failure. */
-    public function endTransaction()
-    {
-        return $this->conn->commit();
     }
 
     /**
@@ -88,7 +82,7 @@ class Database
     }
 
     /**
-    * Get the results of a query based on the given command and parameters.
+    * Get the result of a query based on the given command and parameters.
     *
     * @param    string      $query      Query statement.
     * @param    bool        $singleRow  Get a single row.
@@ -97,7 +91,7 @@ class Database
     *
     * @return   mixed[]|false           Results of query or false on failure.
     */
-    private function sendResults(
+    private function getResult(
         $query,
         $singleRow = false,
         $fetchStyle = PDO::FETCH_ASSOC,
@@ -113,7 +107,11 @@ class Database
             return $this->statement->fetch();
         }
 
-        return $this->statement->fetchAll($fetchStyle, $fetchArgs);
+        if ($fetchArgs) {
+            return $this->statement->fetchAll($fetchStyle, $fetchArgs);
+        }
+
+        return $this->statement->fetchAll($fetchStyle);
     }
 
     /**
@@ -143,9 +141,28 @@ class Database
 
             $this->statement->execute();
 
-            return $this->sendResults($query, $singleRow, $fetchStyle, $fetchArgs);
+            var_dump("Past execute");
+
+            return array(
+                'success' => true,
+                'result' => $this->getResult(
+                    $query,
+                    $singleRow,
+                    $fetchStyle,
+                    $fetchArgs
+                )
+            );
         } catch (\PDOException $e) {
-            return 'ERROR: ' . $e->getMessage();
+            return array(
+                'success' => false,
+                'result' => $e->getMessage()
+            );
         }
+    }
+
+    /** @return bool Success or failure. */
+    public function rollBack()
+    {
+        return $this->conn->rollBack();
     }
 }

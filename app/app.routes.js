@@ -6,26 +6,25 @@
 		.config(config);
 
 	config.$inject = ['$routeProvider'];
-
 	function config($routeProvider) {
 		$routeProvider
 			.when('/login', {
-				templateUrl: 'login/login.html',
+				templateUrl: 'pages/login/login.html',
 				controller: 'LoginController',
 				controllerAs: 'vm'
 			})
 			.when('/logout', {
-				templateUrl: 'logout/logout.html',
+				templateUrl: 'pages/logout/logout.html',
 				controller: 'LogoutController',
 				controllerAs: 'vm'
 			})
 			.when('/register', {
-				templateUrl: 'register/register.html',
+				templateUrl: 'pages/register/register.html',
 				controller: 'RegisterController',
 				controllerAs: 'vm'
 			})
 			.when('/dashboard', {
-				templateUrl: 'dashboard/dashboard.html',
+				templateUrl: 'pages/dashboard/dashboard.html',
 				controller: 'DashboardController',
 				controllerAs: 'vm'
 			})

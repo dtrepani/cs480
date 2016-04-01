@@ -8,7 +8,7 @@
 	function sidebarDirective() {
 		return {
 			link: link,
-			templateUrl: 'sidebar/sidebar.html',
+			templateUrl: 'modules/sidebar/sidebar.html',
 			controller: 'SidebarController',
 			controllerAs: 'vm',
 			bindToController: true
