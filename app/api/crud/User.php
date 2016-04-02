@@ -15,7 +15,7 @@ class User extends CRUD
     */
     public function create($bindings = array())
     {
-        parent::create($this->getBindingsWithHashedPassword($bindings));
+        return parent::create($this->getBindingsWithHashedPassword($bindings));
     }
 
     /**
@@ -23,7 +23,7 @@ class User extends CRUD
     */
     public function update($id, $bindings = array())
     {
-        parent::update($id, $this->getBindingsWithHashedPassword($bindings));
+        return parent::update($id, $this->getBindingsWithHashedPassword($bindings));
     }
 
     /**

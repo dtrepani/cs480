@@ -17,7 +17,4 @@ $manager = new CrudManager(
 
 $test = $manager->getResults();
 
-var_dump("userManager results:");
-var_dump($test);
-
 echo json_encode($test);

@@ -141,8 +141,6 @@ class Database
 
             $this->statement->execute();
 
-            var_dump("Past execute");
-
             return array(
                 'success' => true,
                 'result' => $this->getResult(
