@@ -19,11 +19,11 @@
 				.then(loginComplete);
 
 			function loginComplete(response) {
-				if (response.success) {
+				if (response === "true") {
 					$location.url("/dashboard");
 				} else {
 					vm.loading = false;
-					vm.error = response.result;
+					vm.error = 'Username or password was incorrect.';
 				}
 			}
 		}

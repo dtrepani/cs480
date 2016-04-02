@@ -84,7 +84,7 @@
 		}
 
 		function promiseComplete(response) {
-			return response.data.success;
+			return response.data;
 		}
 
 		function promiseFailed(error) {
@@ -212,11 +212,11 @@
 				.then(loginComplete);
 
 			function loginComplete(response) {
-				if (response.success) {
+				if (response === "true") {
 					$location.url("/dashboard");
 				} else {
 					vm.loading = false;
-					vm.error = response.result;
+					vm.error = 'Username or password was incorrect.';
 				}
 			}
 		}
@@ -246,10 +246,7 @@
 
 			function loginFailed(error) {
 				$log.error(error);
-				return {
-					success: false,
-					result: error
-				};
+				return false;
 			}
 		}
 	}
@@ -274,11 +271,12 @@
 			userService.createUser(vm.user)
 				.then(registerUserComplete);
 
-			function registerUserComplete(success) {
-				if (success) {
+			function registerUserComplete(response) {
+				if (response === "1") {
 					$location.url("/login");
 				} else {
 					vm.loading = false;
+					vm.error = 'Username taken.';
 				}
 			}
 		}

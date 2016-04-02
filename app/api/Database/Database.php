@@ -22,7 +22,7 @@ class Database
     /**
     * Sanitize input using given bindings.
     *
-    * @param string[] $bindings Parameters of statement that need to be bound.
+    * @param mixed[][] $bindings Parameters of statement that need to be bound.
     */
     private function bindValues($bindings)
     {
@@ -37,14 +37,16 @@ class Database
         }
     }
 
-    /** @return bool Success or failure. */
+    /**
+    * @return bool Success or failure.
+    */
     public function commit()
     {
         return $this->conn->commit();
     }
 
     /**
-    * @return string[success][result] On error only.
+    * @return void|false False on error.
     */
     private function connect()
     {
@@ -59,7 +61,8 @@ class Database
                 )
             );
         } catch (\PDOException $e) {
-            return array('success' => false, 'result' => $e->getMessage());
+            error_log($e->getMessage());
+            return false;
         }
     }
 
@@ -92,7 +95,7 @@ class Database
     * @param    int         $fetchStyle Fetch style.
     * @param    int         $fetchArgs  Arguments to fetch style.
     *
-    * @return   mixed[]|false           Results of query or false on failure.
+    * @return   mixed|false             Results of query or false on failure.
     */
     private function getResult(
         $query,
@@ -126,7 +129,7 @@ class Database
     * @param    int         $fetchStyle Fetch style.
     * @param    int         $fetchArgs  Arguments to fetch style.
     *
-    * @return   string[success][result] Results of query or error message.
+    * @return   mixed|false             Results of query or false on failure.
     */
     public function query(
         $query,
@@ -144,20 +147,15 @@ class Database
 
             $this->statement->execute();
 
-            return array(
-                'success' => true,
-                'result' => $this->getResult(
-                    $query,
-                    $singleRow,
-                    $fetchStyle,
-                    $fetchArgs
-                )
+            return $this->getResult(
+                $query,
+                $singleRow,
+                $fetchStyle,
+                $fetchArgs
             );
         } catch (\PDOException $e) {
-            return array(
-                'success' => false,
-                'result' => $e->getMessage()
-            );
+            error_log($e->getMessage());
+            return false;
         }
     }
 

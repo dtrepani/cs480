@@ -17,8 +17,7 @@ class Authentication
     /**
     * Get the password for the given user.
     *
-    * @return string[success][result]   The hashed password.
-    *                                   Error message on success == false.
+    * @return string|bool The hashed password or false on error.
     */
     private function getPassword()
     {
@@ -34,24 +33,16 @@ class Authentication
     /**
     * Compare the given password to the stored.
     *
-    * @return string[success][result]   Whether or not the passwords match.
-    *                                   Error message if they do not.
+    * @return bool Whether or not the passwords match.
     */
     public function verify()
     {
         $passForUser = $this->getPassword();
-        var_dump($passForUser);
 
-        if (!$passForUser['success']) {
+        if (!$passForUser) {
             return $passForUser;
         }
 
-        $passwordsMatch = password_verify($this->user['password'], $passForUser['result']['password']);
-        $message = $passwordsMatch ? '' : 'Password does not match.';
-
-        return array(
-            'success'=>$passwordsMatch,
-            'result'=>$message
-        );
+        return password_verify($this->user['password'], $passForUser['password']);
     }
 }

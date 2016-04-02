@@ -22,10 +22,7 @@
 
 			function loginFailed(error) {
 				$log.error(error);
-				return {
-					success: false,
-					result: error
-				};
+				return false;
 			}
 		}
 	}

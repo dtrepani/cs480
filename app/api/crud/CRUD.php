@@ -21,8 +21,8 @@ abstract class CRUD
     }
 
     /**
-    * @param mixed[]    $bindings       Column names and values of the entry.
-    * @return mixed[success][result]    Number of rows added.
+    * @param mixed[]    $bindings   Column names and values of the entry.
+    * @return int|false             Number of rows added or false on failure.
     */
     public function create($bindings = array())
     {
@@ -36,8 +36,8 @@ abstract class CRUD
     }
 
     /**
-    * @param  int       $id             ID of row to be deleted.
-    * @return mixed[success][result]    Number of rows deleted.
+    * @param  int       $id     ID of row to be deleted.
+    * @return int|false Number of rows deleted or false on failure.
     */
     public function delete($id)
     {
@@ -49,9 +49,9 @@ abstract class CRUD
     /**
     * Delete rows not bounded by an id.
     *
-    * @param  string    $where          Where clause, such as 'completed = true'.
+    * @param  string    $where  Where clause, such as 'completed = true'.
     *
-    * @return mixed[success][result]    Number of rows deleted.
+    * @return int|false         Number of rows deleted or false on failure.
     */
     public function deleteAll($where)
     {
@@ -61,11 +61,11 @@ abstract class CRUD
     }
 
     /**
-    * @param  int      $id              ID of row to grab.
-    * @param  mixed[]  $columns         Column names.
-    * @param  bool      $singleRow      Get a single row.
+    * @param  int      $id          ID of row to grab.
+    * @param  mixed[]  $columns     Column names.
+    * @param  bool      $singleRow  Get a single row.
     *
-    * @return mixed[success][result]    Row matching primary key.
+    * @return mixed[]|false         Row matching primary key or false on failure.
     */
     public function get($id, $columns = array(), $singleRow = false)
     {
@@ -83,16 +83,16 @@ abstract class CRUD
     /**
     * Select rows not bounded by an id.
     *
-    * @param  mixed[]   $columns        Column names.
-    * @param  mixed[]   $bindings       Bindings to sanitize clauses. Should NOT have
-    *                                   a ':' prefix. The DB will take care of that.
-    * @param  bool      $singleRow      Get a single row.
-    * @param  string    $where          Where clause, such as 'completed = true'.
-    * @param  string    $order          Order By clause, such as 'completed'.
-    *                                   Refers to columns.
-    * @param  bool      $asc            Order by ascending or descending order.
+    * @param  mixed[]   $columns    Column names.
+    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
+    *                               a ':' prefix. The DB will take care of that.
+    * @param  bool      $singleRow  Get a single row.
+    * @param  string    $where      Where clause, such as 'completed = true'.
+    * @param  string    $order      Order By clause, such as 'completed'.
+    *                               Refers to columns.
+    * @param  bool      $asc        Order by ascending or descending order.
     *
-    * @return mixed[success][result]    Row(s) matching query.
+    * @return mixed[]|false         Row(s) matching query or false on failure.
     */
     public function getAll(
         $columns = array(),
@@ -121,7 +121,7 @@ abstract class CRUD
     * @param    int           $id            ID of row to be updated.
     * @param    mixed[]       $bindings      Bindings to be updated.
     *
-    * @return   mixed[success][result]       Number of rows updated.
+    * @return   int|false                    Number of rows updated or false on failure.
     */
     public function update($id, $bindings = array())
     {

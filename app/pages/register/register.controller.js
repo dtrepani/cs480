@@ -17,11 +17,12 @@
 			userService.createUser(vm.user)
 				.then(registerUserComplete);
 
-			function registerUserComplete(success) {
-				if (success) {
+			function registerUserComplete(response) {
+				if (response === "1") {
 					$location.url("/login");
 				} else {
 					vm.loading = false;
+					vm.error = 'Username taken.';
 				}
 			}
 		}
