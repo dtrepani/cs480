@@ -14,16 +14,44 @@ class Authentication
         $this->user = $aUser;
     }
 
-    public function verify()
+    /**
+    * Get the password for the given user.
+    *
+    * @return string[success][result]   The hashed password.
+    *                                   Error message on success == false.
+    */
+    private function getPassword()
     {
         $crud = new User();
-        $password = $crud->getAll(
+        return $crud->getAll(
             array('password'),
             array('name'=>$this->user['name']),
+            true,
             'name = :name'
         );
-        var_dump($password);
+    }
 
-        return; // TODO: temporary
+    /**
+    * Compare the given password to the stored.
+    *
+    * @return string[success][result]   Whether or not the passwords match.
+    *                                   Error message if they do not.
+    */
+    public function verify()
+    {
+        $passForUser = $this->getPassword();
+        var_dump($passForUser);
+
+        if (!$passForUser['success']) {
+            return $passForUser;
+        }
+
+        $passwordsMatch = password_verify($this->user['password'], $passForUser['result']['password']);
+        $message = $passwordsMatch ? '' : 'Password does not match.';
+
+        return array(
+            'success'=>$passwordsMatch,
+            'result'=>$message
+        );
     }
 }

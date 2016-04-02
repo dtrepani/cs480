@@ -28,7 +28,7 @@ class CrudManager
     *
     * @return mixed[] Query results.
     */
-    public function getResults()
+    public function getResponse()
     {
         switch ($this->reqMethod) {
             case 'GET':

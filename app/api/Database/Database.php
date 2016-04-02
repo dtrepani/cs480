@@ -22,7 +22,7 @@ class Database
     /**
     * Sanitize input using given bindings.
     *
-    * @param string[][] $bindings Parameters of statement that need to be bound.
+    * @param string[] $bindings Parameters of statement that need to be bound.
     */
     private function bindValues($bindings)
     {
@@ -43,6 +43,9 @@ class Database
         return $this->conn->commit();
     }
 
+    /**
+    * @return string[success][result] On error only.
+    */
     private function connect()
     {
         try {
@@ -123,7 +126,7 @@ class Database
     * @param    int         $fetchStyle Fetch style.
     * @param    int         $fetchArgs  Arguments to fetch style.
     *
-    * @return   mixed[]|false           Results of query or false on failure.
+    * @return   string[success][result] Results of query or error message.
     */
     public function query(
         $query,

@@ -15,6 +15,4 @@ $manager = new CrudManager(
     isset($_GET['id']) ? $_GET['id'] : null
 );
 
-$test = $manager->getResults();
-
-echo json_encode($test);
+echo json_encode($manager->getResponse());

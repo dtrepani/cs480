@@ -21,8 +21,8 @@ abstract class CRUD
     }
 
     /**
-    * @param mixed[]    $bindings   Column names and values of the entry.
-    * @return int|false             Number of rows added or false on failure.
+    * @param mixed[]    $bindings       Column names and values of the entry.
+    * @return mixed[success][result]    Number of rows added.
     */
     public function create($bindings = array())
     {
@@ -36,8 +36,8 @@ abstract class CRUD
     }
 
     /**
-    * @param  int       $id     ID of row to be deleted.
-    * @return int|false Number of rows deleted or false on failure.
+    * @param  int       $id             ID of row to be deleted.
+    * @return mixed[success][result]    Number of rows deleted.
     */
     public function delete($id)
     {
@@ -49,9 +49,9 @@ abstract class CRUD
     /**
     * Delete rows not bounded by an id.
     *
-    * @param  string    $where  Where clause, such as 'completed = true'.
+    * @param  string    $where          Where clause, such as 'completed = true'.
     *
-    * @return int|false         Number of rows deleted or false on failure.
+    * @return mixed[success][result]    Number of rows deleted.
     */
     public function deleteAll($where)
     {
@@ -61,37 +61,43 @@ abstract class CRUD
     }
 
     /**
-    * @param  int      $id       ID of row to grab.
-    * @param  mixed[]  $columns  Column names.
-    * @return mixed[]            Row matching primary key.
+    * @param  int      $id              ID of row to grab.
+    * @param  mixed[]  $columns         Column names.
+    * @param  bool      $singleRow      Get a single row.
+    *
+    * @return mixed[success][result]    Row matching primary key.
     */
-    public function get($id, $columns = array())
+    public function get($id, $columns = array(), $singleRow = false)
     {
         $colNameList = empty($columns) ? '*' : implode(', ', $columns);
 
         return $this->db->query(
             "SELECT $colNameList
             FROM $this->table
-            WHERE id = $id"
+            WHERE id = $id",
+            array(),
+            $singleRow
         );
     }
 
     /**
     * Select rows not bounded by an id.
     *
-    * @param  mixed[]   $columns    Column names.
-    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
-    *                               a ':' prefix. The DB will take care of that.
-    * @param  string    $where      Where clause, such as 'completed = true'.
-    * @param  string    $order      Order By clause, such as 'completed'.
-    *                               Refers to columns.
-    * @param  bool      $asc        Order by ascending or descending order.
+    * @param  mixed[]   $columns        Column names.
+    * @param  mixed[]   $bindings       Bindings to sanitize clauses. Should NOT have
+    *                                   a ':' prefix. The DB will take care of that.
+    * @param  bool      $singleRow      Get a single row.
+    * @param  string    $where          Where clause, such as 'completed = true'.
+    * @param  string    $order          Order By clause, such as 'completed'.
+    *                                   Refers to columns.
+    * @param  bool      $asc            Order by ascending or descending order.
     *
-    * @return mixed[]               Row(s) matching query.
+    * @return mixed[success][result]    Row(s) matching query.
     */
     public function getAll(
         $columns = array(),
         $bindings = array(),
+        $singleRow = false,
         $where = '',
         $order = '',
         $asc = ''
@@ -106,7 +112,8 @@ abstract class CRUD
 
         return $this->db->query(
             "SELECT $colNameList FROM $this->table $where $order $asc",
-            Api\addPrefixToKeys($bindings)
+            Api\addPrefixToKeys($bindings),
+            $singleRow
         );
     }
 
@@ -114,7 +121,7 @@ abstract class CRUD
     * @param    int           $id            ID of row to be updated.
     * @param    mixed[]       $bindings      Bindings to be updated.
     *
-    * @return   int|false                    Number of rows updated or false on failure.
+    * @return   mixed[success][result]       Number of rows updated.
     */
     public function update($id, $bindings = array())
     {
