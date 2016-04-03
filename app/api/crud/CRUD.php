@@ -2,7 +2,7 @@
 namespace SP\App\Api\CRUD;
 
 require_once __DIR__.'/../arrayManipulation.php';
-require_once __DIR__.'/../Database/Database.php';
+require_once __DIR__.'/../database/Database.php';
 
 use SP\App\Api\Database\Database;
 use SP\App\Api as Api;
@@ -42,7 +42,9 @@ abstract class CRUD
     public function delete($id)
     {
         return $this->db->query(
-            "DELETE FROM $this->table WHERE id = $id"
+            "DELETE FROM $this->table WHERE id = :id",
+            array(':id'=>$id),
+            $singleRow
         );
     }
 
@@ -50,20 +52,23 @@ abstract class CRUD
     * Delete rows not bounded by an id.
     *
     * @param  string    $where  Where clause, such as 'completed = true'.
+    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
+    *                               a ':' prefix.
     *
     * @return int|false         Number of rows deleted or false on failure.
     */
-    public function deleteAll($where)
+    public function deleteAll($where, $bindings = array())
     {
         return $this->db->query(
-            "DELETE FROM $this->table WHERE $where"
+            "DELETE FROM $this->table WHERE $where",
+            Api\addPrefixToKeys($bindings)
         );
     }
 
     /**
-    * @param  int      $id          ID of row to grab.
+    * @param  int      $id          ID of row to grab or
     * @param  mixed[]  $columns     Column names.
-    * @param  bool      $singleRow  Get a single row.
+    * @param  bool     $singleRow   Get a single row.
     *
     * @return mixed[]|false         Row matching primary key or false on failure.
     */
@@ -74,8 +79,8 @@ abstract class CRUD
         return $this->db->query(
             "SELECT $colNameList
             FROM $this->table
-            WHERE id = $id",
-            array(),
+            WHERE id = :id",
+            array(':id'=>$id),
             $singleRow
         );
     }
@@ -85,7 +90,7 @@ abstract class CRUD
     *
     * @param  mixed[]   $columns    Column names.
     * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
-    *                               a ':' prefix. The DB will take care of that.
+    *                               a ':' prefix.
     * @param  bool      $singleRow  Get a single row.
     * @param  string    $where      Where clause, such as 'completed = true'.
     * @param  string    $order      Order By clause, such as 'completed'.
@@ -126,11 +131,12 @@ abstract class CRUD
     public function update($id, $bindings = array())
     {
         $bindingSetList = Api\toBindingSetList($bindings);
+        $bindings['id'] = $id;
 
         return $this->db->query(
             "UPDATE $this->table
             SET $bindingSetList
-            WHERE id = $id",
+            WHERE id = :id",
             Api\addPrefixToKeys($bindings)
         );
     }

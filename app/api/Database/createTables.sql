@@ -17,12 +17,9 @@ CREATE TABLE IF NOT EXISTS person (
 
 CREATE TABLE IF NOT EXISTS session (
 	id				VARCHAR(32)	NOT NULL,
-	person_id 		INT 		NOT NULL,
-	ip_address		VARCHAR(16),
 	last_accessed	DATETIME,
 	data			TEXT,
-	PRIMARY KEY (id),
-	FOREIGN KEY (person_id) REFERENCES person(id)
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS recurrence (

@@ -19,6 +19,7 @@
 				.then(loginComplete);
 
 			function loginComplete(response) {
+				console.log(response);
 				if (response === "true") {
 					$location.url("/dashboard");
 				} else {

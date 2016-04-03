@@ -1,0 +1,61 @@
+<?php
+namespace SP\App\Api\Handlers;
+
+require_once __DIR__.'/../crud/Session.php';
+
+use SP\App\Api\CRUD\Session;
+
+class SessionHandler implements \SessionHandlerInterface
+{
+    protected $session;
+
+    public function open($savePath, $sessionName)
+    {
+        $this->session = new Session();
+        return true;
+    }
+
+    public function close()
+    {
+        unset($this->session);
+        return true;
+    }
+
+    public function read($id)
+    {
+        $result = $this->session->get($id, array('data'), true);
+        return (isset($result) ? $result : "");
+    }
+
+    public function write($id, $data)
+    {
+        $result = $this->session->get($id, array(), true);
+
+        if ($result) {
+            $result = $this->session->update($id, array('data'=>$data, 'last_accessed'=>date('Y-m-d H:i:s')));
+        } else {
+            $result = $this->session->create(array(
+                'id'=>$id,
+                'data'=>$data,
+                'last_accessed'=>date('Y-m-d H:i:s')
+            ));
+        }
+
+        return ($result ? true : false);
+    }
+
+    public function destroy($id)
+    {
+        $result = $this->session->delete($id);
+        return ($result ? true : false);
+    }
+
+    public function gc($maxLifetime)
+    {
+        $result = $this->session->deleteAll(
+            'last_accessed < :last_accessed',
+            array('last_accessed'=>date('Y-m-d H:i:s', strtotime('+1 hour')))
+        );
+        return ($result ? true : false);
+    }
+}
