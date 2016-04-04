@@ -1,9 +1,7 @@
 <?php
-namespace SP\App\Api\Handlers;
+namespace SP\App\Api\Session;
 
-require_once __DIR__.'/../crud/Session.php';
-
-use SP\App\Api\CRUD\Session;
+require_once 'Session.php';
 
 class SessionHandler implements \SessionHandlerInterface
 {

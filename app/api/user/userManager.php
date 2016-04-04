@@ -1,10 +1,10 @@
 <?php
-namespace SP\App\Api\Managers;
+namespace SP\App\Api\User;
 
-require_once __DIR__.'/../crud/User.php';
-require_once __DIR__.'/CrudManager.php';
+require_once 'User.php';
+require_once __DIR__.'/../crud/CrudManager.php';
 
-use SP\App\Api\CRUD\User;
+use SP\App\Api\CRUD\CrudManager;
 
 $request = json_decode(file_get_contents('php://input'), true);
 

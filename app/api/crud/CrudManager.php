@@ -1,5 +1,5 @@
 <?php
-namespace SP\App\Api\Managers;
+namespace SP\App\Api\CRUD;
 
 class CrudManager
 {

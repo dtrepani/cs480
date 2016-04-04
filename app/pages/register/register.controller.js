@@ -5,25 +5,22 @@
 		.module('app')
 		.controller('RegisterController', RegisterController);
 
-	RegisterController.$inject = ['$location', 'userService'];
-	function RegisterController($location, userService) {
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
 		var vm = this;
 		vm.loading = false;
-		vm.registerUser = registerUser;
+		vm.error = '';
 
-		function registerUser() {
+		vm.register = register;
+
+		function register() {
 			vm.loading = true;
+			registerService.register(vm.user)
+				.then(registrationComplete);
 
-			userService.createUser(vm.user)
-				.then(registerUserComplete);
-
-			function registerUserComplete(response) {
-				if (response === "1") {
-					$location.url("/login");
-				} else {
-					vm.loading = false;
-					vm.error = 'Username taken.';
-				}
+			function registrationComplete(response) {
+				vm.loading = false;
+				vm.error = response;
 			}
 		}
 	}

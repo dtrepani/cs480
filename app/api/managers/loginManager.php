@@ -1,13 +1,11 @@
 <?php
 namespace SP\App\Api\Managers;
 
-require_once __DIR__.'/../crud/User.php';
-require_once __DIR__.'/../handlers/SessionHandler.php';
-require_once __DIR__.'/../Authentication.php';
+require_once __DIR__.'/../session/SessionHandler.php';
+require_once __DIR__.'/../user/Authentication.php';
 
-use SP\App\Api\CRUD\User;
-use SP\App\Api\Handlers\SessionHandler;
-use SP\App\Api\Authentication;
+use SP\App\Api\Session\SessionHandler;
+use SP\App\Api\User\Authentication;
 
 $request = json_decode(file_get_contents('php://input'), true);
 

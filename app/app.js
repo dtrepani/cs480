@@ -46,39 +46,72 @@
 (function() {
 	'use strict';
 
+	/**
+	* Used to access the api of the various item types.
+	* An instance of crud must be created in order to use the service.
+	*/
+
 	angular
 		.module('app')
-		.factory('userService', userService);
+		.factory('crudService', crudService);
 
-	userService.$inject = ['$http', '$log'];
-	function userService($http, $log) {
-		return {
-			getUser: getUser,
-			createUser: createUser,
-			updateUser: updateUser,
-			deleteUser: deleteUser
+	crudService.$inject = ['$http', '$log'];
+	function crudService($http, $log) {
+		var crud = init;
+		crud.prototype = {
+			get: get,
+			create: create,
+			update: update,
+			remove: remove
 		};
 
-		function getUser(id) {
-			return $http.get('api/managers/userManager.php?id=' + id)
+		return crud;
+
+		/**
+		* @param {string} type
+		*/
+		function init(type) {
+			this.base = 'api/' + type + '/' + type + 'Manager.php'; // jshint ignore:line
+		}
+
+		/**
+		* @param	{string}	id		ID of item type to get.
+		* @return	{mixed[]|string}	Query results or "false" on failure.
+		*/
+		function get(id) {
+			return $http.get(this.base + '?id=' + id) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
 
-		function createUser(user) {
-			return $http.post('api/managers/userManager.php', user)
+		/**
+		* @param	{mixed[]}	data	Data of item to create.
+		* @return	{string}			"1" on success or "false" on failure.
+		*/
+		function create(data) {
+			return $http.post(this.base, data) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
 
-		function updateUser(id, user) {
-			return $http.put('api/managers/userManager.php?id=' + id, user)
+		/**
+		* @param	{string}	id		ID of item type to update.
+		* @param	{mixed[]}	data	Data of item to update.
+		*
+		* @return	{string}			"1" on success or "false" on failure.
+		*/
+		function update(id, data) {
+			return $http.put(this.base + '?id=' + id, data) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
 
-		function deleteUser(id) {
-			return $http.post('api/managers/userManager.php?id=' + id)
+		/**
+		* @param	{string}	id		ID of item type to delete.
+		* @return	{string}			"1" on success or "false" on failure.
+		*/
+		function remove(id) {
+			return $http.delete(this.base + '?id=' + id) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -94,6 +127,135 @@
 	}
 })();
 
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('LoginController', LoginController);
+
+	LoginController.$inject = ['loginService'];
+	function LoginController(loginService) {
+		var vm = this;
+		vm.loading = false;
+		vm.error = '';
+
+		vm.login = login;
+
+		function login() {
+			vm.loading = true;
+			loginService.login(vm.user)
+				.then(loginComplete);
+
+			function loginComplete(response) {
+				vm.loading = false;
+				vm.error = response;
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('loginService', loginService);
+
+	loginService.$inject = ['$http', '$location', '$log'];
+	function loginService($http, $location, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			login: login
+		};
+
+		function login(user) {
+			return $http.post('api/managers/loginManager.php', user)
+				.then(loginComplete)
+				.catch(loginFailed);
+
+			function loginComplete(response) {
+				if (response.data === "true") {
+					$location.url("/dashboard");
+				}
+				return 'Username or password was incorrect.';
+			}
+
+			function loginFailed(error) {
+				$log.error(error);
+				return 'Something went wrong. Please try again.';
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('DashboardController', DashboardController);
+
+	function DashboardController() {
+
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('RegisterController', RegisterController);
+
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
+		var vm = this;
+		vm.loading = false;
+		vm.error = '';
+
+		vm.register = register;
+
+		function register() {
+			vm.loading = true;
+			registerService.register(vm.user)
+				.then(registrationComplete);
+
+			function registrationComplete(response) {
+				vm.loading = false;
+				vm.error = response;
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('registerService', registerService);
+
+	registerService.$inject = ['$location', 'crudService'];
+	function registerService($location, crudService) {
+		var vm = this;  // jshint ignore:line
+		vm.crud = new crudService('user');
+
+		return {
+			register: register
+		};
+
+		function register(user) {
+			return vm.crud.create(user)
+				.then(registrationComplete);
+
+			function registrationComplete(response) {
+				if (response === "1") {
+					$location.url("/login");
+				}
+				return 'Username taken.';
+			}
+		}
+	}
+})();
 (function() {
 	'use strict';
 
@@ -175,109 +337,6 @@
 					element.removeClass('collapsed');
 				} else {
 					element.addClass('collapsed');
-				}
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('DashboardController', DashboardController);
-
-	function DashboardController() {
-
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('LoginController', LoginController);
-
-	LoginController.$inject = ['$location', 'loginService'];
-	function LoginController($location, loginService) {
-		var vm = this;
-		vm.loading = false;
-		vm.error = '';
-		vm.login = login;
-
-		function login() {
-			vm.loading = true;
-
-			loginService.login(vm.user)
-				.then(loginComplete);
-
-			function loginComplete(response) {
-				console.log(response);
-				if (response === "true") {
-					$location.url("/dashboard");
-				} else {
-					vm.loading = false;
-					vm.error = 'Username or password was incorrect.';
-				}
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('loginService', loginService);
-
-	loginService.$inject = ['$http', '$log'];
-	function loginService($http, $log) {
-		return {
-			login: login
-		};
-
-		function login(user) {
-			return $http.post('api/managers/loginManager.php', user)
-				.then(loginComplete)
-				.catch(loginFailed);
-
-			function loginComplete(response) {
-				return response.data;
-			}
-
-			function loginFailed(error) {
-				$log.error(error);
-				return false;
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('RegisterController', RegisterController);
-
-	RegisterController.$inject = ['$location', 'userService'];
-	function RegisterController($location, userService) {
-		var vm = this;
-		vm.loading = false;
-		vm.registerUser = registerUser;
-
-		function registerUser() {
-			vm.loading = true;
-
-			userService.createUser(vm.user)
-				.then(registerUserComplete);
-
-			function registerUserComplete(response) {
-				if (response === "1") {
-					$location.url("/login");
-				} else {
-					vm.loading = false;
-					vm.error = 'Username taken.';
 				}
 			}
 		}

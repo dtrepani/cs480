@@ -1,9 +1,10 @@
 <?php
-namespace SP\App\Api\CRUD;
+namespace SP\App\Api\User;
 
-require_once 'CRUD.php';
+require_once __DIR__.'/../crud/CRUD.php';
 require_once __DIR__.'/../arrayManipulation.php';
 
+use SP\App\Api\Crud\CRUD;
 use SP\App\Api as Api;
 
 class User extends CRUD

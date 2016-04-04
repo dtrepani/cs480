@@ -1,9 +1,9 @@
 <?php
-namespace SP\App\Api;
+namespace SP\App\Api\User;
 
-require_once __DIR__.'/crud/User.php';
+require_once __DIR__.'/User.php';
 
-use SP\App\Api\CRUD\User;
+use SP\App\Api\User\User;
 
 class Authentication
 {

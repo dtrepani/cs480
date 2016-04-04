@@ -5,8 +5,10 @@
 		.module('app')
 		.factory('loginService', loginService);
 
-	loginService.$inject = ['$http', '$log'];
-	function loginService($http, $log) {
+	loginService.$inject = ['$http', '$location', '$log'];
+	function loginService($http, $location, $log) {
+		var vm = this;  // jshint ignore:line
+
 		return {
 			login: login
 		};
@@ -17,12 +19,15 @@
 				.catch(loginFailed);
 
 			function loginComplete(response) {
-				return response.data;
+				if (response.data === "true") {
+					$location.url("/dashboard");
+				}
+				return 'Username or password was incorrect.';
 			}
 
 			function loginFailed(error) {
 				$log.error(error);
-				return false;
+				return 'Something went wrong. Please try again.';
 			}
 		}
 	}
