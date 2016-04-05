@@ -7,6 +7,11 @@ class SessionHandler implements \SessionHandlerInterface
 {
     protected $session;
 
+    public function __construct($session = null)
+    {
+        $this->session = $session;
+    }
+
     public function open($savePath, $sessionName)
     {
         $this->session = new Session();

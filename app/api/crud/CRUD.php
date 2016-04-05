@@ -43,8 +43,7 @@ abstract class CRUD
     {
         return $this->db->query(
             "DELETE FROM $this->table WHERE id = :id",
-            array(':id'=>$id),
-            $singleRow
+            array(':id'=>$id)
         );
     }
 
@@ -68,11 +67,10 @@ abstract class CRUD
     /**
     * @param  int      $id          ID of row to grab or
     * @param  mixed[]  $columns     Column names.
-    * @param  bool     $singleRow   Get a single row.
     *
     * @return mixed[]|false         Row matching primary key or false on failure.
     */
-    public function get($id, $columns = array(), $singleRow = false)
+    public function get($id, $columns = array())
     {
         $colNameList = empty($columns) ? '*' : implode(', ', $columns);
 
@@ -80,8 +78,7 @@ abstract class CRUD
             "SELECT $colNameList
             FROM $this->table
             WHERE id = :id",
-            array(':id'=>$id),
-            $singleRow
+            array(':id'=>$id)
         );
     }
 
@@ -91,7 +88,6 @@ abstract class CRUD
     * @param  mixed[]   $columns    Column names.
     * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
     *                               a ':' prefix.
-    * @param  bool      $singleRow  Get a single row.
     * @param  string    $where      Where clause, such as 'completed = true'.
     * @param  string    $order      Order By clause, such as 'completed'.
     *                               Refers to columns.
@@ -102,7 +98,6 @@ abstract class CRUD
     public function getAll(
         $columns = array(),
         $bindings = array(),
-        $singleRow = false,
         $where = '',
         $order = '',
         $asc = ''
@@ -117,8 +112,7 @@ abstract class CRUD
 
         return $this->db->query(
             "SELECT $colNameList FROM $this->table $where $order $asc",
-            Api\addPrefixToKeys($bindings),
-            $singleRow
+            Api\addPrefixToKeys($bindings)
         );
     }
 

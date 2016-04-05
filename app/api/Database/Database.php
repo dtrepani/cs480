@@ -91,7 +91,6 @@ class Database
     * Get the result of a query based on the given command and parameters.
     *
     * @param    string      $query      Query statement.
-    * @param    bool        $singleRow  Get a single row.
     * @param    int         $fetchStyle Fetch style.
     * @param    int         $fetchArgs  Arguments to fetch style.
     *
@@ -99,7 +98,6 @@ class Database
     */
     private function getResult(
         $query,
-        $singleRow = false,
         $fetchStyle = PDO::FETCH_ASSOC,
         $fetchArgs = null
     ) {
@@ -107,10 +105,6 @@ class Database
 
         if ($cmd === 'DELETE' || $cmd === 'INSERT' || $cmd === 'UPDATE') {
             return $this->statement->rowCount();
-        }
-
-        if ($singleRow) {
-            return $this->statement->fetch();
         }
 
         if ($fetchArgs) {
@@ -125,7 +119,6 @@ class Database
     *
     * @param    string      $query      Query statement.
     * @param    string[][]  $bindings   Parameters of statement that need to be bound.
-    * @param    bool        $singleRow  Get a single row.
     * @param    int         $fetchStyle Fetch style.
     * @param    int         $fetchArgs  Arguments to fetch style.
     *
@@ -134,7 +127,6 @@ class Database
     public function query(
         $query,
         $bindings = array(),
-        $singleRow = false,
         $fetchStyle = PDO::FETCH_ASSOC,
         $fetchArgs = null
     ) {
@@ -149,7 +141,6 @@ class Database
 
             return $this->getResult(
                 $query,
-                $singleRow,
                 $fetchStyle,
                 $fetchArgs
             );

@@ -25,9 +25,8 @@ class Authentication
         return $crud->getAll(
             array('password'),
             array('name'=>$this->user['name']),
-            true,
             'name = :name'
-        );
+        )[0];
     }
 
     /**
