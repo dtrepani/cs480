@@ -26,13 +26,13 @@ class SessionHandler implements \SessionHandlerInterface
 
     public function read($id)
     {
-        $result = $this->session->get($id, array('data'), true);
+        $result = $this->session->get($id, array('data'))[0]['data'];
         return (isset($result) ? $result : "");
     }
 
     public function write($id, $data)
     {
-        $result = $this->session->get($id, array(), true);
+        $result = $this->session->get($id, array())[0];
 
         if ($result) {
             $result = $this->session->update($id, array('data'=>$data, 'last_accessed'=>date('Y-m-d H:i:s')));

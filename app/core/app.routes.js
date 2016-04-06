@@ -9,12 +9,12 @@
 	function config($routeProvider) {
 		$routeProvider
 			.when('/login', {
-				templateUrl: 'pages/login/login.html',
+				templateUrl: 'modules/login/login.html',
 				controller: 'LoginController',
 				controllerAs: 'vm'
 			})
 			.when('/logout', {
-				templateUrl: 'pages/logout/logout.html',
+				templateUrl: 'modules/logout/logout.html',
 				controller: 'LogoutController',
 				controllerAs: 'vm'
 			})

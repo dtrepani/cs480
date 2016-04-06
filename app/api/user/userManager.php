@@ -6,6 +6,9 @@ require_once __DIR__.'/../crud/CrudManager.php';
 
 use SP\App\Api\CRUD\CrudManager;
 
+/**
+* @var mixed[] $request Array with user bindings to create user.
+*/
 $request = json_decode(file_get_contents('php://input'), true);
 
 $manager = new CrudManager(

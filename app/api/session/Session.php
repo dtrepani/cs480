@@ -13,57 +13,29 @@ class Session extends CRUD
     protected $table = 'session';
 
     /**
-    * @param string         $name   Name of session variable to get.
-    *
-    * @return mixed|false           Session variable or false if no session exists.
-    */
-    public function __get($name)
-    {
-        if (!isset($_SESSION)) {
-            return false;
-        }
-
-        return $_SESSION[$name];
-    }
-
-    /**
-    * @param string $name   Name of session variable to set.
-    * @param mixed  $value  Value to set session variable to.
-    *
-    * @return bool          True is variable set or false if no session exists.
-    */
-    public function __set($name, $value)
-    {
-        if (!isset($_SESSION)) {
-            return false;
-        }
-
-        $_SESSION[$name] = $value;
-        return true;
-    }
-
-    /**
-    * Start a session.
-    * Custom handler is used because session information is in database.
-    *
-    * @param string $username User associated with session.
-    */
-    public function start($username)
-    {
-        $handler = new SessionHandler($this);
-        session_set_save_handler($handler, true);
-        session_start();
-
-        $this->setSessionVariables($username);
-    }
-
-    /**
     * End a session.
     */
     public function end()
     {
+        session_start();
         unset($_SESSION);
         session_destroy();
+    }
+
+    /**
+    * @param string         $name   Name of session variable to get.
+    *
+    * @return mixed|false           Session variable or false if no such variable exists.
+    */
+    public function getVar($name)
+    {
+        $this->sessionStart();
+
+        if (!isset($_SESSION[$name])) {
+            return false;
+        }
+
+        return $_SESSION[$name];
     }
 
     /**
@@ -83,5 +55,40 @@ class Session extends CRUD
         foreach ($userInfo as $key => $value) {
             $_SESSION[$key] = $value;
         }
+    }
+
+    /**
+    * @param string $name   Name of session variable to set.
+    * @param mixed  $value  Value to set session variable to.
+    *
+    * @return true
+    */
+    public function setVar($name, $value)
+    {
+        session_start();
+        $_SESSION[$name] = $value;
+        return true;
+    }
+
+    /**
+    * Start a session and set appropriate variables.
+    *
+    * @param string $username User associated with session.
+    */
+    public function start($username)
+    {
+        $this->sessionStart();
+        $this->setSessionVariables($username);
+    }
+
+    /**
+    * Start a session.
+    * Custom handler is used because session information is in database.
+    */
+    public function sessionStart()
+    {
+        $handler = new SessionHandler($this);
+        session_set_save_handler($handler, true);
+        session_start();
     }
 }

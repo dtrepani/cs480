@@ -19,12 +19,12 @@
 	function config($routeProvider) {
 		$routeProvider
 			.when('/login', {
-				templateUrl: 'pages/login/login.html',
+				templateUrl: 'modules/login/login.html',
 				controller: 'LoginController',
 				controllerAs: 'vm'
 			})
 			.when('/logout', {
-				templateUrl: 'pages/logout/logout.html',
+				templateUrl: 'modules/logout/logout.html',
 				controller: 'LogoutController',
 				controllerAs: 'vm'
 			})
@@ -127,6 +127,46 @@
 	}
 })();
 
+(function() {
+	'use strict';
+
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
+
+	angular
+		.module('app')
+		.directive('spCompareTo', compareTo);
+
+	function compareTo() {
+		var directive = {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
+		};
+		return directive;
+
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
+
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
+			}
+		}
+	}
+})();
 (function() {
 	'use strict';
 
@@ -259,43 +299,82 @@
 (function() {
 	'use strict';
 
-	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
+	angular
+		.module('app')
+		.controller('HeaderController', HeaderController);
+
+	HeaderController.$inject = [ 'headerService' ];
+	function HeaderController(headerService) {
+		var vm = this;
+		vm.name = '';
+		vm.url = '';
+
+		headerService.getUser()
+			.then(getUserComplete);
+
+		function getUserComplete(response) {
+			vm.name = response.name;
+			vm.url = response.url;
+		}
+	}
+})();
+(function() {
+	'use strict';
 
 	angular
 		.module('app')
-		.directive('spCompareTo', compareTo);
+		.directive('spHeader', headerDirective);
 
-	function compareTo() {
-		var directive = {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
+	function headerDirective() {
+		return {
+			link: link,
+			templateUrl: 'pages/layout/header/header.html',
+			controller: 'HeaderController',
+			controllerAs: 'vm',
+			bindToController: true
 		};
-		return directive;
 
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
+		function link(scope, element, attrs) {
+		}
+	}
+})();
+(function() {
+	'use strict';
 
-			function cleanUp() {
-				unbindWatch();
+	angular
+		.module('app')
+		.factory('headerService', headerService);
+
+	headerService.$inject = ['$http', '$log'];
+	function headerService($http, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			getUser: getUser
+		};
+
+		function getUser() {
+			return $http.get('api/session/sessionVarManager.php?var=name')
+				.then(getNameComplete)
+				.catch(getNameFailed);
+
+			function getNameComplete(response) {
+				console.log(response);
+				if (response.data === 'false') {
+					return {name: 'Login', url: '#/login'};
+				}
+
+				return {name: response.data, url: '#/dashboard'};
 			}
 
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
+			function getNameFailed(error) {
+				$log.error(error);
+				return 'Something went wrong. Please try again.';
 			}
 		}
 	}
 })();
+
 (function() {
 	'use strict';
 
@@ -323,7 +402,7 @@
 	function sidebarDirective() {
 		return {
 			link: link,
-			templateUrl: 'modules/sidebar/sidebar.html',
+			templateUrl: 'pages/layout/sidebar/sidebar.html',
 			controller: 'SidebarController',
 			controllerAs: 'vm',
 			bindToController: true
