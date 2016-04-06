@@ -17,7 +17,7 @@ class Session extends CRUD
     */
     public function end()
     {
-        session_start();
+        $this->sessionStart();
         unset($_SESSION);
         session_destroy();
     }
@@ -47,7 +47,7 @@ class Session extends CRUD
     {
         $user = new User();
         $userInfo = $user->getAll(
-            array('id', 'name', 'theme', 'avatar'),
+            array('id', 'name', 'admin', 'theme', 'avatar'),
             array('name'=>$username),
             'name = :name'
         )[0];
@@ -60,14 +60,11 @@ class Session extends CRUD
     /**
     * @param string $name   Name of session variable to set.
     * @param mixed  $value  Value to set session variable to.
-    *
-    * @return true
     */
     public function setVar($name, $value)
     {
-        session_start();
+        $this->sessionStart();
         $_SESSION[$name] = $value;
-        return true;
     }
 
     /**

@@ -5,7 +5,14 @@
 		.module('app', ['ngRoute'])
 		.controller('AppController', AppController);
 
-	function AppController() {
+	AppController.$inject = ['$rootScope', '$location', 'appService'];
+	function AppController($rootScope, $location, appService) {
+		$rootScope.$on('$locationChangeStart', checkAuthentication);
+
+		function checkAuthentication() {
+			console.log('changed route');
+			appService.isAuthenticated();
+		}
 	}
 })();
 (function() {
@@ -43,6 +50,34 @@
 			});
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('appService', appService);
+
+	appService.$inject = ['$location', 'sessionService'];
+	function appService($location, sessionService) {
+		return {
+			isAuthenticated: isAuthenticated
+		};
+
+		function isAuthenticated() {
+			sessionService.getVar('name')
+				.then(isAuthenticatedComplete);
+
+			function isAuthenticatedComplete(response) {
+				if (response.data === 'false') {
+					$location.url('/login');
+				}
+
+				console.log('authenticated!!');
+			}
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -112,6 +147,58 @@
 		*/
 		function remove(id) {
 			return $http.delete(this.base + '?id=' + id) // jshint ignore:line
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		function promiseComplete(response) {
+			return response.data;
+		}
+
+		function promiseFailed(error) {
+			$log.error(error);
+			return false;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Used to access session variables.
+	*/
+
+	angular
+		.module('app')
+		.factory('sessionService', sessionService);
+
+	sessionService.$inject = ['$http', '$log'];
+	function sessionService($http, $log) {
+		var vm = this;  // jshint ignore:line
+		vm.base = 'api/session/sessionVarManager.php?var=';
+
+		return {
+			getVar: getVar,
+			setVar: setVar
+		};
+
+		/**
+		* @param  {string} $name Variable name to get from session.
+		* @return {string} 		 Variable value or false on failure.
+		*/
+		function getVar($name) {
+			return $http.get(vm.base + $name)
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		/**
+		* @param {string} $name Variable name to get from session.
+		* @return {bool} 		True on success or false on failure.
+		*/
+		function setVar($name, $value) {
+			return $http.post(vm.base + $name, $value)
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -216,7 +303,7 @@
 
 			function loginComplete(response) {
 				if (response.data === "true") {
-					$location.url("/dashboard");
+					$location.url('/dashboard');
 				}
 				return 'Username or password was incorrect.';
 			}
@@ -289,7 +376,7 @@
 
 			function registrationComplete(response) {
 				if (response === "1") {
-					$location.url("/login");
+					$location.url('/login');
 				}
 				return 'Username taken.';
 			}
@@ -313,7 +400,7 @@
 			.then(getUserComplete);
 
 		function getUserComplete(response) {
-			vm.name = response.name;
+			vm.name = (response.name === false) ? 'Login' : response.name;
 			vm.url = response.url;
 		}
 	}
@@ -345,31 +432,26 @@
 		.module('app')
 		.factory('headerService', headerService);
 
-	headerService.$inject = ['$http', '$log'];
-	function headerService($http, $log) {
-		var vm = this;  // jshint ignore:line
-
+	headerService.$inject = ['sessionService'];
+	function headerService(sessionService) {
 		return {
 			getUser: getUser
 		};
 
+		/**
+		* Get the username of the logged in user.
+		* @return {name: string|false, url: string}  Username (or false if not logged in) and url to redirect to in the header.
+		*/
 		function getUser() {
-			return $http.get('api/session/sessionVarManager.php?var=name')
-				.then(getNameComplete)
-				.catch(getNameFailed);
+			sessionService.getVar('name')
+				.then(getNameComplete);
 
 			function getNameComplete(response) {
-				console.log(response);
 				if (response.data === 'false') {
-					return {name: 'Login', url: '#/login'};
+					return {name: false, url: '/login'};
 				}
 
-				return {name: response.data, url: '#/dashboard'};
-			}
-
-			function getNameFailed(error) {
-				$log.error(error);
-				return 'Something went wrong. Please try again.';
+				return {name: response, url: '/dashboard'};
 			}
 		}
 	}

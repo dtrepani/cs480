@@ -23,7 +23,8 @@ switch ($reqMethod) {
         break;
     case 'POST':
     case 'PUT':
-        $response = $session->setVar($_GET['var'], $request);
+        $session->setVar($_GET['var'], $request);
+        $response = true;
 }
 
 echo $response;

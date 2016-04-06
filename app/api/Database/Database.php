@@ -104,7 +104,13 @@ class Database
         $cmd = strtoupper(strstr($query, ' ', true));
 
         if ($cmd === 'DELETE' || $cmd === 'INSERT' || $cmd === 'UPDATE') {
-            return $this->statement->rowCount();
+            $test = $this->statement->rowCount();
+            if ($cmd === 'UPDATE') {
+                var_dump('testing');
+                // $test = $this->statement->fetchAll($fetchStyle);
+            }
+            var_dump($test);
+            return $test;
         }
 
         if ($fetchArgs) {
@@ -139,11 +145,13 @@ class Database
 
             $this->statement->execute();
 
-            return $this->getResult(
+            $test = $this->getResult(
                 $query,
                 $fetchStyle,
                 $fetchArgs
             );
+            // var_dump($test);
+            return $test;
         } catch (\PDOException $e) {
             error_log($e->getMessage());
             return false;

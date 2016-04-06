@@ -20,7 +20,7 @@
 
 			function loginComplete(response) {
 				if (response.data === "true") {
-					$location.url("/dashboard");
+					$location.url('/dashboard');
 				}
 				return 'Username or password was incorrect.';
 			}

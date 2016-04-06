@@ -5,6 +5,13 @@
 		.module('app', ['ngRoute'])
 		.controller('AppController', AppController);
 
-	function AppController() {
+	AppController.$inject = ['$rootScope', '$location', 'appService'];
+	function AppController($rootScope, $location, appService) {
+		$rootScope.$on('$locationChangeStart', checkAuthentication);
+
+		function checkAuthentication() {
+			console.log('changed route');
+			appService.isAuthenticated();
+		}
 	}
 })();

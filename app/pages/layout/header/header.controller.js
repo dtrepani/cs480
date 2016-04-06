@@ -15,7 +15,7 @@
 			.then(getUserComplete);
 
 		function getUserComplete(response) {
-			vm.name = response.name;
+			vm.name = (response.name === false) ? 'Login' : response.name;
 			vm.url = response.url;
 		}
 	}

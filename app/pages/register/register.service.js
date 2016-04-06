@@ -20,7 +20,7 @@
 
 			function registrationComplete(response) {
 				if (response === "1") {
-					$location.url("/login");
+					$location.url('/login');
 				}
 				return 'Username taken.';
 			}
