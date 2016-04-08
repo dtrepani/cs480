@@ -36,7 +36,6 @@ class SessionHandler implements \SessionHandlerInterface
 
         if ($result) {
             $result = $this->session->update($id, array('data'=>$data, 'last_accessed'=>date('Y-m-d H:i:s')));
-            return true;
         } else {
             $result = $this->session->create(array(
                 'id'=>$id,
@@ -45,7 +44,7 @@ class SessionHandler implements \SessionHandlerInterface
             ));
         }
 
-        return ($result ? true : false);
+        return (($result === false) ? false : true);
     }
 
     public function destroy($id)
