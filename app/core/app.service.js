@@ -8,10 +8,10 @@
 	appService.$inject = ['$location', 'sessionService'];
 	function appService($location, sessionService) {
 		return {
-			isAuthenticated: isAuthenticated
+			checkAuthentication: checkAuthentication
 		};
 
-		function isAuthenticated() {
+		function checkAuthentication() {
 			sessionService.getVar('name')
 				.then(isAuthenticatedComplete);
 
@@ -19,8 +19,6 @@
 				if (response.data === 'false') {
 					$location.url('/login');
 				}
-
-				console.log('authenticated!!');
 			}
 		}
 	}

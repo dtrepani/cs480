@@ -40,7 +40,7 @@
 		}
 
 		function promiseComplete(response) {
-			return response.data;
+			return response;
 		}
 
 		function promiseFailed(error) {

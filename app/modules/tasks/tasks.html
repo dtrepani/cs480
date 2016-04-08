@@ -1,0 +1,7 @@
+<ul class="task-list">
+	<li ng-repeat="task in vm.tasks" ng-class="task.completed">
+		<i class="fa fa-check check-icon"></i>
+		<span class="task-name">{{ task.task-name }}</span>
+		<i class="fa fa-ellipsis-v edit-icon"></i>
+	</li>
+</ul>

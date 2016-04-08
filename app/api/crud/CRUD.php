@@ -27,11 +27,27 @@ abstract class CRUD
     public function create($bindings = array())
     {
         $lists = Api\toQueryLists($bindings);
-
         return $this->db->query(
             "INSERT INTO $this->table ({$lists['columns']})
             VALUES ({$lists['bindings']})",
             Api\addPrefixToKeys($bindings)
+        );
+    }
+
+    /**
+    * Raw creation query without bindings.
+    * For use with nested queries in the values.
+    *
+    * @param mixed[]    $colsAndVals Column names and values of the entry.
+    *
+    * @return int|false              Number of rows added or false on failure.
+    */
+    public function createRaw($colsAndVals)
+    {
+        $lists = Api\toKeyValueList($colsAndVals, '');
+        return $this->db->query(
+            "INSERT INTO $this->table ({$lists['keys']})
+            VALUES ({$lists['values']})"
         );
     }
 
@@ -114,6 +130,17 @@ abstract class CRUD
             "SELECT $colNameList FROM $this->table $where $order $asc",
             Api\addPrefixToKeys($bindings)
         );
+    }
+
+    /**
+    * Roll back a transaction if the last query's results were an error.
+    */
+    protected function checkForError($result)
+    {
+        if (!$result) {
+            $this->db->rollBack();
+            throw new \Exception('Error when inserting entry in CRUD->create().');
+        }
     }
 
     /**

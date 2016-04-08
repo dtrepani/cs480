@@ -51,7 +51,10 @@ CREATE TABLE IF NOT EXISTS activity_prefs (
 	reminder		DATETIME,
 	priority		ENUM('normal', 'low', 'high') NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (recurrence_id) REFERENCES recurrence(id)
+	FOREIGN KEY (recurrence_id)
+		REFERENCES recurrence(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS calendar (
@@ -60,7 +63,10 @@ CREATE TABLE IF NOT EXISTS calendar (
 	name			VARCHAR(64)	NOT NULL,
 	visible			BOOLEAN DEFAULT true,
 	PRIMARY KEY (id),
-	FOREIGN KEY (person_id) REFERENCES person(id)
+	FOREIGN KEY (person_id)
+		REFERENCES person(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS cal_event (
@@ -72,8 +78,14 @@ CREATE TABLE IF NOT EXISTS cal_event (
 	description			TEXT,
 	location			VARCHAR(256),
 	PRIMARY KEY (id),
-	FOREIGN KEY (calendar_id) REFERENCES calendar(id),
-	FOREIGN KEY (activity_prefs_id) REFERENCES activity_prefs(id)
+	FOREIGN KEY (calendar_id)
+		REFERENCES calendar(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	FOREIGN KEY (activity_prefs_id)
+		REFERENCES activity_prefs(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS label (
@@ -81,7 +93,10 @@ CREATE TABLE IF NOT EXISTS label (
 	person_id		INT 		NOT NULL,
 	name			VARCHAR(64)	NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (person_id) REFERENCES person(id)
+	FOREIGN KEY (person_id)
+		REFERENCES person(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS task (
@@ -92,8 +107,14 @@ CREATE TABLE IF NOT EXISTS task (
 	completed			BOOLEAN DEFAULT false,
 	picture				TEXT,
 	PRIMARY KEY (id),
-	FOREIGN KEY (label_id) REFERENCES label(id),
-	FOREIGN KEY (activity_prefs_id) REFERENCES activity_prefs(id)
+	FOREIGN KEY (label_id)
+		REFERENCES label(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	FOREIGN KEY (activity_prefs_id)
+		REFERENCES activity_prefs(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS subtask (
@@ -102,21 +123,36 @@ CREATE TABLE IF NOT EXISTS subtask (
 	summary 		VARCHAR(256)	NOT NULL,
 	completed		BOOLEAN DEFAULT false,
 	PRIMARY KEY (id),
-	FOREIGN KEY (task_id) REFERENCES task(id)
+	FOREIGN KEY (task_id)
+		REFERENCES task(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS calendar_user (
 	calendar_id		INT		NOT NULL,
 	person_id		INT		NOT NULL,
 	PRIMARY KEY (calendar_id, person_id),
-	FOREIGN KEY (calendar_id) REFERENCES calendar(id),
-	FOREIGN KEY (person_id) REFERENCES person(id)
+	FOREIGN KEY (calendar_id)
+		REFERENCES calendar(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	FOREIGN KEY (person_id)
+		REFERENCES person(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS label_user (
 	label_id		INT		NOT NULL,
 	person_id		INT		NOT NULL,
 	PRIMARY KEY (label_id, person_id),
-	FOREIGN KEY (label_id) REFERENCES label(id),
-	FOREIGN KEY (person_id) REFERENCES person(id)
+	FOREIGN KEY (label_id)
+		REFERENCES label(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	FOREIGN KEY (person_id)
+		REFERENCES person(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );

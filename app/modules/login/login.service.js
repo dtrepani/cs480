@@ -19,10 +19,10 @@
 				.catch(loginFailed);
 
 			function loginComplete(response) {
-				if (response.data === "true") {
-					$location.url('/dashboard');
+				if (response.data === "false") {
+					return 'Username or password was incorrect.';
 				}
-				return 'Username or password was incorrect.';
+				$location.url('/dashboard');
 			}
 
 			function loginFailed(error) {

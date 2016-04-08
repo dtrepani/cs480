@@ -5,18 +5,25 @@
 		.module('app')
 		.controller('HeaderController', HeaderController);
 
-	HeaderController.$inject = [ 'headerService' ];
-	function HeaderController(headerService) {
+	HeaderController.$inject = ['$scope', '$log', 'headerService'];
+	function HeaderController($scope, $log, headerService) {
 		var vm = this;
 		vm.name = '';
 		vm.url = '';
 
 		headerService.getUser()
-			.then(getUserComplete);
+			.then(getUserComplete)
+			.catch(getUserFailed);
 
 		function getUserComplete(response) {
-			vm.name = (response.name === false) ? 'Login' : response.name;
-			vm.url = response.url;
+			$scope.$evalAsync(function() {
+				vm.name = (response.name === false) ? 'Login' : response.name;
+				vm.url = response.url;
+			});
+		}
+
+		function getUserFailed(error) {
+			$log.error(error);
 		}
 	}
 })();

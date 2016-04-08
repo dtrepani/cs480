@@ -19,10 +19,10 @@
 				.then(registrationComplete);
 
 			function registrationComplete(response) {
-				if (response === "1") {
-					$location.url('/login');
+				if (response === "false") {
+					return 'Username taken.';
 				}
-				return 'Username taken.';
+				$location.url('/login');
 			}
 		}
 	}

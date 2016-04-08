@@ -7,12 +7,7 @@
 
 	AppController.$inject = ['$rootScope', '$location', 'appService'];
 	function AppController($rootScope, $location, appService) {
-		$rootScope.$on('$locationChangeStart', checkAuthentication);
-
-		function checkAuthentication() {
-			console.log('changed route');
-			appService.isAuthenticated();
-		}
+		$rootScope.$on('$locationChangeStart', appService.checkAuthentication);
 	}
 })();
 (function() {
@@ -28,22 +23,26 @@
 			.when('/login', {
 				templateUrl: 'modules/login/login.html',
 				controller: 'LoginController',
-				controllerAs: 'vm'
+				controllerAs: 'vm',
+				adminOnly: false
 			})
 			.when('/logout', {
 				templateUrl: 'modules/logout/logout.html',
 				controller: 'LogoutController',
-				controllerAs: 'vm'
+				controllerAs: 'vm',
+				adminOnly: false
 			})
 			.when('/register', {
 				templateUrl: 'pages/register/register.html',
 				controller: 'RegisterController',
-				controllerAs: 'vm'
+				controllerAs: 'vm',
+				adminOnly: false
 			})
 			.when('/dashboard', {
 				templateUrl: 'pages/dashboard/dashboard.html',
 				controller: 'DashboardController',
-				controllerAs: 'vm'
+				controllerAs: 'vm',
+				adminOnly: false
 			})
 			.otherwise({
 				redirectTo: '/dashboard'
@@ -60,10 +59,10 @@
 	appService.$inject = ['$location', 'sessionService'];
 	function appService($location, sessionService) {
 		return {
-			isAuthenticated: isAuthenticated
+			checkAuthentication: checkAuthentication
 		};
 
-		function isAuthenticated() {
+		function checkAuthentication() {
 			sessionService.getVar('name')
 				.then(isAuthenticatedComplete);
 
@@ -71,8 +70,6 @@
 				if (response.data === 'false') {
 					$location.url('/login');
 				}
-
-				console.log('authenticated!!');
 			}
 		}
 	}
@@ -204,7 +201,7 @@
 		}
 
 		function promiseComplete(response) {
-			return response.data;
+			return response;
 		}
 
 		function promiseFailed(error) {
@@ -302,10 +299,10 @@
 				.catch(loginFailed);
 
 			function loginComplete(response) {
-				if (response.data === "true") {
-					$location.url('/dashboard');
+				if (response.data === "false") {
+					return 'Username or password was incorrect.';
 				}
-				return 'Username or password was incorrect.';
+				$location.url('/dashboard');
 			}
 
 			function loginFailed(error) {
@@ -313,6 +310,55 @@
 				return 'Something went wrong. Please try again.';
 			}
 		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('TasksController', TasksController);
+
+	TasksController.$inject = ['tasksService'];
+	function TasksController(tasksService) {
+		var vm = this;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spTasks', tasksDirective);
+
+	function tasksDirective() {
+		return {
+			link: link,
+			templateUrl: 'modules/tasks/tasks.html',
+			controller: 'TasksController',
+			controllerAs: 'vm',
+			bindToController: true
+		};
+
+		function link(scope, element, attrs) {
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('tasksService', tasksService);
+
+	tasksService.$inject = ['$http', '$log'];
+	function tasksService($http, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+		};
+
 	}
 })();
 
@@ -375,10 +421,10 @@
 				.then(registrationComplete);
 
 			function registrationComplete(response) {
-				if (response === "1") {
-					$location.url('/login');
+				if (response === "false") {
+					return 'Username taken.';
 				}
-				return 'Username taken.';
+				$location.url('/login');
 			}
 		}
 	}
@@ -390,18 +436,25 @@
 		.module('app')
 		.controller('HeaderController', HeaderController);
 
-	HeaderController.$inject = [ 'headerService' ];
-	function HeaderController(headerService) {
+	HeaderController.$inject = ['$scope', '$log', 'headerService'];
+	function HeaderController($scope, $log, headerService) {
 		var vm = this;
 		vm.name = '';
 		vm.url = '';
 
 		headerService.getUser()
-			.then(getUserComplete);
+			.then(getUserComplete)
+			.catch(getUserFailed);
 
 		function getUserComplete(response) {
-			vm.name = (response.name === false) ? 'Login' : response.name;
-			vm.url = response.url;
+			$scope.$evalAsync(function() {
+				vm.name = (response.name === false) ? 'Login' : response.name;
+				vm.url = response.url;
+			});
+		}
+
+		function getUserFailed(error) {
+			$log.error(error);
 		}
 	}
 })();
@@ -432,24 +485,21 @@
 		.module('app')
 		.factory('headerService', headerService);
 
-	headerService.$inject = ['$http', '$log'];
-	function headerService($http, $log) {
-		var vm = this;  // jshint ignore:line
-
+	headerService.$inject = ['$http', '$log', 'sessionService'];
+	function headerService($http, $log, sessionService) {
 		return {
 			getUser: getUser
 		};
 
 		function getUser() {
-			return $http.get('api/session/sessionVarManager.php?var=name')
+			return sessionService.getVar('name')
 				.then(getNameComplete)
 				.catch(getNameFailed);
 
 			function getNameComplete(response) {
 				if (response.data === 'false') {
-					return {name: 'Login', url: '#/login'};
+					return {name: false, url: '#/login'};
 				}
-
 				return {name: response.data, url: '#/dashboard'};
 			}
 

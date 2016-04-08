@@ -19,6 +19,13 @@ class ArrayToStringListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Api\addPrefixToKeys($this->testArray), array(':a'=>'1', ':b'=>'2', ':c'=>'3'));
     }
 
+    public function testToKeyValueList()
+    {
+        $lists = Api\toKeyValueList($this->testArray);
+        $this->assertEquals($lists['keys'], 'a, b, c');
+        $this->assertEquals($lists['values'], '1, 2, 3');
+    }
+
     public function testToBindingSetList()
     {
         $this->assertEquals(

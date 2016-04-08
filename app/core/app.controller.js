@@ -7,11 +7,6 @@
 
 	AppController.$inject = ['$rootScope', '$location', 'appService'];
 	function AppController($rootScope, $location, appService) {
-		$rootScope.$on('$locationChangeStart', checkAuthentication);
-
-		function checkAuthentication() {
-			console.log('changed route');
-			appService.isAuthenticated();
-		}
+		$rootScope.$on('$locationChangeStart', appService.checkAuthentication);
 	}
 })();

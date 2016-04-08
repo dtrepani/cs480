@@ -67,24 +67,11 @@ class Database
     }
 
     /**
-    * Used to bind parameters in a prepared statement.
-    *
-    * @param  mixed   $bindingValue Type is checked to get return value.
-    *
-    * @return int                   PDO Constant of the param's type.
+    * @return string ID of the last inserted row.
     */
-    private function getValueType($bindingValue)
+    public function lastInsertId()
     {
-        if (is_null($bindingValue)) {
-            return PDO::PARAM_NULL;
-        }
-        if (is_int($bindingValue)) {
-            return PDO::PARAM_INT;
-        }
-        if (is_bool($bindingValue)) {
-            return PDO::PARAM_BOOL;
-        }
-        return PDO::PARAM_STR;
+        return $this->conn->lastInsertId();
     }
 
     /**
@@ -112,6 +99,27 @@ class Database
         }
 
         return $this->statement->fetchAll($fetchStyle);
+    }
+
+    /**
+    * Used to bind parameters in a prepared statement.
+    *
+    * @param  mixed   $bindingValue Type is checked to get return value.
+    *
+    * @return int                   PDO Constant of the param's type.
+    */
+    private function getValueType($bindingValue)
+    {
+        if (is_null($bindingValue)) {
+            return PDO::PARAM_NULL;
+        }
+        if (is_int($bindingValue)) {
+            return PDO::PARAM_INT;
+        }
+        if (is_bool($bindingValue)) {
+            return PDO::PARAM_BOOL;
+        }
+        return PDO::PARAM_STR;
     }
 
     /**
