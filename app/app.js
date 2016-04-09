@@ -56,18 +56,18 @@
 		.module('app')
 		.factory('appService', appService);
 
-	appService.$inject = ['$location', 'sessionService'];
-	function appService($location, sessionService) {
+	appService.$inject = ['$location', '$log', 'sessionService'];
+	function appService($location, $log, sessionService) {
 		return {
 			checkAuthentication: checkAuthentication
 		};
 
 		function checkAuthentication() {
 			sessionService.getVar('name')
-				.then(isAuthenticatedComplete);
+				.then(checkAuthenticationComplete);
 
-			function isAuthenticatedComplete(response) {
-				if (response.data === 'false') {
+			function checkAuthenticationComplete(response) {
+				if (response.data.success === false) {
 					$location.url('/login');
 				}
 			}
@@ -81,6 +81,9 @@
 	/**
 	* Used to access the api of the various item types.
 	* An instance of crud must be created in order to use the service.
+	*
+	* All promises return 'success' and either 'data' on success or, on error, 'title'
+	* with a general error and 'details' with more details.
 	*/
 
 	angular
@@ -100,7 +103,7 @@
 		return crud;
 
 		/**
-		* @param {string} type
+		* @param {string} type Set the base url using the CRUD type.
 		*/
 		function init(type) {
 			this.base = 'api/' + type + '/' + type + 'Manager.php'; // jshint ignore:line
@@ -108,7 +111,7 @@
 
 		/**
 		* @param	{string}	id		ID of item type to get.
-		* @return	{mixed[]|string}	Query results or "false" on failure.
+		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function get(id) {
 			return $http.get(this.base + '?id=' + id) // jshint ignore:line
@@ -118,7 +121,7 @@
 
 		/**
 		* @param	{mixed[]}	data	Data of item to create.
-		* @return	{string}			"1" on success or "false" on failure.
+		* @return	{string[]}			Promise with 'data' === '1' on success.
 		*/
 		function create(data) {
 			return $http.post(this.base, data) // jshint ignore:line
@@ -130,7 +133,7 @@
 		* @param	{string}	id		ID of item type to update.
 		* @param	{mixed[]}	data	Data of item to update.
 		*
-		* @return	{string}			"1" on success or "false" on failure.
+		* @return	{string[]}			Promise with 'data' === '1' on success.
 		*/
 		function update(id, data) {
 			return $http.put(this.base + '?id=' + id, data) // jshint ignore:line
@@ -140,7 +143,7 @@
 
 		/**
 		* @param	{string}	id		ID of item type to delete.
-		* @return	{string}			"1" on success or "false" on failure.
+		* @return	{string[]}			Promise with 'data' === '1' on success.
 		*/
 		function remove(id) {
 			return $http.delete(this.base + '?id=' + id) // jshint ignore:line
@@ -149,12 +152,16 @@
 		}
 
 		function promiseComplete(response) {
-			return response.data;
+			return response;
 		}
 
 		function promiseFailed(error) {
 			$log.error(error);
-			return false;
+			return {
+				success: 'false',
+				title: 'Error when querying server.',
+				message: error
+			};
 		}
 	}
 })();
@@ -181,8 +188,8 @@
 		};
 
 		/**
-		* @param  {string} $name Variable name to get from session.
-		* @return {string} 		 Variable value or false on failure.
+		* @param	{string} $name	Variable name to get from session.
+		* @return	{string} 		Promise or error on fail.
 		*/
 		function getVar($name) {
 			return $http.get(vm.base + $name)
@@ -191,8 +198,8 @@
 		}
 
 		/**
-		* @param {string} $name Variable name to get from session.
-		* @return {bool} 		True on success or false on failure.
+		* @param	{string} $name	Variable name to get from session.
+		* @return	{string} 		Promise or error on fail.
 		*/
 		function setVar($name, $value) {
 			return $http.post(vm.base + $name, $value)
@@ -206,7 +213,11 @@
 
 		function promiseFailed(error) {
 			$log.error(error);
-			return false;
+			return {
+				success: 'false',
+				title: 'Error when accessing variable.',
+				message: error
+			};
 		}
 	}
 })();
@@ -299,8 +310,8 @@
 				.catch(loginFailed);
 
 			function loginComplete(response) {
-				if (response.data === "false") {
-					return 'Username or password was incorrect.';
+				if (response.data.success === false) {
+					return response.data.title;
 				}
 				$location.url('/dashboard');
 			}
@@ -407,8 +418,8 @@
 		.module('app')
 		.factory('registerService', registerService);
 
-	registerService.$inject = ['$location', 'crudService'];
-	function registerService($location, crudService) {
+	registerService.$inject = ['$location', '$log', 'crudService'];
+	function registerService($location, $log, crudService) {
 		var vm = this;  // jshint ignore:line
 		vm.crud = new crudService('user');
 
@@ -421,8 +432,9 @@
 				.then(registrationComplete);
 
 			function registrationComplete(response) {
-				if (response === "false") {
-					return 'Username taken.';
+				if (response.success === 'false') {
+					$log.error(response.title);
+					return response.title;
 				}
 				$location.url('/login');
 			}
@@ -436,25 +448,20 @@
 		.module('app')
 		.controller('HeaderController', HeaderController);
 
-	HeaderController.$inject = ['$scope', '$log', 'headerService'];
-	function HeaderController($scope, $log, headerService) {
+	HeaderController.$inject = ['$scope', 'headerService'];
+	function HeaderController($scope, headerService) {
 		var vm = this;
 		vm.name = '';
 		vm.url = '';
 
 		headerService.getUser()
-			.then(getUserComplete)
-			.catch(getUserFailed);
+			.then(getUserComplete);
 
 		function getUserComplete(response) {
 			$scope.$evalAsync(function() {
 				vm.name = (response.name === false) ? 'Login' : response.name;
 				vm.url = response.url;
 			});
-		}
-
-		function getUserFailed(error) {
-			$log.error(error);
 		}
 	}
 })();
@@ -493,19 +500,15 @@
 
 		function getUser() {
 			return sessionService.getVar('name')
-				.then(getNameComplete)
-				.catch(getNameFailed);
+				.then(getNameComplete);
 
 			function getNameComplete(response) {
-				if (response.data === 'false') {
+				var res = response.data;
+
+				if (res.success === false) {
 					return {name: false, url: '#/login'};
 				}
-				return {name: response.data, url: '#/dashboard'};
-			}
-
-			function getNameFailed(error) {
-				$log.error(error);
-				return 'Something went wrong. Please try again.';
+				return {name: res.data, url: '#/dashboard'};
 			}
 		}
 	}

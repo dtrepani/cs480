@@ -14,7 +14,9 @@ class SessionHandler implements \SessionHandlerInterface
 
     public function open($savePath, $sessionName)
     {
-        $this->session = new Session();
+        if (!isset($this->session)) {
+            $this->session = new Session();
+        }
         return true;
     }
 
@@ -26,15 +28,15 @@ class SessionHandler implements \SessionHandlerInterface
 
     public function read($id)
     {
-        $result = $this->session->get($id, array('data'))[0]['data'];
-        return (isset($result) ? $result : "");
+        $result = $this->session->get($id, array('data'));
+        return ($result['success'] && !empty($result['data']) ? $result['data'][0]['data'] : "");
     }
 
     public function write($id, $data)
     {
-        $result = $this->session->get($id, array())[0];
+        $result = $this->session->get($id, array());
 
-        if ($result) {
+        if ($result['success']) {
             $result = $this->session->update($id, array('data'=>$data, 'last_accessed'=>date('Y-m-d H:i:s')));
         } else {
             $result = $this->session->create(array(
@@ -44,13 +46,13 @@ class SessionHandler implements \SessionHandlerInterface
             ));
         }
 
-        return (($result === false) ? false : true);
+        return $result['success'];
     }
 
     public function destroy($id)
     {
         $result = $this->session->delete($id);
-        return ($result ? true : false);
+        return $result['success'];
     }
 
     public function gc($maxLifetime)
@@ -59,6 +61,6 @@ class SessionHandler implements \SessionHandlerInterface
             'last_accessed < :last_accessed',
             array('last_accessed'=>date('Y-m-d H:i:s', strtotime('+1 hour')))
         );
-        return ($result ? true : false);
+        return $result['success'];
     }
 }

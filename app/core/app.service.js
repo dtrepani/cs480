@@ -5,18 +5,18 @@
 		.module('app')
 		.factory('appService', appService);
 
-	appService.$inject = ['$location', 'sessionService'];
-	function appService($location, sessionService) {
+	appService.$inject = ['$location', '$log', 'sessionService'];
+	function appService($location, $log, sessionService) {
 		return {
 			checkAuthentication: checkAuthentication
 		};
 
 		function checkAuthentication() {
 			sessionService.getVar('name')
-				.then(isAuthenticatedComplete);
+				.then(checkAuthenticationComplete);
 
-			function isAuthenticatedComplete(response) {
-				if (response.data === 'false') {
+			function checkAuthenticationComplete(response) {
+				if (response.data.success === false) {
 					$location.url('/login');
 				}
 			}

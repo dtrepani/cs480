@@ -21,8 +21,9 @@ abstract class CRUD
     }
 
     /**
-    * @param mixed[]    $bindings   Column names and values of the entry.
-    * @return int|false             Number of rows added or false on failure.
+    * @param  mixed[]    $bindings   Column names and values of the entry.
+    * @return mixed[]                Promise results with affected row count.
+    *                                See Database->query().
     */
     public function create($bindings = array())
     {
@@ -40,7 +41,8 @@ abstract class CRUD
     *
     * @param mixed[]    $colsAndVals Column names and values of the entry.
     *
-    * @return int|false              Number of rows added or false on failure.
+    * @return mixed[]                Promise results with affected row count.
+    *                                See Database->query().
     */
     public function createRaw($colsAndVals)
     {
@@ -53,7 +55,8 @@ abstract class CRUD
 
     /**
     * @param  int       $id     ID of row to be deleted.
-    * @return int|false Number of rows deleted or false on failure.
+    * @return mixed[]           Promise results with affected row count.
+    *                           See Database->query().
     */
     public function delete($id)
     {
@@ -66,11 +69,12 @@ abstract class CRUD
     /**
     * Delete rows not bounded by an id.
     *
-    * @param  string    $where  Where clause, such as 'completed = true'.
+    * @param  string    $where      Where clause, such as 'completed = true'.
     * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
     *                               a ':' prefix.
     *
-    * @return int|false         Number of rows deleted or false on failure.
+    * @return mixed[]               Promise results with affected row count.
+    *                               See Database->query().
     */
     public function deleteAll($where, $bindings = array())
     {
@@ -84,18 +88,20 @@ abstract class CRUD
     * @param  int      $id          ID of row to grab or
     * @param  mixed[]  $columns     Column names.
     *
-    * @return mixed[]|false         Row matching primary key or false on failure.
+    * @return mixed[]               Promise results with requested row. See Database.php.
     */
     public function get($id, $columns = array())
     {
         $colNameList = empty($columns) ? '*' : implode(', ', $columns);
 
-        return $this->db->query(
+        $test = $this->db->query(
             "SELECT $colNameList
             FROM $this->table
             WHERE id = :id",
             array(':id'=>$id)
         );
+
+        return $test;
     }
 
     /**
@@ -109,7 +115,8 @@ abstract class CRUD
     *                               Refers to columns.
     * @param  bool      $asc        Order by ascending or descending order.
     *
-    * @return mixed[]|false         Row(s) matching query or false on failure.
+    * @return mixed[]               Promise results with requested rows.
+    *                               See Database->query().
     */
     public function getAll(
         $columns = array(),
@@ -144,10 +151,11 @@ abstract class CRUD
     }
 
     /**
-    * @param    int           $id            ID of row to be updated.
-    * @param    mixed[]       $bindings      Bindings to be updated.
+    * @param    int           $id           ID of row to be updated.
+    * @param    mixed[]       $bindings     Bindings to be updated.
     *
-    * @return   int|false                    Number of rows updated or false on failure.
+    * @return   mixed[]                     Promise results with affeced row count.
+    *                                       See Database->query().
     */
     public function update($id, $bindings = array())
     {

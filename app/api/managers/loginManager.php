@@ -15,7 +15,7 @@ $request = json_decode(file_get_contents('php://input'), true);
 $auth = new Authentication($request);
 $response = $auth->verify();
 
-if (!$response) {
+if (!$response['success']) {
     echo json_encode($response);
 }
 

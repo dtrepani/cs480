@@ -26,22 +26,39 @@ class Authentication
             array('password'),
             array('name'=>$this->user['name']),
             'name = :name'
-        )[0];
+        );
     }
 
     /**
     * Compare the given password to the stored.
     *
-    * @return bool Whether or not the passwords match.
+    * @return mixed[] Promise results with whether or not the passwords match.
+    *                 See Database->query().
     */
     public function verify()
     {
         $passForUser = $this->getPassword();
 
-        if (!$passForUser) {
-            return $passForUser;
+        if ($passForUser['success'] !== false && !empty($passForUser['data'])) {
+            $result = password_verify(
+                $this->user['password'],
+                $passForUser['data'][0]['password']
+            );
+        } else {
+            $result = false;
         }
 
-        return password_verify($this->user['password'], $passForUser['password']);
+        if ($result) {
+            return array(
+                'success'=>true,
+                'data'=>true
+            );
+        }
+
+        return array(
+            'success'=>false,
+            'title'=>'Username or password is incorrect.',
+            'message'=>"{$this->user['name']} or given password is incorrect."
+        );
     }
 }

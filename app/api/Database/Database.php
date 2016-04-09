@@ -13,7 +13,9 @@ class Database
         $this->connect();
     }
 
-    /** @return bool Success or failure. */
+    /**
+    * @return bool Success or failure.
+    */
     public function beginTransaction()
     {
         return $this->conn->beginTransaction();
@@ -22,7 +24,7 @@ class Database
     /**
     * Sanitize input using given bindings.
     *
-    * @param mixed[][] $bindings Parameters of statement that need to be bound.
+    * @param mixed[] $bindings Parameters of statement that need to be bound.
     */
     private function bindValues($bindings)
     {
@@ -38,11 +40,24 @@ class Database
     }
 
     /**
-    * @return bool Success or failure.
+    * @return mixed[] See $this->query() for details on returned promise.
     */
     public function commit()
     {
-        return $this->conn->commit();
+        $result = $this->conn->commit();
+
+        if ($result === false) {
+            return array(
+                'success'=>false,
+                'title'=>'An error occurred when finishing queries.',
+                'message'=>"Commit returned: $result"
+            );
+        }
+
+        return array(
+            'success'=>true,
+            'data'=>$result
+        );
     }
 
     /**
@@ -62,7 +77,11 @@ class Database
             );
         } catch (\PDOException $e) {
             error_log($e->getMessage());
-            return false;
+            return array(
+                'success'=>false,
+                'title'=>'Could not connect to database.',
+                'message'=>$e->getMessage()
+            );
         }
     }
 
@@ -130,7 +149,9 @@ class Database
     * @param    int         $fetchStyle Fetch style.
     * @param    int         $fetchArgs  Arguments to fetch style.
     *
-    * @return   mixed|false             Results of query or false on failure.
+    * @return   mixed[]     Promise with 'success' of query, 'data' with results
+    *                       of query or 'title' with general error message, and
+    *                       'message' of an error if one occurred.
     */
     public function query(
         $query,
@@ -147,18 +168,37 @@ class Database
 
             $this->statement->execute();
 
-            return $this->getResult(
+            $result = $this->getResult(
                 $query,
                 $fetchStyle,
                 $fetchArgs
             );
+
+            if ($result === false || (is_array($result) && empty($result))) {
+                return array(
+                    'success'=>false,
+                    'title'=>'Query could not be completed successfully.',
+                    'message'=>$result
+                );
+            }
+
+            return array(
+                'success'=>true,
+                'data'=>$result
+            );
         } catch (\PDOException $e) {
             error_log($e->getMessage());
-            return false;
+            return array(
+                'success'=>false,
+                'title'=>'An error occurred while executing the query.',
+                'message'=>$e->getMessage()
+            );
         }
     }
 
-    /** @return bool Success or failure. */
+    /**
+    * @return bool Success or failure.
+    */
     public function rollBack()
     {
         return $this->conn->rollBack();

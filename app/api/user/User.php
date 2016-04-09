@@ -19,35 +19,42 @@ class User extends CRUD
     * Must be overridden to account for unhashed password and to create
     * a default label and calendar for the user.
     *
-    * @return bool Whether or not user, calendar, and label were created successfully.
+    * @return mixed[] Promise results with whether or not user, calendar, and label
+    *                 were created successfully. See Database->query().
     */
     public function create($bindings = array())
     {
         try {
-            $this->db->beginTransaction();
+            $result = $this->db->beginTransaction();
+            $this->checkForError($result);
 
             $result = parent::create($this->getBindingsWithHashedPassword($bindings));
-            $this->checkForError($result);
+            $this->checkForError($result['success']);
 
             $userID = $this->db->lastInsertId();
 
             $result = $this->createDefaultLabel($userID);
-            $this->checkForError($result);
+            $this->checkForError($result['success']);
 
             $result = $this->createDefaultCalendar($userID);
-            $this->checkForError($result);
+            $this->checkForError($result['success']);
 
             return $this->db->commit();
         } catch (\Exception $e) {
             error_log($e->getMessage());
-            return false;
+            return array(
+                'success'=>false,
+                'title'=>'An error occurred while creating user.',
+                'message'=>$e->getMessage()
+            );
         }
     }
 
     /**
     * Create the default calendar that every user will have.
-    * @param  int       $userID ID of the new user.
-    * @return int|false         Number of rows added or false on failure.
+    * @param  int       $userID     ID of the new user.
+    * @return mixed[]               Promise results with affected row count.
+    *                               See Database->query().
     */
     private function createDefaultCalendar($userID)
     {
@@ -62,8 +69,9 @@ class User extends CRUD
 
     /**
     * Create the default label that every user will have.
-    * @param  int       $userID ID of the new user.
-    * @return int|false         Number of rows added or false on failure.
+    * @param  int       $userID     ID of the new user.
+    * @return mixed[]               Promise results with affected row count.
+    *                               See Database->query().
     */
     private function createDefaultLabel($userID)
     {

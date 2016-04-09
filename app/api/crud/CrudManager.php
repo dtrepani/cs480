@@ -26,7 +26,7 @@ class CrudManager
     /**
     * Execute the appropriate query based on the request method.
     *
-    * @return mixed|false Query results or false on failure.
+    * @return mixed[] Promise with query results. See Database->query().
     */
     public function getResponse()
     {

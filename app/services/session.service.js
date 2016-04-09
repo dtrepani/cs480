@@ -20,8 +20,8 @@
 		};
 
 		/**
-		* @param  {string} $name Variable name to get from session.
-		* @return {string} 		 Variable value or false on failure.
+		* @param	{string} $name	Variable name to get from session.
+		* @return	{string} 		Promise or error on fail.
 		*/
 		function getVar($name) {
 			return $http.get(vm.base + $name)
@@ -30,8 +30,8 @@
 		}
 
 		/**
-		* @param {string} $name Variable name to get from session.
-		* @return {bool} 		True on success or false on failure.
+		* @param	{string} $name	Variable name to get from session.
+		* @return	{string} 		Promise or error on fail.
 		*/
 		function setVar($name, $value) {
 			return $http.post(vm.base + $name, $value)
@@ -45,7 +45,11 @@
 
 		function promiseFailed(error) {
 			$log.error(error);
-			return false;
+			return {
+				success: 'false',
+				title: 'Error when accessing variable.',
+				message: error
+			};
 		}
 	}
 })();

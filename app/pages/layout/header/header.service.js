@@ -13,19 +13,15 @@
 
 		function getUser() {
 			return sessionService.getVar('name')
-				.then(getNameComplete)
-				.catch(getNameFailed);
+				.then(getNameComplete);
 
 			function getNameComplete(response) {
-				if (response.data === 'false') {
+				var res = response.data;
+
+				if (res.success === false) {
 					return {name: false, url: '#/login'};
 				}
-				return {name: response.data, url: '#/dashboard'};
-			}
-
-			function getNameFailed(error) {
-				$log.error(error);
-				return 'Something went wrong. Please try again.';
+				return {name: res.data, url: '#/dashboard'};
 			}
 		}
 	}

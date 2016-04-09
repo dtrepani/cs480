@@ -25,32 +25,41 @@ class Session extends CRUD
     /**
     * @param string         $name   Name of session variable to get.
     *
-    * @return mixed|false           Session variable or false if no such variable exists.
+    * @return mixed[]               Promise results with session variable or error
+    *                               message if it doesn't exist. See Database->query().
     */
     public function getVar($name)
     {
         $this->sessionStart();
 
         if (!isset($_SESSION[$name])) {
-            return false;
+            return array(
+                'success'=>false,
+                'title'=>'Error getting variable.',
+                'message'=>"The session variable '{$name}' does not exist."
+            );
         }
 
-        return $_SESSION[$name];
+        return array(
+            'success'=>true,
+            'data'=>$_SESSION[$name]
+        );
     }
 
     /**
     * Set all the session variables for corresponding user.
+    * Only called when it is known that the user exists.
     *
     * @param string $username User associated with session.
     */
     public function setSessionVariables($username)
     {
-        $user = new User();
+        $user = new User($this->db);
         $userInfo = $user->getAll(
             array('id', 'name', 'admin', 'theme', 'avatar'),
             array('name'=>$username),
             'name = :name'
-        )[0];
+        )['data'][0];
 
         foreach ($userInfo as $key => $value) {
             $_SESSION[$key] = $value;
@@ -60,11 +69,17 @@ class Session extends CRUD
     /**
     * @param string $name   Name of session variable to set.
     * @param mixed  $value  Value to set session variable to.
+    *
+    * @return mixed[]       Promise results with success. See Database->query().
     */
     public function setVar($name, $value)
     {
         $this->sessionStart();
         $_SESSION[$name] = $value;
+        return array(
+            'success'=>true,
+            'data'=>true
+        );
     }
 
     /**
@@ -87,5 +102,20 @@ class Session extends CRUD
         $handler = new SessionHandler($this);
         session_set_save_handler($handler, true);
         session_start();
+    }
+
+    /**
+    * @param string $name   Name of session variable to unset
+    * @param mixed  $value  Value to set session variable to.
+    *
+    * @return mixed[]       Promise results with success. See Database->query().
+    */
+    public function unsetVar($name)
+    {
+        unset($_SESSION[$name]);
+        return array(
+            'success'=>true,
+            'data'=>true
+        );
     }
 }
