@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS recurrence (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS activity_prefs (
+CREATE TABLE IF NOT EXISTS activity_info (
 	id				INT			NOT NULL AUTO_INCREMENT,
 	recurrence_id	INT,
 	summary			VARCHAR(256)	NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS calendar (
 CREATE TABLE IF NOT EXISTS cal_event (
 	id					INT				NOT NULL AUTO_INCREMENT,
 	calendar_id			INT 			NOT NULL,
-	activity_prefs_id	INT				NOT NULL,
+	activity_info_id	INT				NOT NULL,
 	dt_start			DATETIME,
 	dt_end				DATETIME,
 	description			TEXT,
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS cal_event (
 		REFERENCES calendar(id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE,
-	FOREIGN KEY (activity_prefs_id)
-		REFERENCES activity_prefs(id)
+	FOREIGN KEY (activity_info_id)
+		REFERENCES activity_info(id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE
 );
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS label (
 CREATE TABLE IF NOT EXISTS task (
 	id					INT				NOT NULL AUTO_INCREMENT,
 	label_id			INT 			NOT NULL,
-	activity_prefs_id	INT				NOT NULL,
+	activity_info_id	INT				NOT NULL,
 	due					DATETIME,
 	completed			BOOLEAN DEFAULT false,
 	picture				TEXT,
@@ -111,8 +111,8 @@ CREATE TABLE IF NOT EXISTS task (
 		REFERENCES label(id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE,
-	FOREIGN KEY (activity_prefs_id)
-		REFERENCES activity_prefs(id)
+	FOREIGN KEY (activity_info_id)
+		REFERENCES activity_info(id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE
 );

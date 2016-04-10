@@ -5,9 +5,9 @@
 		.module('app', ['ngRoute'])
 		.controller('AppController', AppController);
 
-	AppController.$inject = ['$rootScope', '$location', 'appService'];
-	function AppController($rootScope, $location, appService) {
-		$rootScope.$on('$locationChangeStart', appService.checkAuthentication);
+	AppController.$inject = ['$rootScope', 'appService'];
+	function AppController($rootScope, appService) {
+		$rootScope.$on('$routeChangeError', appService.routeChangeError);
 	}
 })();
 (function() {
@@ -15,38 +15,53 @@
 
 	angular
 		.module('app')
-		.config(config);
+		.config(appConfig);
 
-	config.$inject = ['$routeProvider'];
-	function config($routeProvider) {
+	appConfig.$inject = ['$routeProvider'];
+	function appConfig($routeProvider) {
 		$routeProvider
 			.when('/login', {
 				templateUrl: 'modules/login/login.html',
 				controller: 'LoginController',
 				controllerAs: 'vm',
-				adminOnly: false
 			})
 			.when('/logout', {
 				templateUrl: 'modules/logout/logout.html',
 				controller: 'LogoutController',
-				controllerAs: 'vm',
-				adminOnly: false
+				controllerAs: 'vm'
 			})
 			.when('/register', {
 				templateUrl: 'pages/register/register.html',
 				controller: 'RegisterController',
-				controllerAs: 'vm',
-				adminOnly: false
+				controllerAs: 'vm'
 			})
 			.when('/dashboard', {
 				templateUrl: 'pages/dashboard/dashboard.html',
 				controller: 'DashboardController',
 				controllerAs: 'vm',
-				adminOnly: false
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated]
+				}
+			})
+			.when('/admin', {
+				templateUrl: 'pages/admin/admin.html',
+				controller: 'AdminController',
+				controllerAs: 'vm',
+				resolve: {
+					isAdmin: ['accessService', isAdmin]
+				}
 			})
 			.otherwise({
-				redirectTo: '/dashboard'
+				redirectTo: '/login'
 			});
+
+		function isAuthenticated(accessService) {
+			return accessService.isAuthenticated();
+		}
+
+		function isAdmin(accessService) {
+			return accessService.isAdmin();
+		}
 	}
 })();
 (function() {
@@ -56,22 +71,108 @@
 		.module('app')
 		.factory('appService', appService);
 
-	appService.$inject = ['$location', '$log', 'sessionService'];
-	function appService($location, $log, sessionService) {
+	appService.$inject = ['$location', 'statusService'];
+	function appService($location, statusService) {
 		return {
-			checkAuthentication: checkAuthentication
+			routeChangeError: routeChangeError
 		};
 
-		function checkAuthentication() {
-			sessionService.getVar('name')
-				.then(checkAuthenticationComplete);
-
-			function checkAuthenticationComplete(response) {
-				if (response.data.success === false) {
-					$location.url('/login');
-				}
+		function routeChangeError(event, current, previous, rejection) {
+			if (rejection === statusService.UNAUTHORIZED) {
+				$location.path('/login');
+			} else if (rejection === statusService.FORBIDDEN) {
+				$location.path('/forbidden');
 			}
 		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
+
+	angular
+		.module('app')
+		.directive('spCompareTo', compareTo);
+
+	function compareTo() {
+		var directive = {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
+		};
+		return directive;
+
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
+
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('TasksController', TasksController);
+
+	TasksController.$inject = ['tasksService'];
+	function TasksController(tasksService) {
+		var vm = this;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spTasks', tasksDirective);
+
+	function tasksDirective() {
+		return {
+			link: link,
+			templateUrl: 'modules/tasks/tasks.html',
+			controller: 'TasksController',
+			controllerAs: 'vm',
+			bindToController: true
+		};
+
+		function link(scope, element, attrs) {
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('tasksService', tasksService);
+
+	tasksService.$inject = ['$http', '$log'];
+	function tasksService($http, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+		};
+
 	}
 })();
 
@@ -225,46 +326,6 @@
 (function() {
 	'use strict';
 
-	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
-
-	angular
-		.module('app')
-		.directive('spCompareTo', compareTo);
-
-	function compareTo() {
-		var directive = {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
-		};
-		return directive;
-
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
-
-			function cleanUp() {
-				unbindWatch();
-			}
-
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
 	angular
 		.module('app')
 		.controller('LoginController', LoginController);
@@ -313,7 +374,7 @@
 				if (response.data.success === false) {
 					return response.data.title;
 				}
-				$location.url('/dashboard');
+				$location.path('/dashboard');
 			}
 
 			function loginFailed(error) {
@@ -321,55 +382,6 @@
 				return 'Something went wrong. Please try again.';
 			}
 		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('TasksController', TasksController);
-
-	TasksController.$inject = ['tasksService'];
-	function TasksController(tasksService) {
-		var vm = this;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spTasks', tasksDirective);
-
-	function tasksDirective() {
-		return {
-			link: link,
-			templateUrl: 'modules/tasks/tasks.html',
-			controller: 'TasksController',
-			controllerAs: 'vm',
-			bindToController: true
-		};
-
-		function link(scope, element, attrs) {
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('tasksService', tasksService);
-
-	tasksService.$inject = ['$http', '$log'];
-	function tasksService($http, $log) {
-		var vm = this;  // jshint ignore:line
-
-		return {
-		};
-
 	}
 })();
 
@@ -446,6 +458,109 @@
 
 	angular
 		.module('app')
+		.controller('SidebarController', SidebarController);
+
+	function SidebarController() {
+		var vm = this;
+
+		vm.collapsed = true;
+
+		vm.toggleSidebar = function() {
+			vm.collapsed = !vm.collapsed;
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spSidebar', sidebarDirective);
+
+	function sidebarDirective() {
+		return {
+			link: link,
+			templateUrl: 'pages/layout/sidebar/sidebar.html',
+			controller: 'SidebarController',
+			controllerAs: 'vm',
+			bindToController: true
+		};
+
+		function link(scope, element, attrs) {
+			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+
+			function toggleSidebar(collapsed) {
+				if (collapsed) {
+					element.removeClass('collapsed');
+				} else {
+					element.addClass('collapsed');
+				}
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('accessService', accessService);
+
+	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
+	function accessService($location, $q, sessionService, statusService) {
+		var deferred = $q.defer();
+
+		return {
+			isAuthenticated: isAuthenticated,
+			isAdmin: isAdmin
+		};
+
+		function isAuthenticated() {
+			return sessionService.getVar('name')
+				.then(isAuthenticatedComplete);
+
+			function isAuthenticatedComplete(response) {
+				if (response.data.success !== false) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.UNAUTHORIZED);
+				}
+
+				return deferred.promise;
+			}
+		}
+
+		function isAdmin() {
+
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Status codes used when accessing various pages in the app.
+	*/
+
+	angular
+		.module('app')
+		.service('statusService', statusService);
+
+	function statusService() {
+		return {
+			OK: 200,
+			UNAUTHORIZED: 401,
+			FORBIDDEN: 403
+		};
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.controller('HeaderController', HeaderController);
 
 	HeaderController.$inject = ['$scope', 'headerService'];
@@ -509,53 +624,6 @@
 					return {name: false, url: '#/login'};
 				}
 				return {name: res.data, url: '#/dashboard'};
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('SidebarController', SidebarController);
-
-	function SidebarController() {
-		var vm = this;
-
-		vm.collapsed = true;
-
-		vm.toggleSidebar = function() {
-			vm.collapsed = !vm.collapsed;
-		};
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spSidebar', sidebarDirective);
-
-	function sidebarDirective() {
-		return {
-			link: link,
-			templateUrl: 'pages/layout/sidebar/sidebar.html',
-			controller: 'SidebarController',
-			controllerAs: 'vm',
-			bindToController: true
-		};
-
-		function link(scope, element, attrs) {
-			scope.$watch(attrs.sidebarDirective, toggleSidebar);
-
-			function toggleSidebar(collapsed) {
-				if (collapsed) {
-					element.removeClass('collapsed');
-				} else {
-					element.addClass('collapsed');
-				}
 			}
 		}
 	}

@@ -21,6 +21,17 @@ abstract class CRUD
     }
 
     /**
+    * Roll back a transaction if the last query's results were an error.
+    */
+    protected function checkForError($result)
+    {
+        if (!$result) {
+            $this->db->rollBack();
+            throw new \Exception('Error when inserting entry in CRUD->create().');
+        }
+    }
+
+    /**
     * @param  mixed[]    $bindings   Column names and values of the entry.
     * @return mixed[]                Promise results with affected row count.
     *                                See Database->query().
@@ -94,14 +105,12 @@ abstract class CRUD
     {
         $colNameList = empty($columns) ? '*' : implode(', ', $columns);
 
-        $test = $this->db->query(
+        return $this->db->query(
             "SELECT $colNameList
             FROM $this->table
             WHERE id = :id",
             array(':id'=>$id)
         );
-
-        return $test;
     }
 
     /**
@@ -137,17 +146,6 @@ abstract class CRUD
             "SELECT $colNameList FROM $this->table $where $order $asc",
             Api\addPrefixToKeys($bindings)
         );
-    }
-
-    /**
-    * Roll back a transaction if the last query's results were an error.
-    */
-    protected function checkForError($result)
-    {
-        if (!$result) {
-            $this->db->rollBack();
-            throw new \Exception('Error when inserting entry in CRUD->create().');
-        }
     }
 
     /**

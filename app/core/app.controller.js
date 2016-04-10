@@ -5,8 +5,8 @@
 		.module('app', ['ngRoute'])
 		.controller('AppController', AppController);
 
-	AppController.$inject = ['$rootScope', '$location', 'appService'];
-	function AppController($rootScope, $location, appService) {
-		$rootScope.$on('$locationChangeStart', appService.checkAuthentication);
+	AppController.$inject = ['$rootScope', 'appService'];
+	function AppController($rootScope, appService) {
+		$rootScope.$on('$routeChangeError', appService.routeChangeError);
 	}
 })();

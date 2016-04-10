@@ -17,9 +17,9 @@ $response = $auth->verify();
 
 if (!$response['success']) {
     echo json_encode($response);
+} else {
+    $session = new Session();
+    $session->start($request['name']);
+
+    echo json_encode($response);
 }
-
-$session = new Session();
-$session->start($request['name']);
-
-echo json_encode($response);

@@ -3,37 +3,52 @@
 
 	angular
 		.module('app')
-		.config(config);
+		.config(appConfig);
 
-	config.$inject = ['$routeProvider'];
-	function config($routeProvider) {
+	appConfig.$inject = ['$routeProvider'];
+	function appConfig($routeProvider) {
 		$routeProvider
 			.when('/login', {
 				templateUrl: 'modules/login/login.html',
 				controller: 'LoginController',
 				controllerAs: 'vm',
-				adminOnly: false
 			})
 			.when('/logout', {
 				templateUrl: 'modules/logout/logout.html',
 				controller: 'LogoutController',
-				controllerAs: 'vm',
-				adminOnly: false
+				controllerAs: 'vm'
 			})
 			.when('/register', {
 				templateUrl: 'pages/register/register.html',
 				controller: 'RegisterController',
-				controllerAs: 'vm',
-				adminOnly: false
+				controllerAs: 'vm'
 			})
 			.when('/dashboard', {
 				templateUrl: 'pages/dashboard/dashboard.html',
 				controller: 'DashboardController',
 				controllerAs: 'vm',
-				adminOnly: false
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated]
+				}
+			})
+			.when('/admin', {
+				templateUrl: 'pages/admin/admin.html',
+				controller: 'AdminController',
+				controllerAs: 'vm',
+				resolve: {
+					isAdmin: ['accessService', isAdmin]
+				}
 			})
 			.otherwise({
-				redirectTo: '/dashboard'
+				redirectTo: '/login'
 			});
+
+		function isAuthenticated(accessService) {
+			return accessService.isAuthenticated();
+		}
+
+		function isAdmin(accessService) {
+			return accessService.isAdmin();
+		}
 	}
 })();

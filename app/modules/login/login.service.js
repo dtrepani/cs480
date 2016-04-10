@@ -22,7 +22,7 @@
 				if (response.data.success === false) {
 					return response.data.title;
 				}
-				$location.url('/dashboard');
+				$location.path('/dashboard');
 			}
 
 			function loginFailed(error) {

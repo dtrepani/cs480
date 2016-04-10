@@ -5,20 +5,17 @@
 		.module('app')
 		.factory('appService', appService);
 
-	appService.$inject = ['$location', '$log', 'sessionService'];
-	function appService($location, $log, sessionService) {
+	appService.$inject = ['$location', 'statusService'];
+	function appService($location, statusService) {
 		return {
-			checkAuthentication: checkAuthentication
+			routeChangeError: routeChangeError
 		};
 
-		function checkAuthentication() {
-			sessionService.getVar('name')
-				.then(checkAuthenticationComplete);
-
-			function checkAuthenticationComplete(response) {
-				if (response.data.success === false) {
-					$location.url('/login');
-				}
+		function routeChangeError(event, current, previous, rejection) {
+			if (rejection === statusService.UNAUTHORIZED) {
+				$location.path('/login');
+			} else if (rejection === statusService.FORBIDDEN) {
+				$location.path('/forbidden');
 			}
 		}
 	}

@@ -10,14 +10,33 @@ use SP\App\Api as Api;
 class Task extends CRUD
 {
     protected $table = 'task';
+    protected $infoTable = 'activity_info';
+    protected $recurrenceTable = 'recurrence';
 
     /**
     *
     */
-    // public function create($bindings = array())
-    // {
+    public function create($bindings = array())
+    {
 
-    // }
+    }
+
+    /**
+    *
+    */
+    public function get($id, $columns = array())
+    {
+        $colNameList = empty($columns) ? '*' : implode(', ', $columns);
+
+        return $this->db->query(
+            "SELECT $colNameList
+            FROM $this->table
+                INNER JOIN $this->infoTable
+                ON {$this->table}.id = {$this->prefsTable}.task_id
+            WHERE id = :id",
+            array(':id'=>$id)
+        );
+    }
 
     // /**
     // *
