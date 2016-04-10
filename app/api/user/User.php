@@ -2,14 +2,14 @@
 namespace SP\App\Api\User;
 
 require_once __DIR__.'/../crud/CRUD.php';
-require_once __DIR__.'/../tasks/label/Label.php';
-require_once __DIR__.'/../calendars/calendar/Calendar.php';
-require_once __DIR__.'/../arrayManipulation.php';
+require_once __DIR__.'/../activity/tasks/label/Label.php';
+require_once __DIR__.'/../activity/calendars/calendar/Calendar.php';
+require_once __DIR__.'/../ConvertArray.php';
 
 use SP\App\Api\Crud\CRUD;
-use SP\App\Api\Tasks\Label\Label;
-use SP\App\Api\Calendars\Calendar\Calendar;
-use SP\App\Api as Api;
+use SP\App\Api\Activity\Tasks\Label\Label;
+use SP\App\Api\Activity\Calendars\Calendar\Calendar;
+use SP\App\Api\ConvertArray;
 
 class User extends CRUD
 {
@@ -33,11 +33,8 @@ class User extends CRUD
 
             $userID = $this->db->lastInsertId();
 
-            $result = $this->createDefaultLabel($userID);
-            $this->checkForError($result['success']);
-
-            $result = $this->createDefaultCalendar($userID);
-            $this->checkForError($result['success']);
+            $this->createDefaultLabel($userID);
+            $this->createDefaultCalendar($userID);
 
             return $this->db->commit();
         } catch (\Exception $e) {
@@ -53,35 +50,33 @@ class User extends CRUD
     /**
     * Create the default calendar that every user will have.
     * @param  int       $userID     ID of the new user.
-    * @return mixed[]               Promise results with affected row count.
-    *                               See Database->query().
     */
     private function createDefaultCalendar($userID)
     {
         $calendar = new Calendar($this->db);
-        return $calendar->create(
+        $result = $calendar->create(
             array(
                 'person_id'=>$userID,
                 'name'=>'Calendar'
             )
         );
+        $this->checkForError($result['success']);
     }
 
     /**
     * Create the default label that every user will have.
     * @param  int       $userID     ID of the new user.
-    * @return mixed[]               Promise results with affected row count.
-    *                               See Database->query().
     */
     private function createDefaultLabel($userID)
     {
         $label = new Label($this->db);
-        return $label->create(
+        $result = $label->create(
             array(
                 'person_id'=>$userID,
                 'name'=>'Inbox'
             )
         );
+        $this->checkForError($result['success']);
     }
 
     /**

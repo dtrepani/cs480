@@ -1,8 +1,8 @@
 <?php
-namespace SP\App\Api\Tasks\Task;
+namespace SP\App\Api\Activity\Tasks\Task;
 
 require_once 'Task.php';
-require_once __DIR__.'/../../crud/CrudManager.php';
+require_once __DIR__.'/../../../crud/CrudManager.php';
 
 use SP\App\Api\CRUD\CrudManager;
 

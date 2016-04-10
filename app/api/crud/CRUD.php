@@ -1,11 +1,11 @@
 <?php
 namespace SP\App\Api\CRUD;
 
-require_once __DIR__.'/../arrayManipulation.php';
+require_once __DIR__.'/../ConvertArray.php';
 require_once __DIR__.'/../database/Database.php';
 
 use SP\App\Api\Database\Database;
-use SP\App\Api as Api;
+use SP\App\Api\ConvertArray;
 
 abstract class CRUD
 {
@@ -38,11 +38,11 @@ abstract class CRUD
     */
     public function create($bindings = array())
     {
-        $lists = Api\toQueryLists($bindings);
+        $lists = ConvertArray::toQueryLists($bindings);
         return $this->db->query(
             "INSERT INTO $this->table ({$lists['columns']})
             VALUES ({$lists['bindings']})",
-            Api\addPrefixToKeys($bindings)
+            ConvertArray::addPrefixToKeys($bindings)
         );
     }
 
@@ -57,7 +57,7 @@ abstract class CRUD
     */
     public function createRaw($colsAndVals)
     {
-        $lists = Api\toKeyValueList($colsAndVals, '');
+        $lists = ConvertArray::toKeyValueList($colsAndVals, '');
         return $this->db->query(
             "INSERT INTO $this->table ({$lists['keys']})
             VALUES ({$lists['values']})"
@@ -78,7 +78,7 @@ abstract class CRUD
     }
 
     /**
-    * Delete rows not bounded by an id.
+    * Delete all rows matching where clause.
     *
     * @param  string    $where      Where clause, such as 'completed = true'.
     * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
@@ -91,20 +91,20 @@ abstract class CRUD
     {
         return $this->db->query(
             "DELETE FROM $this->table WHERE $where",
-            Api\addPrefixToKeys($bindings)
+            ConvertArray::addPrefixToKeys($bindings)
         );
     }
 
     /**
-    * @param  int      $id          ID of row to grab or
+    * @param  int      $id          ID of row to grab.
     * @param  mixed[]  $columns     Column names.
     *
-    * @return mixed[]               Promise results with requested row. See Database.php.
+    * @return mixed[]               Promise results with requested row.
+    *                               See Database->query().
     */
     public function get($id, $columns = array())
     {
-        $colNameList = empty($columns) ? '*' : implode(', ', $columns);
-
+        $colNameList = ConvertArray::toColNameList($columns);
         return $this->db->query(
             "SELECT $colNameList
             FROM $this->table
@@ -114,7 +114,7 @@ abstract class CRUD
     }
 
     /**
-    * Select rows not bounded by an id.
+    * Select all rows corresponding to where clause.
     *
     * @param  mixed[]   $columns    Column names.
     * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
@@ -134,7 +134,7 @@ abstract class CRUD
         $order = '',
         $asc = ''
     ) {
-        $colNameList = empty($columns) ? '*' : implode(', ', $columns);
+        $colNameList = ConvertArray::toColNameList($columns);
         $where = empty($where) ? '' : 'WHERE ' . $where;
 
         if (!empty($order)) {
@@ -144,8 +144,29 @@ abstract class CRUD
 
         return $this->db->query(
             "SELECT $colNameList FROM $this->table $where $order $asc",
-            Api\addPrefixToKeys($bindings)
+            ConvertArray::addPrefixToKeys($bindings)
         );
+    }
+
+    /**
+    * Convert array of column names to list.
+    * @param  mixed[]   $columns    Column names.
+    * @return string                Column names in list form.
+    */
+    protected function getColNameList($columns)
+    {
+        return empty($columns) ? '*' : implode(', ', $columns);
+
+
+
+        // TODO: convert arraymanip to class, add this there
+        // TODO: who cares about the mock db for now?? just cleanup afterward
+    }
+
+    /** @return string */
+    public static function getTableName()
+    {
+        return $this->table;
     }
 
     /**
@@ -157,14 +178,14 @@ abstract class CRUD
     */
     public function update($id, $bindings = array())
     {
-        $bindingSetList = Api\toBindingSetList($bindings);
+        $bindingSetList = ConvertArray::toBindingSetList($bindings);
         $bindings['id'] = $id;
 
         return $this->db->query(
             "UPDATE $this->table
             SET $bindingSetList
             WHERE id = :id",
-            Api\addPrefixToKeys($bindings)
+            ConvertArray::addPrefixToKeys($bindings)
         );
     }
 }
