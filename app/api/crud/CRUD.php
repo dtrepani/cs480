@@ -148,21 +148,6 @@ abstract class CRUD
         );
     }
 
-    /**
-    * Convert array of column names to list.
-    * @param  mixed[]   $columns    Column names.
-    * @return string                Column names in list form.
-    */
-    protected function getColNameList($columns)
-    {
-        return empty($columns) ? '*' : implode(', ', $columns);
-
-
-
-        // TODO: convert arraymanip to class, add this there
-        // TODO: who cares about the mock db for now?? just cleanup afterward
-    }
-
     /** @return string */
     public static function getTableName()
     {
