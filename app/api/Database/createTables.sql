@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS session (
 
 CREATE TABLE IF NOT EXISTS recurrence (
 	id				INT		NOT NULL AUTO_INCREMENT,
-	freq			ENUM('daily', 'secondly', 'minutely', 'hourly', 'monthly', 'yearly') NOT NULL,
+	freq			ENUM('daily', 'secondly', 'minutely', 'hourly', 'weekly', 'monthly', 'yearly') NOT NULL,
 	until			DATETIME,
 	count			INT,
 	repeat_interval	INT		NOT NULL DEFAULT 1,

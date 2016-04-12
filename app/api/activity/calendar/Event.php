@@ -1,7 +1,7 @@
 <?php
-namespace SP\App\Api\Activity\Calendars\Event;
+namespace SP\App\Api\Activity\Calendar;
 
-require_once __DIR__.'/../../../crud/ActivityCRUD.php';
+require_once __DIR__.'/../../crud/ActivityCRUD.php';
 use SP\App\Api\Crud\ActivityCRUD;
 
 class Event extends ActivityCRUD

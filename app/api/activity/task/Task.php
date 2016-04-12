@@ -1,7 +1,7 @@
 <?php
-namespace SP\App\Api\Activity\Tasks\Task;
+namespace SP\App\Api\Activity\Task;
 
-require_once __DIR__.'/../../../crud/ActivityCRUD.php';
+require_once __DIR__.'/../../crud/ActivityCRUD.php';
 use SP\App\Api\Crud\ActivityCRUD;
 
 class Task extends ActivityCRUD

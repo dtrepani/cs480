@@ -91,95 +91,6 @@
 	'use strict';
 
 	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
-
-	angular
-		.module('app')
-		.directive('spCompareTo', compareTo);
-
-	function compareTo() {
-		var directive = {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
-		};
-		return directive;
-
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
-
-			function cleanUp() {
-				unbindWatch();
-			}
-
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('TasksController', TasksController);
-
-	TasksController.$inject = ['tasksService'];
-	function TasksController(tasksService) {
-		var vm = this;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spTasks', tasksDirective);
-
-	function tasksDirective() {
-		return {
-			link: link,
-			templateUrl: 'modules/tasks/tasks.html',
-			controller: 'TasksController',
-			controllerAs: 'vm',
-			bindToController: true
-		};
-
-		function link(scope, element, attrs) {
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('tasksService', tasksService);
-
-	tasksService.$inject = ['$http', '$log'];
-	function tasksService($http, $log) {
-		var vm = this;  // jshint ignore:line
-
-		return {
-		};
-
-	}
-})();
-
-(function() {
-	'use strict';
-
-	/**
 	* Used to access the api of the various item types.
 	* An instance of crud must be created in order to use the service.
 	*
@@ -328,68 +239,6 @@
 
 	angular
 		.module('app')
-		.controller('LoginController', LoginController);
-
-	LoginController.$inject = ['loginService'];
-	function LoginController(loginService) {
-		var vm = this;
-		vm.loading = false;
-		vm.error = '';
-
-		vm.login = login;
-
-		function login() {
-			vm.loading = true;
-			loginService.login(vm.user)
-				.then(loginComplete);
-
-			function loginComplete(response) {
-				vm.loading = false;
-				vm.error = response;
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('loginService', loginService);
-
-	loginService.$inject = ['$http', '$location', '$log'];
-	function loginService($http, $location, $log) {
-		var vm = this;  // jshint ignore:line
-
-		return {
-			login: login
-		};
-
-		function login(user) {
-			return $http.post('api/managers/loginManager.php', user)
-				.then(loginComplete)
-				.catch(loginFailed);
-
-			function loginComplete(response) {
-				if (response.data.success === false) {
-					return response.data.title;
-				}
-				$location.path('/dashboard');
-			}
-
-			function loginFailed(error) {
-				$log.error(error);
-				return 'Something went wrong. Please try again.';
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('DashboardController', DashboardController);
 
 	function DashboardController() {
@@ -458,16 +307,26 @@
 
 	angular
 		.module('app')
-		.controller('SidebarController', SidebarController);
+		.controller('LoginController', LoginController);
 
-	function SidebarController() {
+	LoginController.$inject = ['loginService'];
+	function LoginController(loginService) {
 		var vm = this;
+		vm.loading = false;
+		vm.error = '';
 
-		vm.collapsed = true;
+		vm.login = login;
 
-		vm.toggleSidebar = function() {
-			vm.collapsed = !vm.collapsed;
-		};
+		function login() {
+			vm.loading = true;
+			loginService.login(vm.user)
+				.then(loginComplete);
+
+			function loginComplete(response) {
+				vm.loading = false;
+				vm.error = response;
+			}
+		}
 	}
 })();
 (function() {
@@ -475,26 +334,121 @@
 
 	angular
 		.module('app')
-		.directive('spSidebar', sidebarDirective);
+		.factory('loginService', loginService);
 
-	function sidebarDirective() {
+	loginService.$inject = ['$http', '$location', '$log'];
+	function loginService($http, $location, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			login: login
+		};
+
+		function login(user) {
+			return $http.post('api/user/loginManager.php', user)
+				.then(loginComplete)
+				.catch(loginFailed);
+
+			function loginComplete(response) {
+				if (response.data.success === false) {
+					return response.data.title;
+				}
+				$location.path('/dashboard');
+			}
+
+			function loginFailed(error) {
+				$log.error(error);
+				return 'Something went wrong. Please try again.';
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('TasksController', TasksController);
+
+	TasksController.$inject = ['tasksService'];
+	function TasksController(tasksService) {
+		var vm = this;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spTasks', tasksDirective);
+
+	function tasksDirective() {
 		return {
 			link: link,
-			templateUrl: 'pages/layout/sidebar/sidebar.html',
-			controller: 'SidebarController',
+			templateUrl: 'modules/tasks/tasks.html',
+			controller: 'TasksController',
 			controllerAs: 'vm',
 			bindToController: true
 		};
 
 		function link(scope, element, attrs) {
-			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+		}
+	}
+})();
+(function() {
+	'use strict';
 
-			function toggleSidebar(collapsed) {
-				if (collapsed) {
-					element.removeClass('collapsed');
-				} else {
-					element.addClass('collapsed');
-				}
+	angular
+		.module('app')
+		.factory('tasksService', tasksService);
+
+	tasksService.$inject = ['$http', '$log'];
+	function tasksService($http, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+		};
+
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
+
+	angular
+		.module('app')
+		.directive('spCompareTo', compareTo);
+
+	function compareTo() {
+		var directive = {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
+		};
+		return directive;
+
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
+
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
 			}
 		}
 	}
@@ -624,6 +578,53 @@
 					return {name: false, url: '#/login'};
 				}
 				return {name: res.data, url: '#/dashboard'};
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('SidebarController', SidebarController);
+
+	function SidebarController() {
+		var vm = this;
+
+		vm.collapsed = true;
+
+		vm.toggleSidebar = function() {
+			vm.collapsed = !vm.collapsed;
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spSidebar', sidebarDirective);
+
+	function sidebarDirective() {
+		return {
+			link: link,
+			templateUrl: 'pages/layout/sidebar/sidebar.html',
+			controller: 'SidebarController',
+			controllerAs: 'vm',
+			bindToController: true
+		};
+
+		function link(scope, element, attrs) {
+			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+
+			function toggleSidebar(collapsed) {
+				if (collapsed) {
+					element.removeClass('collapsed');
+				} else {
+					element.addClass('collapsed');
+				}
 			}
 		}
 	}

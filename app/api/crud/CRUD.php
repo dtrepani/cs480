@@ -10,7 +10,7 @@ use SP\App\Api\ConvertArray;
 abstract class CRUD
 {
     protected $db;
-    protected $table;
+    protected $table = 'person'; // Default value; for testing
 
     /**
     * @param Database   $aDB        Database to be injected, if it exists.
@@ -114,6 +114,29 @@ abstract class CRUD
     }
 
     /**
+    * Shorthand to getAll when wanting to select row equal to something.
+    *
+    * @param  string    $colName    Column name to compare to.
+    * @param  string    $where      Item to compare to.
+    * @param  mixed[]   $columns    Column names to select.
+    *
+    * @return mixed[]               Promise results with requested rows.
+    *                               See Database->query().
+    */
+    public function getBy($colName, $where, $columns = array())
+    {
+        $colNameList = ConvertArray::toColNameList($columns);
+        $bindings = array(':'.$colName=>$where);
+
+        return $this->db->query(
+            "SELECT $colNameList
+            FROM $this->table
+            WHERE $colName = :{$colName}",
+            $bindings
+        );
+    }
+
+    /**
     * Select all rows corresponding to where clause.
     *
     * @param  mixed[]   $columns    Column names.
@@ -146,12 +169,6 @@ abstract class CRUD
             "SELECT $colNameList FROM $this->table $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)
         );
-    }
-
-    /** @return string */
-    public static function getTableName()
-    {
-        return $this->table;
     }
 
     /**

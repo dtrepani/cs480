@@ -2,37 +2,46 @@
 namespace SP\App\Api\CRUD;
 
 /**
-* CRUD to be extended for events and tasks only.
 * Acts as a wrapper for its corresponding entries in activity information and recurrence.
 * All CRUDing of said entries should be done through their parent activity.
 */
 
-require_once 'CRUD.php';
 require_once __DIR__.'/../activity/shared/ActivityInfo.php';
 require_once __DIR__.'/../activity/shared/Recurrence.php';
+require_once __DIR__.'/../database/Database.php';
 require_once __DIR__.'/../ConvertArray.php';
 
-use SP\App\Api\Crud\CRUD;
 use SP\App\Api\Activity\Shared\ActivityInfo;
 use SP\App\Api\Activity\Shared\Recurrence;
+use SP\App\Api\Database\Database;
 use SP\App\Api\ConvertArray;
 
-abstract class ActivityCRUD extends CRUD
+abstract class ActivityCRUD
 {
-    protected $table;
-    protected $infoTable;
-    protected $recurrenceTable;
+    protected $table = 'cal_event'; // Default value; for testing
+    protected $infoTable = 'activity_info';
+    protected $recurrenceTable = 'recurrence';
     protected $fullActivityJoinString;
 
     /**
     * Get table names from activity's partner tables on creation.
+    * @param Database   $aDB        Database to be injected, if it exists.
     */
     public function __construct($aDB = null)
     {
-        parent::__construct($aDB);
-        $infoTable = ActivityInfo::getTableName();
-        $recurrenceTable = Recurrence::getTableName();
-        $fullActivityJoinString = $this->getFullActivityJoinString();
+        $this->db = $aDB ? $aDB : new Database();
+        $this->fullActivityJoinString = $this->getFullActivityJoinString();
+    }
+
+    /**
+    * Roll back a transaction if the last query's results were an error.
+    */
+    protected function checkForError($result)
+    {
+        if (!$result) {
+            $this->db->rollBack();
+            throw new \Exception('Error when inserting entry in CRUD->create().');
+        }
     }
 
     /**
@@ -51,6 +60,7 @@ abstract class ActivityCRUD extends CRUD
     {
         try {
             $result = $this->db->beginTransaction();
+            $this->checkForError($result);
 
             if (!empty($recurrenceBindings)) {
                 $this->createRecurrence($recurrenceBindings);
@@ -60,7 +70,7 @@ abstract class ActivityCRUD extends CRUD
             $this->createActivityInfo($infoBindings);
             $bindings['activity_info_id'] = $this->db->lastInsertId();
 
-            $result = parent::create($bindings);
+            $result = $this->createSelf($bindings);
             $this->checkForError($result['success']);
 
             return $this->db->commit();
@@ -72,6 +82,19 @@ abstract class ActivityCRUD extends CRUD
                 'message'=>$e->getMessage()
             );
         }
+    }
+
+    /**
+    * Create the activity's corresponding information entry.
+    * Must be called BEFORE creating activity to pass this id into activity.
+    *
+    * @param mixed[] $infoBindings Bindings for query. See CRUD->create().
+    */
+    protected function createActivityInfo($infoBindings)
+    {
+        $activityInfo = new ActivityInfo($this->db);
+        $result = $activityInfo->create($infoBindings);
+        $this->checkForError($result['success']);
     }
 
     /**
@@ -89,16 +112,20 @@ abstract class ActivityCRUD extends CRUD
     }
 
     /**
-    * Create the activity's corresponding information entry.
-    * Must be called BEFORE creating activity to pass this id into activity.
+    * Create the activity itself.
     *
-    * @param mixed[] $infoBindings Bindings for query. See CRUD->create().
+    * @param  mixed[]    $bindings   Column names and values of the entry.
+    * @return mixed[]                Promise results with affected row count.
+    *                                See Database->query().
     */
-    protected function createActivityInfo($infoBindings)
+    protected function createSelf($bindings)
     {
-        $activityInfo = new ActivityInfo($this->db);
-        $result = $activityInfo->create($infoBindings);
-        $this->checkForError($result['success']);
+        $lists = ConvertArray::toQueryLists($bindings);
+        return $this->db->query(
+            "INSERT INTO $this->table ({$lists['columns']})
+            VALUES ({$lists['bindings']})",
+            ConvertArray::addPrefixToKeys($bindings)
+        );
     }
 
     /**
@@ -112,7 +139,8 @@ abstract class ActivityCRUD extends CRUD
     public function delete($id)
     {
         return $this->db->query(
-            "DELETE FROM {$this->fullActivityJoinString}
+            "DELETE {$this->table}, {$this->infoTable}, {$this->recurrenceTable}
+            FROM {$this->fullActivityJoinString}
             WHERE {$this->table}.id = :id",
             array(':id'=>$id)
         );
@@ -131,7 +159,8 @@ abstract class ActivityCRUD extends CRUD
     public function deleteAll($where, $bindings = array())
     {
         return $this->db->query(
-            "DELETE FROM {$this->getFullActivityJoinString}
+            "DELETE {$this->table}, {$this->infoTable}, {$this->recurrenceTable}
+            FROM {$this->getFullActivityJoinString}
             WHERE $where",
             ConvertArray::addPrefixToKeys($bindings)
         );
@@ -154,6 +183,29 @@ abstract class ActivityCRUD extends CRUD
             FROM {$this->fullActivityJoinString}
             WHERE {$this->table}.id = :id",
             array(':id'=>$id)
+        );
+    }
+
+    /**
+    * Shorthand to getAll when wanting to select row equal to something.
+    *
+    * @param  string    $colName    Column name to compare to.
+    * @param  string    $where      Item to compare to.
+    * @param  mixed[]   $columns    Column names to select.
+    *
+    * @return mixed[]               Promise results with requested rows.
+    *                               See Database->query().
+    */
+    public function getBy($colName, $where, $columns = array())
+    {
+        $colNameList = ConvertArray::toColNameList($columns);
+        $bindings = array(':'.$colName=>$where);
+
+        return $this->db->query(
+            "SELECT $colNameList
+            FROM {$this->fullActivityJoinString}
+            WHERE $colName = :{$colName}",
+            $bindings
         );
     }
 
@@ -189,7 +241,7 @@ abstract class ActivityCRUD extends CRUD
         return $this->db->query(
             "SELECT $colNameList
             FROM {$this->fullActivityJoinString}
-            WHERE $where $order $asc",
+            $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)
         );
     }
@@ -200,38 +252,33 @@ abstract class ActivityCRUD extends CRUD
     */
     protected function getFullActivityJoinString()
     {
-        $infoAndRecurrenceJoin = "($this->infoTable
+        $infoAndRecurrenceJoin = "({$this->infoTable}
                     LEFT JOIN $this->recurrenceTable
                     ON {$this->infoTable}.{$this->recurrenceTable}_id = {$this->recurrenceTable}.id)";
-        return "($this->table
+        return "{$this->table}
                 LEFT JOIN $infoAndRecurrenceJoin
-                ON {$this->table}.id = {$this->infoTable}.{$this->table}_id)";
+                ON {$this->table}.{$this->infoTable}_id = {$this->infoTable}.id";
     }
 
     /**
     * The activity takes cares of updating entries in itself as well as
     * its corresponding activity information and recurrence entries.
+    * Binding parameters SHOULD NOT contain the table name.
     *
     * @param    int     $id                 ID of row to be updated.
     * @param    mixed[] $bindings           Bindings to be updated.
-    * @param    mixed[] $infoBindings       Activity info bindings to be updated.
-    * @param    mixed[] $recurrenceBindings Recurrence bindings to be updated.
     *
     * @return   mixed[]                     Promise results with affeced row count.
     *                                       See Database->query().
     */
-    public function update(
-        $id,
-        $bindings = array(),
-        $infoBindings = array(),
-        $recurrenceBindings = array()
-    ) {
-        $bindingSetList = ConvertArray::toBindingSetList($bindings);
+    public function update($id, $bindings)
+    {
+        $bindingsSetList = ConvertArray::toBindingSetList($bindings);
         $bindings['id'] = $id;
 
         return $this->db->query(
-            "UPDATE {$this->getFullActivityJoinString}
-            SET $bindingSetList
+            "UPDATE {$this->fullActivityJoinString}
+            SET $bindingsSetList
             WHERE {$this->table}.id = :id",
             ConvertArray::addPrefixToKeys($bindings)
         );

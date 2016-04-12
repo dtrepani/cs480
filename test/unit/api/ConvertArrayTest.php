@@ -7,10 +7,6 @@ use SP\App\Api\ConvertArray;
 
 class ConvertArrayTest extends \PHPUnit_Framework_TestCase
 {
-    protected $testArray;
-    protected $emptyArray;
-    protected $singleArray;
-
     protected function setUp()
     {
         $this->assocArray = array('a'=>'1', 'b'=>'2', 'c'=>'3');

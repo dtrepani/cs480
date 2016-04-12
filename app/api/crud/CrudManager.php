@@ -7,6 +7,7 @@ class CrudManager
     protected $itemType;
     protected $bindings;
     protected $id;
+    protected $where;
 
     /**
     * @param    string      $aReqMethod     Request method.
@@ -14,13 +15,20 @@ class CrudManager
     * @param    mixed[]     $aBindings      Bindings, only applicable to
     *                                       create and update.
     * @param    int         $anId           ID of item.
+    * @param    string      $where          Where clause, such as 'completed = true'.
     */
-    public function __construct($aReqMethod, $anItemType, $aBindings = null, $anId = null)
-    {
+    public function __construct(
+        $aReqMethod,
+        $anItemType,
+        $aBindings = array(),
+        $anId = null,
+        $aWhere = null
+    ) {
         $this->reqMethod = $aReqMethod;
         $this->itemType = $anItemType;
         $this->bindings = $aBindings;
         $this->id = $anId;
+        $this->where = $aWhere;
     }
 
     /**
@@ -32,13 +40,23 @@ class CrudManager
     {
         switch ($this->reqMethod) {
             case 'GET':
-                return $this->itemType->get($id);
+                if ($this->where) {
+                    return $this->itemType->getAll(
+                        array(),
+                        $this->bindings,
+                        $this->where
+                    );
+                }
+                return $this->itemType->get($this->id);
             case 'POST':
                 return $this->itemType->create($this->bindings);
             case 'PUT':
                 return $this->itemType->update($this->bindings);
             case 'DELETE':
-                return $this->itemType->delete($id);
+                if ($this->where) {
+                    return $this->itemType->deleteAll($this->where, $this->bindings);
+                }
+                return $this->itemType->delete($this->id);
         }
     }
 }

@@ -17,7 +17,7 @@ class ConvertArray
         $prefixedArray = array();
 
         foreach ($array as $key => $value) {
-            $prefixedArray[$prefix . $key] = $array[$key];
+            $prefixedArray[$prefix . $key] = $value;
         }
 
         return $prefixedArray;

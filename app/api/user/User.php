@@ -2,13 +2,13 @@
 namespace SP\App\Api\User;
 
 require_once __DIR__.'/../crud/CRUD.php';
-require_once __DIR__.'/../activity/tasks/label/Label.php';
-require_once __DIR__.'/../activity/calendars/calendar/Calendar.php';
+require_once __DIR__.'/../activity/task/Label.php';
+require_once __DIR__.'/../activity/calendar/Calendar.php';
 require_once __DIR__.'/../ConvertArray.php';
 
 use SP\App\Api\Crud\CRUD;
-use SP\App\Api\Activity\Tasks\Label\Label;
-use SP\App\Api\Activity\Calendars\Calendar\Calendar;
+use SP\App\Api\Activity\Task\Label;
+use SP\App\Api\Activity\Calendar\Calendar;
 use SP\App\Api\ConvertArray;
 
 class User extends CRUD

@@ -14,7 +14,7 @@
 		};
 
 		function login(user) {
-			return $http.post('api/managers/loginManager.php', user)
+			return $http.post('api/user/loginManager.php', user)
 				.then(loginComplete)
 				.catch(loginFailed);
 
