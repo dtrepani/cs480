@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS session (
 );
 
 CREATE TABLE IF NOT EXISTS recurrence (
-	id				INT		NOT NULL AUTO_INCREMENT,
+	id					INT		NOT NULL AUTO_INCREMENT,
+	activity_info_id	INT				NOT NULL,
 	freq			ENUM('daily', 'secondly', 'minutely', 'hourly', 'weekly', 'monthly', 'yearly') NOT NULL,
 	until			DATETIME,
 	count			INT,
@@ -38,23 +39,22 @@ CREATE TABLE IF NOT EXISTS recurrence (
 	by_week_no		TEXT,
 	by_month 		TEXT,
 	by_set_pos		INT,
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	FOREIGN KEY (activity_info_id)
+		REFERENCES activity_info(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS activity_info (
 	id				INT			NOT NULL AUTO_INCREMENT,
-	recurrence_id	INT,
 	summary			VARCHAR(256)	NOT NULL,
 	created			DATETIME	NOT NULL,
 	color			VARCHAR(32),
 	note			TEXT,
 	reminder		DATETIME,
 	priority		ENUM('normal', 'low', 'high') NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (recurrence_id)
-		REFERENCES recurrence(id)
-		ON UPDATE CASCADE
-		ON DELETE CASCADE
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS calendar (

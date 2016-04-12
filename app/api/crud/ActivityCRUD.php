@@ -62,14 +62,10 @@ abstract class ActivityCRUD
             $result = $this->db->beginTransaction();
             $this->checkForError($result);
 
-            if (!empty($recurrenceBindings)) {
-                $this->createRecurrence($recurrenceBindings);
-                $infoBindings['recurrence_id'] = $this->db->lastInsertId();
-            }
-
             $this->createActivityInfo($infoBindings);
-            $bindings['activity_info_id'] = $this->db->lastInsertId();
+            $bindings['activity_info_id'] = $recurrenceBindings['activity_info_id'] = $this->db->lastInsertId();
 
+            $this->createRecurrence($recurrenceBindings);
             $result = $this->createSelf($bindings);
             $this->checkForError($result['success']);
 
@@ -92,6 +88,7 @@ abstract class ActivityCRUD
     */
     protected function createActivityInfo($infoBindings)
     {
+        $infoBindings['created'] = date('Y-m-d H:i:s');
         $activityInfo = new ActivityInfo($this->db);
         $result = $activityInfo->create($infoBindings);
         $this->checkForError($result['success']);
@@ -99,9 +96,6 @@ abstract class ActivityCRUD
 
     /**
     * Create the activity's corresponding recurrence entry.
-    * Must be called BEFORE creating activity information to pass this id
-    * into activity information.
-    *
     * @param mixed[] $recurrenceBindings Bindings for query. See CRUD->create().
     */
     protected function createRecurrence($recurrenceBindings)
@@ -254,7 +248,7 @@ abstract class ActivityCRUD
     {
         $infoAndRecurrenceJoin = "({$this->infoTable}
                     LEFT JOIN $this->recurrenceTable
-                    ON {$this->infoTable}.{$this->recurrenceTable}_id = {$this->recurrenceTable}.id)";
+                    ON {$this->infoTable}.id = {$this->recurrenceTable}.{$this->infoTable}_id)";
         return "{$this->table}
                 LEFT JOIN $infoAndRecurrenceJoin
                 ON {$this->table}.{$this->infoTable}_id = {$this->infoTable}.id";

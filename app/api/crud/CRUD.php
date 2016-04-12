@@ -47,24 +47,6 @@ abstract class CRUD
     }
 
     /**
-    * Raw creation query without bindings.
-    * For use with nested queries in the values.
-    *
-    * @param mixed[]    $colsAndVals Column names and values of the entry.
-    *
-    * @return mixed[]                Promise results with affected row count.
-    *                                See Database->query().
-    */
-    public function createRaw($colsAndVals)
-    {
-        $lists = ConvertArray::toKeyValueList($colsAndVals, '');
-        return $this->db->query(
-            "INSERT INTO $this->table ({$lists['keys']})
-            VALUES ({$lists['values']})"
-        );
-    }
-
-    /**
     * @param  int       $id     ID of row to be deleted.
     * @return mixed[]           Promise results with affected row count.
     *                           See Database->query().
