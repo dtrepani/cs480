@@ -3,11 +3,16 @@ namespace SP\App\Api\CRUD;
 
 /**
 * Acts as a wrapper for its corresponding entries in activity information and recurrence.
-* All CRUDing of said entries should be done through their parent activity.
+* All CRUDing of said entries should be done through this activity.
+* Anything not accessing activity with its id will also require the user id the
+* activity belongs to. This is to prevent users from viewing or changing other
+* users' activities.
 */
 
 require_once __DIR__.'/../activity/shared/ActivityInfo.php';
 require_once __DIR__.'/../activity/shared/Recurrence.php';
+require_once __DIR__.'/../activity/calendar/Calendar.php';
+require_once __DIR__.'/../activity/task/Label.php';
 require_once __DIR__.'/../database/Database.php';
 require_once __DIR__.'/../ConvertArray.php';
 
@@ -18,10 +23,13 @@ use SP\App\Api\ConvertArray;
 
 abstract class ActivityCRUD
 {
-    protected $table = 'cal_event'; // Default value; for testing
+    // Default values for testing
+    protected $table = 'cal_event';
     protected $infoTable = 'activity_info';
     protected $recurrenceTable = 'recurrence';
-    protected $fullActivityJoinString;
+    protected $parentTable = 'calendar';
+    protected $joinedActivity;
+    protected $joinedActivityWithParent;
 
     /**
     * Get table names from activity's partner tables on creation.
@@ -30,7 +38,8 @@ abstract class ActivityCRUD
     public function __construct($aDB = null)
     {
         $this->db = $aDB ? $aDB : new Database();
-        $this->fullActivityJoinString = $this->getFullActivityJoinString();
+        $this->joinedActivity = $this->getJoinedActivity();
+        $this->joinedActivityWithParent = $this->getJoinedActivityWithParent();
     }
 
     /**
@@ -48,6 +57,7 @@ abstract class ActivityCRUD
     * Create the corresponding entries in recurrence and activity information
     * used by the activity.
     *
+    * @param  int        $parentID              ID of the parent of the activity.
     * @param  mixed[]    $bindings              Bindings for the activity. MUST include
     *                                           parent id (label_id or calendar_id).
     * @param  mixed[]    $infoBindings          Bindings for the activity information.
@@ -56,11 +66,20 @@ abstract class ActivityCRUD
     * @return mixed[] Promise results with whether or not activity and its corresponding
     *                 entries were created successfully. See Database->query().
     */
-    public function create($bindings, $infoBindings, $recurrenceBindings = array())
-    {
+    public function create(
+        $parentID,
+        $bindings,
+        $infoBindings,
+        $recurrenceBindings = array()
+    ) {
         try {
             $result = $this->db->beginTransaction();
             $this->checkForError($result);
+
+            $bindingsNameForParent = ($this->table === 'cal_event'
+                ? 'calendar_id'
+                : 'label_id');
+            $bindings[$bindingsNameForParent] = $parentID;
 
             $this->createActivityInfo($infoBindings);
             $bindings['activity_info_id'] = $recurrenceBindings['activity_info_id'] = $this->db->lastInsertId();
@@ -124,57 +143,47 @@ abstract class ActivityCRUD
 
     /**
     * Delete the activity and its corresponding entries in the other tables.
-    *
-    * @param  int       $id     ID of row to be deleted.
-    *
-    * @return mixed[]           Promise results with affected row count.
-    *                           See Database->query().
+    * Deleting the activity info row will delete the activity and recurrence rows, too.
+    * @see CRUD->delete().
     */
     public function delete($id)
     {
         return $this->db->query(
-            "DELETE {$this->table}, {$this->infoTable}, {$this->recurrenceTable}
-            FROM {$this->fullActivityJoinString}
+            "DELETE {$this->infoTable}
+            FROM {$this->joinedActivity}
             WHERE {$this->table}.id = :id",
             array(':id'=>$id)
         );
     }
 
     /**
-    * Delete all rows matching where clause.
+    * Delete all children of the parent corresponding to the where clause.
+    * Will only ever delete children for a single user.
     *
-    * @param  string    $where      Where clause, such as 'completed = true'.
-    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
-    *                               a ':' prefix.
-    *
-    * @return mixed[]               Promise results with affected row count.
-    *                               See Database->query().
+    * @param  int   $userID   Corresponding user.
+    * @see CRUD->deleteWhere().
     */
-    public function deleteAll($where, $bindings = array())
+    public function deleteWhere($userID, $where, $bindings = array())
     {
+        $bindings['person_id'] = $userID;
         return $this->db->query(
-            "DELETE {$this->table}, {$this->infoTable}, {$this->recurrenceTable}
-            FROM {$this->getFullActivityJoinString}
-            WHERE $where",
+            "DELETE {$this->infoTable}
+            FROM {$this->joinedActivityWithParent}
+            WHERE {$this->parentTable}.person_id = :person_id AND $where",
             ConvertArray::addPrefixToKeys($bindings)
         );
     }
 
     /**
     * Get the specified columns from this activity and its corresponding tables.
-    *
-    * @param  int      $id          ID of row to grab.
-    * @param  mixed[]  $columns     Column names.
-    *
-    * @return mixed[]               Promise results with requested row.
-    *                               See Database->query().
+    * @see CRUD->get().
     */
     public function get($id, $columns = array())
     {
         $colNameList = ConvertArray::toColNameList($columns);
         return $this->db->query(
             "SELECT $colNameList
-            FROM {$this->fullActivityJoinString}
+            FROM {$this->joinedActivity}
             WHERE {$this->table}.id = :id",
             array(':id'=>$id)
         );
@@ -182,50 +191,37 @@ abstract class ActivityCRUD
 
     /**
     * Shorthand to getAll when wanting to select row equal to something.
-    *
-    * @param  string    $colName    Column name to compare to.
-    * @param  string    $where      Item to compare to.
-    * @param  mixed[]   $columns    Column names to select.
-    *
-    * @return mixed[]               Promise results with requested rows.
-    *                               See Database->query().
+    * @param  int   $userID   Corresponding user.
+    * @see CRUD->getBy().
     */
-    public function getBy($colName, $where, $columns = array())
+    public function getBy($userID, $colName, $where, $columns = array())
     {
         $colNameList = ConvertArray::toColNameList($columns);
-        $bindings = array(':'.$colName=>$where);
+        $bindings = array(':'.$colName=>$where, ':person_id'=>$userID);
 
         return $this->db->query(
             "SELECT $colNameList
-            FROM {$this->fullActivityJoinString}
-            WHERE $colName = :{$colName}",
+            FROM {$this->joinedActivityWithParent}
+            WHERE {$this->parentTable}.person_id = :person_id AND $colName = :{$colName}",
             $bindings
         );
     }
 
     /**
     * Select all rows corresponding to where clause.
-    *
-    * @param  mixed[]   $columns    Column names.
-    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
-    *                               a ':' prefix.
-    * @param  string    $where      Where clause, such as 'completed = true'.
-    * @param  string    $order      Order By clause, such as 'completed'.
-    *                               Refers to columns.
-    * @param  bool      $asc        Order by ascending or descending order.
-    *
-    * @return mixed[]               Promise results with requested rows.
-    *                               See Database->query().
+    * @see CRUD->getWhere().
     */
-    public function getAll(
-        $columns = array(),
-        $bindings = array(),
+    public function getWhere(
+        $userID,
         $where = '',
         $order = '',
-        $asc = ''
+        $asc = '',
+        $bindings = array(),
+        $columns = array()
     ) {
         $colNameList = ConvertArray::toColNameList($columns);
-        $where = empty($where) ? '' : 'WHERE ' . $where;
+        $where = (empty($where) ? '' : 'AND ' . $where);
+        $bindings['person_id'] = $userID;
 
         if (!empty($order)) {
             $order = 'ORDER BY ' . $order;
@@ -234,8 +230,8 @@ abstract class ActivityCRUD
 
         return $this->db->query(
             "SELECT $colNameList
-            FROM {$this->fullActivityJoinString}
-            $where $order $asc",
+            FROM {$this->joinedActivityWithParent}
+            WHERE {$this->parentTable}.person_id = :person_id $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)
         );
     }
@@ -244,14 +240,28 @@ abstract class ActivityCRUD
     * Selecting rows from the activity involves left joining on three different tables.
     * @return string The joined tables.
     */
-    protected function getFullActivityJoinString()
+    private function getJoinedActivity()
     {
         $infoAndRecurrenceJoin = "({$this->infoTable}
                     LEFT JOIN $this->recurrenceTable
                     ON {$this->infoTable}.id = {$this->recurrenceTable}.{$this->infoTable}_id)";
         return "{$this->table}
-                LEFT JOIN $infoAndRecurrenceJoin
+                JOIN $infoAndRecurrenceJoin
                 ON {$this->table}.{$this->infoTable}_id = {$this->infoTable}.id";
+    }
+
+    /**
+    * Get the full join string of the activity ands its label.
+    * This is to gain access to the user's id, which is required to by many functions
+    * since one user should never be viewing or affecting the activities of
+    * another user.
+    * @return string
+    */
+    private function getJoinedActivityWithParent()
+    {
+        return "{$this->parentTable}
+                JOIN ({$this->getJoinedActivity()})
+                ON {$this->parentTable}.id = {$this->table}.{$this->parentTable}_id";
     }
 
     /**
@@ -271,7 +281,7 @@ abstract class ActivityCRUD
         $bindings['id'] = $id;
 
         return $this->db->query(
-            "UPDATE {$this->fullActivityJoinString}
+            "UPDATE {$this->joinedActivity}
             SET $bindingsSetList
             WHERE {$this->table}.id = :id",
             ConvertArray::addPrefixToKeys($bindings)

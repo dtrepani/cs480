@@ -99,7 +99,36 @@ class User extends CRUD
         if (isset($bindings['password'])) {
             $bindings['password'] = password_hash($bindings['password'], PASSWORD_DEFAULT);
         }
-
         return $bindings;
+    }
+
+    /**
+    * @see ParentCRUD->getAllChildrenWhere().
+    */
+    public function getAllEventsWhere(
+        $userID,
+        $where = '',
+        $order = '',
+        $asc = '',
+        $bindings = array(),
+        $columns = array()
+    ) {
+        $cal = new Calendar($this->db);
+        return $cal->getAllChildrenWhere($userID, $where, $order, $asc, $bindings, $columns);
+    }
+
+    /**
+    * @see ParentCRUD->getAllChildrenWhere().
+    */
+    public function getAllTasksWhere(
+        $userID,
+        $where = '',
+        $order = '',
+        $asc = '',
+        $bindings = array(),
+        $columns = array()
+    ) {
+        $label = new Label($this->db);
+        return $label->getAllChildrenWhere($userID, $where, $order, $asc, $bindings, $columns);
     }
 }

@@ -20,7 +20,8 @@
 			get: get,
 			create: create,
 			update: update,
-			remove: remove
+			remove: remove,
+			getWhere: getWhere
 		};
 
 		return crud;
@@ -38,6 +39,18 @@
 		*/
 		function get(id) {
 			return $http.get(this.base + '?id=' + id) // jshint ignore:line
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		/**
+		* @param	{string}	userID	For activities (tasks, events), the corresponding
+		*								user for the activity. Pass empty string
+		*								otherwise.
+		* @return	{string[]}			Promise with 'data' == query results on success.
+		*/
+		function getWhere(where, userID) {
+			return $http.get(this.base + '?where=' + where + '?id=' + id) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}

@@ -96,7 +96,7 @@ class CRUDTest extends \PHPUnit_Framework_TestCase
     * @depends testCreate
     * @depends testDelete
     */
-    public function testGetAll()
+    public function testGetWhere()
     {
         $bindings2 = array(
             'name'=>'x',
@@ -108,11 +108,11 @@ class CRUDTest extends \PHPUnit_Framework_TestCase
         $this->stub->create($bindings2);
         $this->stub->create($bindings3);
 
-        $result = $this->stub->getAll(
-            array(),
-            array('email'=>$this->bindings['email']),
+        $result = $this->stub->getWhere(
             'email = :email',
-            'name'
+            'name',
+            '',
+            array('email'=>$this->bindings['email'])
         )['data'];
         $this->assertEquals($result[0]['name'], $this->bindings['name']);
         $this->assertEquals($result[1]['name'], $bindings2['name']);

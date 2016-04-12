@@ -10,7 +10,7 @@ use SP\App\Api\ConvertArray;
 abstract class CRUD
 {
     protected $db;
-    protected $table = 'person'; // Default value; for testing
+    protected $table = 'person'; // Default value for testing
 
     /**
     * @param Database   $aDB        Database to be injected, if it exists.
@@ -69,7 +69,7 @@ abstract class CRUD
     * @return mixed[]               Promise results with affected row count.
     *                               See Database->query().
     */
-    public function deleteAll($where, $bindings = array())
+    public function deleteWhere($where, $bindings = array())
     {
         return $this->db->query(
             "DELETE FROM $this->table WHERE $where",
@@ -121,26 +121,25 @@ abstract class CRUD
     /**
     * Select all rows corresponding to where clause.
     *
-    * @param  mixed[]   $columns    Column names.
-    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
-    *                               a ':' prefix.
     * @param  string    $where      Where clause, such as 'completed = true'.
     * @param  string    $order      Order By clause, such as 'completed'.
     *                               Refers to columns.
     * @param  bool      $asc        Order by ascending or descending order.
+    * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
+    *                               a ':' prefix.
+    * @param  mixed[]   $columns    Column names to get.
     *
     * @return mixed[]               Promise results with requested rows.
     *                               See Database->query().
     */
-    public function getAll(
-        $columns = array(),
-        $bindings = array(),
-        $where = '',
+    public function getWhere(
+        $where,
         $order = '',
-        $asc = ''
+        $asc = '',
+        $bindings = array(),
+        $columns = array()
     ) {
         $colNameList = ConvertArray::toColNameList($columns);
-        $where = empty($where) ? '' : 'WHERE ' . $where;
 
         if (!empty($order)) {
             $order = 'ORDER BY ' . $order;
@@ -148,7 +147,9 @@ abstract class CRUD
         }
 
         return $this->db->query(
-            "SELECT $colNameList FROM $this->table $where $order $asc",
+            "SELECT $colNameList
+            FROM $this->table
+            WHERE $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)
         );
     }

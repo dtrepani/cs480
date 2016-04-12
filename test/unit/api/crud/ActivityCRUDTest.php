@@ -6,14 +6,10 @@ namespace SP\Test\Unit\Api\CRUD;
 */
 
 require_once __DIR__.'/../../../../app/api/crud/ActivityCRUD.php';
-require_once __DIR__.'/../../../../app/api/activity/shared/ActivityInfo.php';
 require_once __DIR__.'/../../../../app/api/activity/calendar/Calendar.php';
-require_once __DIR__.'/../../../../app/api/activity/shared/Recurrence.php';
 require_once __DIR__.'/../../../../app/api/user/User.php';
 use SP\App\Api\CRUD\ActivityCRUD;
-use SP\App\Api\Activity\Shared\ActivityInfo;
 use SP\App\Api\Activity\Calendar\Calendar;
-use SP\App\Api\Activity\Shared\Recurrence;
 use SP\App\Api\User\User;
 
 class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
@@ -21,15 +17,25 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->stub = $this->getMockForAbstractClass('SP\\App\\Api\\CRUD\\ActivityCRUD');
-        $this->info = new ActivityInfo();
-        $this->recurrence = new Recurrence();
         $this->user = new User();
         $this->cal = new Calendar();
 
         $this->userBindings = array('name'=>'b', 'password'=>'b');
-        $this->bindings = array('description'=>'a', 'location'=>'b');
-        $this->infoBindings = array('summary'=>'c', 'note'=>'d');
-        $this->recBindings = array('freq'=>'weekly', 'repeat_interval'=>2);
+        $this->bindings1 = array(
+            'event'=>array('description'=>'a1'),
+            'info'=>array('summary'=>'c1', 'note'=>'d1'),
+            'rec'=>array('freq'=>'hourly', 'repeat_interval'=>1)
+        );
+        $this->bindings2 = array(
+            'event'=>array('description'=>'a2'),
+            'info'=>array('summary'=>'c2', 'note'=>'d2'),
+            'rec'=>array('freq'=>'daily', 'repeat_interval'=>5)
+        );
+        $this->bindings3 = array(
+            'event'=>array('description'=>'a3'),
+            'info'=>array('summary'=>'c3', 'note'=>'d3'),
+            'rec'=>array('freq'=>'weekly', 'repeat_interval'=>5)
+        );
 
         $this->userID = $this->user->getBy('name', $this->userBindings['name']);
         // Will only succeed after testCreate creates new user.
@@ -42,11 +48,14 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->stub);
-        unset($this->info);
-        unset($this->recurrence);
-        unset($this->bindings);
-        unset($this->infoBindings);
-        unset($this->recBindings);
+        unset($this->user);
+        unset($this->cal);
+        unset($this->userID);
+        unset($this->calID);
+        unset($this->userBindings);
+        unset($this->bindings1);
+        unset($this->bindings2);
+        unset($this->bindings3);
     }
 
     public function testCreate()
@@ -54,12 +63,12 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
         $this->user->create($this->userBindings);
         $this->userID = $this->user->getBy('name', $this->userBindings['name'])['data'][0]['id'];
         $this->calID = $this->cal->getBy('person_id', $this->userID)['data'][0]['id'];
-        $this->bindings['calendar_id'] = $this->calID;
 
         $result = $this->stub->create(
-            $this->bindings,
-            $this->infoBindings,
-            $this->recBindings
+            $this->calID,
+            $this->bindings1['event'],
+            $this->bindings1['info'],
+            $this->bindings1['rec']
         );
         $this->assertTrue($result['success']);
     }
@@ -70,14 +79,15 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     public function testGetBy()
     {
         $result = $this->stub->getBy(
+            $this->userID,
             'summary',
-            $this->infoBindings['summary']
+            $this->bindings1['info']['summary']
         )['data'][0];
-        $this->assertEquals($result['description'], $this->bindings['description']);
-        $this->assertEquals($result['summary'], $this->infoBindings['summary']);
-        $this->assertEquals($result['freq'], $this->recBindings['freq']);
+        $this->assertEquals($result['description'], $this->bindings1['event']['description']);
+        $this->assertEquals($result['summary'], $this->bindings1['info']['summary']);
+        $this->assertEquals($result['freq'], $this->bindings1['rec']['freq']);
 
-        $result = $this->stub->getBy('summary', 'ERROR');
+        $result = $this->stub->getBy($this->userID, 'summary', 'ERROR');
         $this->assertFalse($result['success']);
     }
 
@@ -88,15 +98,16 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     public function testGet()
     {
         $data = $this->stub->getBy(
+            $this->userID,
             'summary',
-            $this->infoBindings['summary']
+            $this->bindings1['info']['summary']
         )['data'][0];
         $result = $this->stub->get($data['id'])['data'][0];
 
         $this->assertEquals($result['id'], $data['id']);
-        $this->assertEquals($result['description'], $this->bindings['description']);
-        $this->assertEquals($result['summary'], $this->infoBindings['summary']);
-        $this->assertEquals($result['freq'], $this->recBindings['freq']);
+        $this->assertEquals($result['description'], $this->bindings1['event']['description']);
+        $this->assertEquals($result['summary'], $this->bindings1['info']['summary']);
+        $this->assertEquals($result['freq'], $this->bindings1['rec']['freq']);
 
         $result = $this->stub->get(-1);
         $this->assertFalse($result['success']);
@@ -113,11 +124,11 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
             'note'=>'updated note',
             'freq'=>'daily'
         );
-        $result = $this->stub->getBy('summary', $this->infoBindings['summary'])['data'][0];
+        $result = $this->stub->getBy($this->userID, 'summary', $this->bindings1['info']['summary'])['data'][0];
         $result = $this->stub->update($result['id'], $updateBindings);
         $this->assertGreaterThanOrEqual(1, $result['data']);
 
-        $result = $this->stub->getBy('summary', $this->infoBindings['summary'])['data'][0];
+        $result = $this->stub->getBy($this->userID, 'summary', $this->bindings1['info']['summary'])['data'][0];
         $this->assertEquals($result['description'], $updateBindings['description']);
         $this->assertEquals($result['note'], $updateBindings['note']);
         $this->assertEquals($result['freq'], $updateBindings['freq']);
@@ -129,9 +140,9 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     */
     public function testDelete()
     {
-        $data = $this->stub->getBy('summary', $this->infoBindings['summary'])['data'][0];
+        $data = $this->stub->getBy($this->userID, 'summary', $this->bindings1['info']['summary'])['data'][0];
         $result = $this->stub->delete($data['id']);
-        $this->assertGreaterThanOrEqual(1, $result['data']);
+        $this->assertEquals($result['data'], 1);
         $result = $this->stub->delete($data['id']);
         $this->assertEquals($result['data'], 0);
     }
@@ -140,44 +151,36 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     * @depends testCreate
     * @depends testDelete
     */
-    public function testGetAll()
+    public function testGetWhere()
     {
-        $bindings1 = array(
-            'event'=>array('calendar_id'=>$this->calID, 'description'=>'a1'),
-            'info'=>array('summary'=>'c1', 'note'=>'d1'),
-            'rec'=>array('freq'=>'hourly', 'repeat_interval'=>1)
-        );
-        $bindings2 = array(
-            'event'=>array('calendar_id'=>$this->calID, 'description'=>'a2'),
-            'info'=>array('summary'=>'c2', 'note'=>'d2'),
-            'rec'=>array('freq'=>'daily', 'repeat_interval'=>5)
-        );
-        $bindings3 = array(
-            'event'=>array('calendar_id'=>$this->calID, 'description'=>'a3'),
-            'info'=>array('summary'=>'c3', 'note'=>'d3'),
-            'rec'=>array('freq'=>'weekly', 'repeat_interval'=>5)
-        );
+        $this->stub->create($this->calID, $this->bindings1['event'], $this->bindings1['info'], $this->bindings1['rec']);
+        $this->stub->create($this->calID, $this->bindings2['event'], $this->bindings2['info'], $this->bindings2['rec']);
+        $this->stub->create($this->calID, $this->bindings3['event'], $this->bindings3['info'], $this->bindings3['rec']);
 
-        $this->stub->create($bindings1['event'], $bindings1['info'], $bindings1['rec']);
-        $this->stub->create($bindings2['event'], $bindings2['info'], $bindings2['rec']);
-        $this->stub->create($bindings3['event'], $bindings3['info'], $bindings3['rec']);
+        $result = $this->stub->getWhere($this->userID, '', 'summary')['data'];
+        $this->assertEquals($result[0]['summary'], $this->bindings1['info']['summary']);
+        $this->assertEquals($result[1]['summary'], $this->bindings2['info']['summary']);
+        $this->assertEquals($result[2]['summary'], $this->bindings3['info']['summary']);
 
-        $result = $this->stub->getAll(
-            array(),
-            array(),
-            'repeat_interval > 1',
-            'summary'
-        )['data'];
-        $this->assertEquals($result[0]['summary'], $bindings2['info']['summary']);
-        $this->assertEquals($result[1]['summary'], $bindings3['info']['summary']);
+        $result = $this->stub->getWhere($this->userID, 'repeat_interval > 1', 'summary')['data'];
+        $this->assertEquals($result[0]['summary'], $this->bindings2['info']['summary']);
+        $this->assertEquals($result[1]['summary'], $this->bindings3['info']['summary']);
         $this->assertFalse(isset($result[2]));
+    }
 
-        $result = $this->stub->getBy('summary', $bindings1['info']['summary'])['data'][0];
-        $this->stub->delete($result['id']);
-        $result = $this->stub->getBy('summary', $bindings2['info']['summary'])['data'][0];
-        $this->stub->delete($result['id']);
-        $result = $this->stub->getBy('summary', $bindings3['info']['summary'])['data'][0];
-        $this->stub->delete($result['id']);
+    /**
+    * @depends testGetWhere
+    */
+    public function testDeleteWhere()
+    {
+        $result = $this->stub->deleteWhere($this->userID, 'repeat_interval > 1');
+        $this->assertEquals($result['data'], 2);
+
+        $result = $this->stub->deleteWhere($this->userID, 'repeat_interval = 1');
+        $this->assertEquals($result['data'], 1);
+
+        $result = $this->stub->deleteWhere($this->userID, 'repeat_interval < 10');
+        $this->assertEquals($result['data'], 0);
 
         $this->user->delete($this->userID);
     }

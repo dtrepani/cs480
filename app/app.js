@@ -109,7 +109,8 @@
 			get: get,
 			create: create,
 			update: update,
-			remove: remove
+			remove: remove,
+			getWhere: getWhere
 		};
 
 		return crud;
@@ -127,6 +128,18 @@
 		*/
 		function get(id) {
 			return $http.get(this.base + '?id=' + id) // jshint ignore:line
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		/**
+		* @param	{string}	userID	For activities (tasks, events), the corresponding
+		*								user for the activity. Pass empty string
+		*								otherwise.
+		* @return	{string[]}			Promise with 'data' == query results on success.
+		*/
+		function getWhere(where, userID) {
+			return $http.get(this.base + '?where=' + where + '?id=' + id) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -237,67 +250,39 @@
 (function() {
 	'use strict';
 
-	angular
-		.module('app')
-		.controller('DashboardController', DashboardController);
-
-	function DashboardController() {
-
-	}
-})();
-(function() {
-	'use strict';
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
 
 	angular
 		.module('app')
-		.controller('RegisterController', RegisterController);
+		.directive('spCompareTo', compareTo);
 
-	RegisterController.$inject = ['registerService'];
-	function RegisterController(registerService) {
-		var vm = this;
-		vm.loading = false;
-		vm.error = '';
-
-		vm.register = register;
-
-		function register() {
-			vm.loading = true;
-			registerService.register(vm.user)
-				.then(registrationComplete);
-
-			function registrationComplete(response) {
-				vm.loading = false;
-				vm.error = response;
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('registerService', registerService);
-
-	registerService.$inject = ['$location', '$log', 'crudService'];
-	function registerService($location, $log, crudService) {
-		var vm = this;  // jshint ignore:line
-		vm.crud = new crudService('user');
-
-		return {
-			register: register
+	function compareTo() {
+		var directive = {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
 		};
+		return directive;
 
-		function register(user) {
-			return vm.crud.create(user)
-				.then(registrationComplete);
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
 
-			function registrationComplete(response) {
-				if (response.success === 'false') {
-					$log.error(response.title);
-					return response.title;
-				}
-				$location.url('/login');
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
 			}
 		}
 	}
@@ -416,39 +401,67 @@
 (function() {
 	'use strict';
 
-	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
+	angular
+		.module('app')
+		.controller('DashboardController', DashboardController);
+
+	function DashboardController() {
+
+	}
+})();
+(function() {
+	'use strict';
 
 	angular
 		.module('app')
-		.directive('spCompareTo', compareTo);
+		.controller('RegisterController', RegisterController);
 
-	function compareTo() {
-		var directive = {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
+		var vm = this;
+		vm.loading = false;
+		vm.error = '';
+
+		vm.register = register;
+
+		function register() {
+			vm.loading = true;
+			registerService.register(vm.user)
+				.then(registrationComplete);
+
+			function registrationComplete(response) {
+				vm.loading = false;
+				vm.error = response;
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('registerService', registerService);
+
+	registerService.$inject = ['$location', '$log', 'crudService'];
+	function registerService($location, $log, crudService) {
+		var vm = this;  // jshint ignore:line
+		vm.crud = new crudService('user');
+
+		return {
+			register: register
 		};
-		return directive;
 
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
+		function register(user) {
+			return vm.crud.create(user)
+				.then(registrationComplete);
 
-			function cleanUp() {
-				unbindWatch();
-			}
-
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
+			function registrationComplete(response) {
+				if (response.success === 'false') {
+					$log.error(response.title);
+					return response.title;
+				}
+				$location.url('/login');
 			}
 		}
 	}

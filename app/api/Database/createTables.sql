@@ -22,6 +22,17 @@ CREATE TABLE IF NOT EXISTS session (
 	PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS activity_info (
+	id				INT			NOT NULL AUTO_INCREMENT,
+	summary			VARCHAR(256)	NOT NULL,
+	created			DATETIME	NOT NULL,
+	color			VARCHAR(32),
+	note			TEXT,
+	reminder		DATETIME,
+	priority		ENUM('normal', 'low', 'high') NOT NULL,
+	PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS recurrence (
 	id					INT		NOT NULL AUTO_INCREMENT,
 	activity_info_id	INT				NOT NULL,
@@ -44,17 +55,6 @@ CREATE TABLE IF NOT EXISTS recurrence (
 		REFERENCES activity_info(id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS activity_info (
-	id				INT			NOT NULL AUTO_INCREMENT,
-	summary			VARCHAR(256)	NOT NULL,
-	created			DATETIME	NOT NULL,
-	color			VARCHAR(32),
-	note			TEXT,
-	reminder		DATETIME,
-	priority		ENUM('normal', 'low', 'high') NOT NULL,
-	PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS calendar (
