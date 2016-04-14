@@ -5,28 +5,28 @@ class CrudManager
 {
     protected $reqMethod;
     protected $itemType;
-    protected $bindings;
+    protected $data;
     protected $id;
     protected $where;
 
     /**
     * @param    string      $aReqMethod     Request method.
     * @param    CRUD        $anItemType     Item type to act on.
-    * @param    mixed[]     $aBindings      Bindings, only applicable to
-    *                                       create and update.
+    * @param    mixed[]     $aData          Bindings (only applicable to create and
+    *                                       update) or where clause, if $aWhere is true.
     * @param    int         $anId           ID of item.
-    * @param    string      $where          Where clause, such as 'completed = true'.
+    * @param    string      $aWhere          Whether or not to use where.
     */
     public function __construct(
         $aReqMethod,
         $anItemType,
-        $aBindings = array(),
+        $aData = array(),
         $anId = null,
         $aWhere = null
     ) {
         $this->reqMethod = $aReqMethod;
         $this->itemType = $anItemType;
-        $this->bindings = $aBindings;
+        $this->data = $aData;
         $this->id = $anId;
         $this->where = $aWhere;
     }
@@ -41,14 +41,11 @@ class CrudManager
             case 'GET':
                 return $this->getGetResponse();
             case 'POST':
-                return $this->itemType->create($this->bindings);
+                return $this->itemType->create($this->data);
             case 'PUT':
-                return $this->itemType->update($this->bindings);
+                return $this->itemType->update($this->data);
             case 'DELETE':
-                if ($this->where) {
-                    return $this->itemType->deleteAll($this->where, $this->bindings);
-                }
-                return $this->itemType->delete($this->id);
+                return $this->getDeleteResponse();
         }
     }
 
@@ -62,11 +59,25 @@ class CrudManager
     private function getGetResponse()
     {
         if ($this->where) {
-            if (is_a($this->itemType, 'ActivityCRUD')) {
-                return $this->itemType->getWhere($this->id, $this->where, '', '', $this->bindings);
+            if ($this->itemType instanceof ActivityCRUD) {
+                return $this->itemType->getWhere($this->id, $this->data, '', '');
             }
-            return $this->itemType->getWhere($this->where, '', '', $this->bindings);
+            return $this->itemType->getWhere($this->data, '', '');
         }
         return $this->itemType->get($this->id);
+    }
+
+    /**
+    * @see getGetResponse(), except for 'DELETE'
+    */
+    private function getDeleteResponse()
+    {
+        if ($this->where) {
+            if (is_a($this->itemType, 'ActivityCRUD')) {
+                return $this->itemType->deleteWhere($this->id, $this->data, '', '');
+            }
+            return $this->itemType->deleteWhere($this->data, '', '');
+        }
+        return $this->itemType->delete($this->id);
     }
 }

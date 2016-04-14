@@ -57,7 +57,7 @@ class SessionHandler implements \SessionHandlerInterface
 
     public function gc($maxLifetime)
     {
-        $result = $this->session->deleteAll(
+        $result = $this->session->deleteWhere(
             'last_accessed < :last_accessed',
             array('last_accessed'=>date('Y-m-d H:i:s', strtotime('+1 hour')))
         );

@@ -8,20 +8,17 @@
 	RegisterController.$inject = ['registerService'];
 	function RegisterController(registerService) {
 		var vm = this;
-		vm.loading = false;
 		vm.error = '';
-
+		vm.loading = false;
 		vm.register = register;
 
 		function register() {
 			vm.loading = true;
 			registerService.register(vm.user)
-				.then(registrationComplete);
-
-			function registrationComplete(response) {
-				vm.loading = false;
-				vm.error = response;
-			}
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
 		}
 	}
 })();

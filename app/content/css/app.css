@@ -48,7 +48,7 @@ table {
 #calendar:after, #calendar-header:after {
   clear: both; }
 
-.task-list li .task-name, .all-day-events, .events {
+.task-list li .task-summary, .all-day-events, .events {
   white-space: nowrap;
   overflow-x: hidden; }
 
@@ -418,7 +418,7 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
     display: table-cell;
     width: 30px;
     width: 1.875rem; }
-  .task-list li .task-name {
+  .task-list li .task-summary {
     display: table-cell;
     text-overflow: ellipsis; }
 

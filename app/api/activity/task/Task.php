@@ -7,4 +7,5 @@ use SP\App\Api\Crud\ActivityCRUD;
 class Task extends ActivityCRUD
 {
     protected $table = 'task';
+    protected $parentTable = 'label';
 }

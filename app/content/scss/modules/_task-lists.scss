@@ -15,7 +15,7 @@
 		@include rem('width', $icon-width);
 	}
 
-	.task-name {
+	.task-summary {
 		@extend %one-line;
 		display: table-cell;
 		text-overflow: ellipsis;

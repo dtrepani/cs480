@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS session (
 );
 
 CREATE TABLE IF NOT EXISTS activity_info (
-	id				INT			NOT NULL AUTO_INCREMENT,
-	summary			VARCHAR(256)	NOT NULL,
-	created			DATETIME	NOT NULL,
+	id				INT				NOT NULL AUTO_INCREMENT,
+	summary			VARCHAR(512)	NOT NULL,
+	created			DATETIME		NOT NULL,
 	color			VARCHAR(32),
 	note			TEXT,
 	reminder		DATETIME,

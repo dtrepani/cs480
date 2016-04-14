@@ -107,19 +107,39 @@
 		var crud = init;
 		crud.prototype = {
 			get: get,
+			getWhere: getWhere,
 			create: create,
 			update: update,
 			remove: remove,
-			getWhere: getWhere
+			removeWhere: removeWhere
 		};
 
 		return crud;
 
 		/**
-		* @param {string} type Set the base url using the CRUD type.
+		* Initialize the base url using the type of item to be called on.
+		* Activities and their parents have a specific subfolder to be pointed to,
+		* while others do not.
+		*
+		* @param {string} type Type of item.
 		*/
 		function init(type) {
-			this.base = 'api/' + type + '/' + type + 'Manager.php'; // jshint ignore:line
+			/* jshint ignore:start */
+			this.base = 'api/';
+			switch (type) {
+				case 'event':
+				case 'calendar':
+					this.base += 'activity/calendar/';
+					break;
+				case 'label':
+				case 'task':
+					this.base += 'activity/task/';
+					break;
+				default:
+					this.base += type + '/';
+			}
+			this.base += type + 'Manager.php';
+			/* jshint ignore:end */
 		}
 
 		/**
@@ -133,20 +153,21 @@
 		}
 
 		/**
+		* @param 	{string}	where 	Where clause.
 		* @param	{string}	userID	For activities (tasks, events), the corresponding
 		*								user for the activity. Pass empty string
 		*								otherwise.
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function getWhere(where, userID) {
-			return $http.get(this.base + '?where=' + where + '?id=' + id) // jshint ignore:line
+			return $http.get(this.base + '?where=true&id=' + userID, where) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
 
 		/**
 		* @param	{mixed[]}	data	Data of item to create.
-		* @return	{string[]}			Promise with 'data' === '1' on success.
+		* @return	{string[]}			Promise with 'data' === 1 on success.
 		*/
 		function create(data) {
 			return $http.post(this.base, data) // jshint ignore:line
@@ -168,10 +189,23 @@
 
 		/**
 		* @param	{string}	id		ID of item type to delete.
-		* @return	{string[]}			Promise with 'data' === '1' on success.
+		* @return	{string[]}			Promise with 'data' === 1 on success.
 		*/
 		function remove(id) {
 			return $http.delete(this.base + '?id=' + id) // jshint ignore:line
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		/**
+		* @param 	{string}	where 	Where clause.
+		* @param	{string}	userID	For activities (tasks, events), the corresponding
+		*								user for the activity. Pass empty string
+		*								otherwise.
+		* @return	{string[]}			Promise with 'data' >= 0 on success.
+		*/
+		function removeWhere(where, userID) {
+			return $http.delete(this.base + '?where=true&id=' + userID, where) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -302,15 +336,17 @@
 
 		vm.login = login;
 
+		/**
+		* LoginService will redirect if there is no error. Thus, there's only a
+		* need to return a promise if there's an error.
+		*/
 		function login() {
 			vm.loading = true;
 			loginService.login(vm.user)
-				.then(loginComplete);
-
-			function loginComplete(response) {
-				vm.loading = false;
-				vm.error = response;
-			}
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
 		}
 	}
 })();
@@ -359,6 +395,13 @@
 	TasksController.$inject = ['tasksService'];
 	function TasksController(tasksService) {
 		var vm = this;
+		vm.tasks = {};
+
+		activate();
+
+		function activate() {
+			tasksService.getTasks().then(function(response) { vm.tasks = response; });
+		}
 	}
 })();
 (function() {
@@ -370,15 +413,11 @@
 
 	function tasksDirective() {
 		return {
-			link: link,
 			templateUrl: 'modules/tasks/tasks.html',
 			controller: 'TasksController',
 			controllerAs: 'vm',
 			bindToController: true
 		};
-
-		function link(scope, element, attrs) {
-		}
 	}
 })();
 (function() {
@@ -388,13 +427,35 @@
 		.module('app')
 		.factory('tasksService', tasksService);
 
-	tasksService.$inject = ['$http', '$log'];
-	function tasksService($http, $log) {
+	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function tasksService($http, $log, crudService, sessionService) {
 		var vm = this;  // jshint ignore:line
+		vm.task = new crudService('task');
 
 		return {
+			getTasks: getTasks
 		};
 
+		function getTasks() {
+			return sessionService.getVar('id')
+				.then(getTaskWithUserID);
+
+			function getTaskWithUserID(response) {
+				var res = response.data;
+				if (res.success) {
+					return vm.task.getWhere('', res.data).then(getWhereComplete);
+				}
+				return res.title;
+			}
+
+			function getWhereComplete(response) {
+				var res = response.data;
+				if (res.success) {
+					return res.data;
+				}
+				return res.title;
+			}
+		}
 	}
 })();
 
@@ -419,20 +480,17 @@
 	RegisterController.$inject = ['registerService'];
 	function RegisterController(registerService) {
 		var vm = this;
-		vm.loading = false;
 		vm.error = '';
-
+		vm.loading = false;
 		vm.register = register;
 
 		function register() {
 			vm.loading = true;
 			registerService.register(vm.user)
-				.then(registrationComplete);
-
-			function registrationComplete(response) {
-				vm.loading = false;
-				vm.error = response;
-			}
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
 		}
 	}
 })();

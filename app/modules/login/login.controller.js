@@ -13,15 +13,17 @@
 
 		vm.login = login;
 
+		/**
+		* LoginService will redirect if there is no error. Thus, there's only a
+		* need to return a promise if there's an error.
+		*/
 		function login() {
 			vm.loading = true;
 			loginService.login(vm.user)
-				.then(loginComplete);
-
-			function loginComplete(response) {
-				vm.loading = false;
-				vm.error = response;
-			}
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
 		}
 	}
 })();

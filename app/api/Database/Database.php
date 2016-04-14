@@ -49,7 +49,7 @@ class Database
         if ($result === false) {
             return array(
                 'success'=>false,
-                'title'=>'An error occurred when finishing queries.',
+                'title'=>'DB: An error occurred when finishing queries.',
                 'message'=>"Commit returned: $result"
             );
         }
@@ -79,7 +79,7 @@ class Database
             error_log($e->getMessage());
             return array(
                 'success'=>false,
-                'title'=>'Could not connect to database.',
+                'title'=>'DB: Could not connect to database.',
                 'message'=>$e->getMessage()
             );
         }
@@ -177,7 +177,7 @@ class Database
             if ($result === false || (is_array($result) && empty($result))) {
                 return array(
                     'success'=>false,
-                    'title'=>'Query could not be completed successfully.',
+                    'title'=>'DB: Query could not be completed successfully.',
                     'message'=>$result
                 );
             }
@@ -190,7 +190,7 @@ class Database
             error_log($e->getMessage());
             return array(
                 'success'=>false,
-                'title'=>'An error occurred while executing the query.',
+                'title'=>'DB: An error occurred while executing the query.',
                 'message'=>$e->getMessage()
             );
         }
