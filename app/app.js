@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('app', ['ngRoute'])
+		.module('app', ['ngRoute', 'ui.bootstrap'])
 		.controller('AppController', AppController);
 
 	AppController.$inject = ['$rootScope', 'appService'];
@@ -111,7 +111,8 @@
 			create: create,
 			update: update,
 			remove: remove,
-			removeWhere: removeWhere
+			removeWhere: removeWhere,
+			removeUnecessaryKeys: removeUnecessaryKeys
 		};
 
 		return crud;
@@ -125,6 +126,7 @@
 		*/
 		function init(type) {
 			/* jshint ignore:start */
+			this.type = type;
 			this.base = 'api/';
 			switch (type) {
 				case 'event':
@@ -170,6 +172,7 @@
 		* @return	{string[]}			Promise with 'data' === 1 on success.
 		*/
 		function create(data) {
+			data = this.removeUnecessaryKeys(data);  // jshint ignore:line
 			return $http.post(this.base, data) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
@@ -182,6 +185,7 @@
 		* @return	{string[]}			Promise with 'data' === '1' on success.
 		*/
 		function update(id, data) {
+			data = this.removeUnecessaryKeys(data);  // jshint ignore:line
 			return $http.put(this.base + '?id=' + id, data) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
@@ -221,6 +225,21 @@
 				title: 'Error when querying server.',
 				message: error
 			};
+		}
+
+		/**
+		* Item data passed in may still have their ids or alias fields (for activities)
+		* embedded, which will can cause errors in the SQL.
+		*
+		* @param	{mixed[]} data
+		* @return	{mixed[]}
+		*/
+		function removeUnecessaryKeys(data) {
+			var toDelete = ['id', 'person_id', this.type + '_id', 'activity_info_id', 'parent_name'];  // jshint ignore:line
+			for (var i = 0; i < toDelete.length; i++) {
+				delete data[toDelete[i]];
+			}
+			return data;
 		}
 	}
 })();
@@ -390,17 +409,61 @@
 
 	angular
 		.module('app')
+		.controller('ModalController', ModalController);
+
+	ModalController.$inject = ['$uibModalInstance', 'item'];
+	function ModalController($uibModalInstance, item) {
+		var vm = this;
+		vm.item = item;
+		vm.close = close;
+		vm.cancel = cancel;
+		vm.confirm = confirm;
+		vm.remove = remove;
+
+		function close() {
+			$uibModalInstance.close();
+		}
+
+		function cancel() {
+			$uibModalInstance.dismiss('cancel');
+		}
+
+		function remove(data) {
+			$uibModalInstance.dismiss(data);
+		}
+
+		function confirm(data) {
+			$uibModalInstance.close(data);
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.controller('TasksController', TasksController);
 
 	TasksController.$inject = ['tasksService'];
 	function TasksController(tasksService) {
 		var vm = this;
 		vm.tasks = {};
+		vm.showTaskDialog = showTaskDialog;
 
 		activate();
 
 		function activate() {
-			tasksService.getTasks().then(function(response) { vm.tasks = response; });
+			tasksService.getTasks().then(updateTasks);
+		}
+
+		function showTaskDialog(task) {
+			tasksService.openTaskModal(task).then(updateTasks);
+		}
+
+		function updateTasks(response) {
+			if (response) {
+				vm.tasks = response;
+			}
 		}
 	}
 })();
@@ -427,14 +490,28 @@
 		.module('app')
 		.factory('tasksService', tasksService);
 
-	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function tasksService($http, $log, crudService, sessionService) {
+	tasksService.$inject = ['$http', '$log', '$uibModal', 'crudService', 'sessionService'];
+	function tasksService($http, $log, $uibModal, crudService, sessionService) {
 		var vm = this;  // jshint ignore:line
 		vm.task = new crudService('task');
 
 		return {
-			getTasks: getTasks
+			createOrUpdateTask: createOrUpdateTask,
+			deleteTask: deleteTask,
+			getTasks: getTasks,
+			openTaskModal: openTaskModal
 		};
+
+		function createOrUpdateTask(task) {
+			if (!task.task_id) {
+				return vm.task.create(task).then(promiseComplete);
+			}
+			return vm.task.update(task.task_id, task).then(promiseComplete);
+		}
+
+		function deleteTask(task) {
+			return vm.task.remove(task.task_id).then(promiseComplete);
+		}
 
 		function getTasks() {
 			return sessionService.getVar('id')
@@ -443,18 +520,43 @@
 			function getTaskWithUserID(response) {
 				var res = response.data;
 				if (res.success) {
-					return vm.task.getWhere('', res.data).then(getWhereComplete);
+					return vm.task.getWhere('', res.data).then(promiseComplete);
 				}
 				return res.title;
+			}
+		}
+
+		function openTaskModal(task) {
+			if (angular.isString(task.due)) {
+				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+			if (angular.isString(task.reminder)) {
+				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
 			}
 
-			function getWhereComplete(response) {
-				var res = response.data;
-				if (res.success) {
-					return res.data;
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/task.modal.html',
+				resolve: {
+					item: task
 				}
-				return res.title;
+			}).result
+				.then(function(response) {
+					return createOrUpdateTask(response).then(getTasks);
+				}, function(response) {
+					if (response.task_id) {
+						return deleteTask(response).then(getTasks);
+					}
+				});
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
 			}
+			return res.title;
 		}
 	}
 })();

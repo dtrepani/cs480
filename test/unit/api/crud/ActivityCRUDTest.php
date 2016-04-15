@@ -102,9 +102,9 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
             'summary',
             $this->bindings1['info']['summary']
         )['data'][0];
-        $result = $this->stub->get($data['id'])['data'][0];
+        $result = $this->stub->get($data['event_id'])['data'][0];
 
-        $this->assertEquals($result['id'], $data['id']);
+        $this->assertEquals($result['event_id'], $data['event_id']);
         $this->assertEquals($result['description'], $this->bindings1['event']['description']);
         $this->assertEquals($result['summary'], $this->bindings1['info']['summary']);
         $this->assertEquals($result['freq'], $this->bindings1['rec']['freq']);
@@ -125,7 +125,7 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
             'freq'=>'daily'
         );
         $result = $this->stub->getBy($this->userID, 'summary', $this->bindings1['info']['summary'])['data'][0];
-        $result = $this->stub->update($result['id'], $updateBindings);
+        $result = $this->stub->update($result['event_id'], $updateBindings);
         $this->assertGreaterThanOrEqual(1, $result['data']);
 
         $result = $this->stub->getBy($this->userID, 'summary', $this->bindings1['info']['summary'])['data'][0];
@@ -141,9 +141,9 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     public function testDelete()
     {
         $data = $this->stub->getBy($this->userID, 'summary', $this->bindings1['info']['summary'])['data'][0];
-        $result = $this->stub->delete($data['id']);
+        $result = $this->stub->delete($data['event_id']);
         $this->assertEquals($result['data'], 1);
-        $result = $this->stub->delete($data['id']);
+        $result = $this->stub->delete($data['event_id']);
         $this->assertEquals($result['data'], 0);
     }
 

@@ -1,7 +1,12 @@
 <ul class="task-list">
-	<li ng-repeat="task in vm.tasks" ng-class="{completed: task.completed}">
+	<li class="add-task" ng-click="vm.showTaskDialog($event, {})">
+		<i class="fa fa-plus"></i>
+		<span class="task-summary" >Add a task</span>
+	</li>
+
+	<li ng-repeat="task in vm.tasks" ng-class="{complete: task.completed == true}">
 		<i class="fa fa-check check-icon"></i>
-		<span class="task-summary">{{ task.summary }}</span>
+		<span class="task-summary" ng-click="vm.showTaskDialog(task)">{{ task.summary }}</span>
 		<i class="fa fa-ellipsis-v edit-icon"></i>
 	</li>
 </ul>

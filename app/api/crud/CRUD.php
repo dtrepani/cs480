@@ -79,16 +79,13 @@ abstract class CRUD
 
     /**
     * @param  int      $id          ID of row to grab.
-    * @param  mixed[]  $columns     Column names.
-    *
     * @return mixed[]               Promise results with requested row.
     *                               See Database->query().
     */
-    public function get($id, $columns = array())
+    public function get($id)
     {
-        $colNameList = ConvertArray::toColNameList($columns);
         return $this->db->query(
-            "SELECT $colNameList
+            "SELECT *
             FROM $this->table
             WHERE id = :id",
             array(':id'=>$id)
@@ -100,18 +97,16 @@ abstract class CRUD
     *
     * @param  string    $colName    Column name to compare to.
     * @param  string    $where      Item to compare to.
-    * @param  mixed[]   $columns    Column names to select.
     *
     * @return mixed[]               Promise results with requested rows.
     *                               See Database->query().
     */
-    public function getBy($colName, $where, $columns = array())
+    public function getBy($colName, $where)
     {
-        $colNameList = ConvertArray::toColNameList($columns);
         $bindings = array(':'.$colName=>$where);
 
         return $this->db->query(
-            "SELECT $colNameList
+            "SELECT *
             FROM $this->table
             WHERE $colName = :{$colName}",
             $bindings
@@ -127,7 +122,6 @@ abstract class CRUD
     * @param  bool      $asc        Order by ascending or descending order.
     * @param  mixed[]   $bindings   Bindings to sanitize clauses. Should NOT have
     *                               a ':' prefix.
-    * @param  mixed[]   $columns    Column names to get.
     *
     * @return mixed[]               Promise results with requested rows.
     *                               See Database->query().
@@ -136,18 +130,15 @@ abstract class CRUD
         $where,
         $order = '',
         $asc = '',
-        $bindings = array(),
-        $columns = array()
+        $bindings = array()
     ) {
-        $colNameList = ConvertArray::toColNameList($columns);
-
         if (!empty($order)) {
             $order = 'ORDER BY ' . $order;
             $asc = ($asc === true) ? 'ASC' : ($asc === false) ? 'DESC' : '';
         }
 
         return $this->db->query(
-            "SELECT $colNameList
+            "SELECT *
             FROM $this->table
             WHERE $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)

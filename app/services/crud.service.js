@@ -22,7 +22,8 @@
 			create: create,
 			update: update,
 			remove: remove,
-			removeWhere: removeWhere
+			removeWhere: removeWhere,
+			removeUnecessaryKeys: removeUnecessaryKeys
 		};
 
 		return crud;
@@ -36,6 +37,7 @@
 		*/
 		function init(type) {
 			/* jshint ignore:start */
+			this.type = type;
 			this.base = 'api/';
 			switch (type) {
 				case 'event':
@@ -81,6 +83,7 @@
 		* @return	{string[]}			Promise with 'data' === 1 on success.
 		*/
 		function create(data) {
+			data = this.removeUnecessaryKeys(data);  // jshint ignore:line
 			return $http.post(this.base, data) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
@@ -93,6 +96,7 @@
 		* @return	{string[]}			Promise with 'data' === '1' on success.
 		*/
 		function update(id, data) {
+			data = this.removeUnecessaryKeys(data);  // jshint ignore:line
 			return $http.put(this.base + '?id=' + id, data) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
@@ -132,6 +136,21 @@
 				title: 'Error when querying server.',
 				message: error
 			};
+		}
+
+		/**
+		* Item data passed in may still have their ids or alias fields (for activities)
+		* embedded, which will can cause errors in the SQL.
+		*
+		* @param	{mixed[]} data
+		* @return	{mixed[]}
+		*/
+		function removeUnecessaryKeys(data) {
+			var toDelete = ['id', 'person_id', this.type + '_id', 'activity_info_id', 'parent_name'];  // jshint ignore:line
+			for (var i = 0; i < toDelete.length; i++) {
+				delete data[toDelete[i]];
+			}
+			return data;
 		}
 	}
 })();

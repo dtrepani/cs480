@@ -48,7 +48,7 @@ table {
 #calendar:after, #calendar-header:after {
   clear: both; }
 
-.task-list li .task-summary, .all-day-events, .events {
+.all-day-events, .events, .task-list li .task-summary {
   white-space: nowrap;
   overflow-x: hidden; }
 
@@ -304,6 +304,90 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
     vertical-align: middle;
     line-height: inherit; }
 
+#month-name {
+  float: left; }
+
+#calendar-views {
+  float: right; }
+  #calendar-views li {
+    display: inline-block; }
+
+.today {
+  background: #F0F0F0; }
+
+#calendar-month .selected {
+  background: #ebf1f8; }
+
+.all-day-events {
+  width: 100%;
+  height: 10.5px;
+  padding: 0 1px; }
+  @media screen and (min-width: 768px) {
+    .all-day-events {
+      height: 12.5px; } }
+  @media screen and (min-width: 1200px) {
+    .all-day-events {
+      height: 22.5px; } }
+
+.events {
+  width: 100%; }
+
+.day-number {
+  padding-right: 10px;
+  padding-right: 0.625rem;
+  vertical-align: top; }
+
+#calendar-month > ul > li {
+  width: 14.28571%;
+  float: left;
+  margin: -1px 0 0 -1px; }
+
+#month-day-names li {
+  padding-bottom: 2px; }
+
+#month > li {
+  -webkit-border: 1px solid #ddd;
+  -moz-border: 1px solid #ddd;
+  -ms-border: 1px solid #ddd;
+  -o-border: 1px solid #ddd;
+  border: 1px solid #ddd;
+  height: 45px; }
+  @media screen and (min-width: 768px) {
+    #month > li {
+      height: 75px; } }
+  @media screen and (min-width: 1200px) {
+    #month > li {
+      height: 135px; } }
+
+#month ul li {
+  height: 3px;
+  background-color: #3272BB;
+  margin: 1px 0; }
+  @media screen and (min-width: 768px) {
+    #month ul li {
+      height: 5px; } }
+  @media screen and (min-width: 1200px) {
+    #month ul li {
+      height: 9px; } }
+
+.month-day-row {
+  display: table;
+  width: 100%;
+  padding: 0 1px; }
+  .month-day-row .day-number, .month-day-row .events {
+    display: table-cell; }
+
+.modal-body .input-group {
+  margin-bottom: 5px; }
+  .modal-body .input-group:last-child {
+    margin-bottom: 0; }
+
+.modal-title input {
+  border: none; }
+
+.modal-footer .btn-danger {
+  float: left; }
+
 .check-icon {
   margin-right: 10px; }
 
@@ -402,12 +486,20 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
   -ms-border-bottom: 1px solid #ddd;
   -o-border-bottom: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  padding: 10px 0px;
-  padding: 0.625rem 0rem;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  padding: 10px;
+  padding: 0.625rem;
   display: table;
   table-layout: fixed;
   overflow: hidden;
   width: 100%; }
+  .task-list li:hover {
+    background: #FAFAFA;
+    cursor: pointer; }
   .task-list li:last-child {
     -webkit-border-bottom: none;
     -moz-border-bottom: none;
@@ -422,75 +514,8 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
     display: table-cell;
     text-overflow: ellipsis; }
 
-#month-name {
-  float: left; }
-
-#calendar-views {
-  float: right; }
-  #calendar-views li {
-    display: inline-block; }
-
-.today {
-  background: #F0F0F0; }
-
-#calendar-month .selected {
-  background: #ebf1f8; }
-
-.all-day-events {
-  width: 100%;
-  height: 10.5px;
-  padding: 0 1px; }
-  @media screen and (min-width: 768px) {
-    .all-day-events {
-      height: 12.5px; } }
-  @media screen and (min-width: 1200px) {
-    .all-day-events {
-      height: 22.5px; } }
-
-.events {
-  width: 100%; }
-
-.day-number {
-  padding-right: 10px;
-  padding-right: 0.625rem;
-  vertical-align: top; }
-
-#calendar-month > ul > li {
-  width: 14.28571%;
-  float: left;
-  margin: -1px 0 0 -1px; }
-
-#month-day-names li {
-  padding-bottom: 2px; }
-
-#month > li {
-  -webkit-border: 1px solid #ddd;
-  -moz-border: 1px solid #ddd;
-  -ms-border: 1px solid #ddd;
-  -o-border: 1px solid #ddd;
-  border: 1px solid #ddd;
-  height: 45px; }
-  @media screen and (min-width: 768px) {
-    #month > li {
-      height: 75px; } }
-  @media screen and (min-width: 1200px) {
-    #month > li {
-      height: 135px; } }
-
-#month ul li {
-  height: 3px;
-  background-color: #3272BB;
-  margin: 1px 0; }
-  @media screen and (min-width: 768px) {
-    #month ul li {
-      height: 5px; } }
-  @media screen and (min-width: 1200px) {
-    #month ul li {
-      height: 9px; } }
-
-.month-day-row {
-  display: table;
-  width: 100%;
-  padding: 0 1px; }
-  .month-day-row .day-number, .month-day-row .events {
-    display: table-cell; }
+.add-task {
+  background: #FAFAFA;
+  color: #888; }
+  .add-task:hover {
+    background: #F0F0F0 !important; }

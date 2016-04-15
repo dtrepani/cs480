@@ -1,10 +1,16 @@
 .task-list li {
 	@include property('border-bottom', 1px solid $color-dim);
-	@include rem('padding', 10px 0);
+	@include property('border-radius', 3px);
+	@include rem('padding', 10px);
 	display: table;
 	table-layout: fixed;
 	overflow: hidden;
 	width: 100%;
+
+	&:hover {
+		background: $color-dim-lighter;
+		cursor: pointer;
+	}
 
 	&:last-child {
 		@include property('border-bottom', none);
@@ -19,5 +25,14 @@
 		@extend %one-line;
 		display: table-cell;
 		text-overflow: ellipsis;
+	}
+}
+
+.add-task {
+	background: $color-dim-lighter;
+	color: $color-dim-darker;
+
+	&:hover {
+		background: $color-dim-light !important;
 	}
 }

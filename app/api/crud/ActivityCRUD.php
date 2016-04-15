@@ -28,6 +28,8 @@ abstract class ActivityCRUD
     protected $infoTable = 'activity_info';
     protected $recurrenceTable = 'recurrence';
     protected $parentTable = 'calendar';
+    protected $selectWithParent;
+    protected $selectID;
     protected $joinedActivity;
     protected $joinedActivityWithParent;
 
@@ -40,6 +42,10 @@ abstract class ActivityCRUD
         $this->db = $aDB ? $aDB : new Database();
         $this->joinedActivity = $this->getJoinedActivity();
         $this->joinedActivityWithParent = $this->getJoinedActivityWithParent();
+
+        $tableID = $this->table === 'task' ? 'task' : 'event';
+        $this->selectID = "{$this->table}.id AS {$tableID}_id";
+        $this->selectWithParent = "{$this->table}.*, {$this->infoTable}.*, {$this->recurrenceTable}.*, {$this->selectID}, {$this->parentTable}.person_id, {$this->parentTable}.name AS parent_name";
     }
 
     /**
@@ -175,14 +181,13 @@ abstract class ActivityCRUD
     }
 
     /**
-    * Get the specified columns from this activity and its corresponding tables.
+    * Get the columns from this activity and its corresponding tables.
     * @see CRUD->get().
     */
-    public function get($id, $columns = array())
+    public function get($id)
     {
-        $colNameList = ConvertArray::toColNameList($columns);
         return $this->db->query(
-            "SELECT $colNameList
+            "SELECT *, {$this->selectID}
             FROM {$this->joinedActivity}
             WHERE {$this->table}.id = :id",
             array(':id'=>$id)
@@ -194,13 +199,11 @@ abstract class ActivityCRUD
     * @param  int   $userID   Corresponding user.
     * @see CRUD->getBy().
     */
-    public function getBy($userID, $colName, $where, $columns = array())
+    public function getBy($userID, $colName, $where)
     {
-        $colNameList = ConvertArray::toColNameList($columns);
         $bindings = array(':'.$colName=>$where, ':person_id'=>$userID);
-
         return $this->db->query(
-            "SELECT $colNameList
+            "SELECT {$this->selectWithParent}
             FROM {$this->joinedActivityWithParent}
             WHERE {$this->parentTable}.person_id = :person_id AND $colName = :{$colName}",
             $bindings
@@ -216,10 +219,8 @@ abstract class ActivityCRUD
         $where = '',
         $order = '',
         $asc = '',
-        $bindings = array(),
-        $columns = array()
+        $bindings = array()
     ) {
-        $colNameList = ConvertArray::toColNameList($columns);
         $where = (empty($where) ? '' : 'AND ' . $where);
         $bindings['person_id'] = $userID;
 
@@ -229,7 +230,7 @@ abstract class ActivityCRUD
         }
 
         return $this->db->query(
-            "SELECT $colNameList
+            "SELECT {$this->selectWithParent}
             FROM {$this->joinedActivityWithParent}
             WHERE {$this->parentTable}.person_id = :person_id $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)

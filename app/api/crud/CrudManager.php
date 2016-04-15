@@ -43,7 +43,7 @@ class CrudManager
             case 'POST':
                 return $this->itemType->create($this->data);
             case 'PUT':
-                return $this->itemType->update($this->data);
+                return $this->itemType->update($this->id, $this->data);
             case 'DELETE':
                 return $this->getDeleteResponse();
         }
