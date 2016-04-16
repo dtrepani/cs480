@@ -24,22 +24,35 @@ class ConvertArray
     }
 
     /**
-    * Convert an array's keys and values to lists for raw query statements.
+    * Separate the bindings into their appropriate subgroups.
+    * Bindings not in any of the subgroups are thrown out.
+    * Only to be called by ActivityCRUD.
     *
-    * @param    string[][]  $array  Array to make the lists out of.
+    * @param  mixed[] $aBindings Unorganized bindings.
     *
-    * @return   string              'keys' and 'values' in the form of 'x, y, z'.
+    * @return mixed[]            Bindings with subgroups activity, info, and recurrence.
     */
-    public static function toKeyValueList($array)
+    public static function toSubgroups($aBindings)
     {
-        $delimiter = ', ';
-        $keyArray = array_keys($array);
-        $valArray = array_values($array);
-
-        return array(
-            'keys'=>implode($delimiter, $keyArray),
-            'values'=>implode($delimiter, $valArray),
+        $bindings = array('activity'=>array(), 'info'=>array(), 'recurrence'=>array());
+        $cols = array(
+            'activity'=>array('label_id', 'calendar_id', 'dt_start', 'dt_end', 'description', 'location', 'due', 'completed', 'picture'),
+            'info'=>array('summary', 'color', 'note', 'reminder', 'priority'),
+            'recurrence'=>array('freq', 'until', 'count', 'repeat_interval'),
         );
+
+        foreach ($aBindings as $key => $value) {
+            foreach (array_keys($cols) as $colKey) {
+                if (in_array($key, $cols[$colKey]) ||
+                    ($colKey === 'recurrence' && preg_match('/^by_.*/', $colKey) === 1)
+                ) {
+                    $bindings[$colKey][$key] = $value;
+                    break;
+                }
+            }
+        }
+
+        return $bindings;
     }
 
     /**
@@ -69,13 +82,22 @@ class ConvertArray
     }
 
     /**
-    * Convert array of column names to list.
-    * @param  string[]   $columns   Column names.
-    * @return string                Column names in form 'x, y, z' or '*'
+    * Convert an array's keys and values to lists for raw query statements.
+    *
+    * @param    string[][]  $array  Array to make the lists out of.
+    *
+    * @return   string              'keys' and 'values' in the form of 'x, y, z'.
     */
-    public static function toColNameList($columns)
+    public static function toKeyValueList($array)
     {
-        return empty($columns) ? '*' : implode(', ', $columns);
+        $delimiter = ', ';
+        $keyArray = array_keys($array);
+        $valArray = array_values($array);
+
+        return array(
+            'keys'=>implode($delimiter, $keyArray),
+            'values'=>implode($delimiter, $valArray),
+        );
     }
 
     /**

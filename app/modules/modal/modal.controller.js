@@ -5,9 +5,10 @@
 		.module('app')
 		.controller('ModalController', ModalController);
 
-	ModalController.$inject = ['$uibModalInstance', 'item'];
-	function ModalController($uibModalInstance, item) {
+	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
+	function ModalController($uibModalInstance, groups, item) {
 		var vm = this;
+		vm.groups = groups;
 		vm.item = item;
 		vm.close = close;
 		vm.cancel = cancel;

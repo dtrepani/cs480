@@ -73,7 +73,7 @@
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function getWhere(where, userID) {
-			return $http.get(this.base + '?where=true&id=' + userID, where) // jshint ignore:line
+			return $http.get(this.base + '?usewhere=true&where=' + escape(where) + '&id=' + userID) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}

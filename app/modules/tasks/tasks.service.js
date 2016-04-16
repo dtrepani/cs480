@@ -5,27 +5,33 @@
 		.module('app')
 		.factory('tasksService', tasksService);
 
-	tasksService.$inject = ['$http', '$log', '$uibModal', 'crudService', 'sessionService'];
-	function tasksService($http, $log, $uibModal, crudService, sessionService) {
+	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function tasksService($http, $log, crudService, sessionService) {
 		var vm = this;  // jshint ignore:line
 		vm.task = new crudService('task');
 
 		return {
+			createTask: createTask,
 			createOrUpdateTask: createOrUpdateTask,
 			deleteTask: deleteTask,
 			getTasks: getTasks,
-			openTaskModal: openTaskModal
+			toggleCompleted: toggleCompleted,
+			updateTask: updateTask
 		};
+
+		function createTask(task) {
+			return vm.task.create(task).then(promiseComplete);
+		}
 
 		function createOrUpdateTask(task) {
 			if (!task.task_id) {
-				return vm.task.create(task).then(promiseComplete);
+				return createTask(task);
 			}
-			return vm.task.update(task.task_id, task).then(promiseComplete);
+			return updateTask(task.task_id, task);
 		}
 
-		function deleteTask(task) {
-			return vm.task.remove(task.task_id).then(promiseComplete);
+		function deleteTask(id) {
+			return vm.task.remove(id).then(promiseComplete);
 		}
 
 		function getTasks() {
@@ -41,29 +47,13 @@
 			}
 		}
 
-		function openTaskModal(task) {
-			if (angular.isString(task.due)) {
-				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(task.reminder)) {
-				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
+		function toggleCompleted(task) {
+			task.completed = !parseInt(task.completed);
+			return updateTask(task.task_id, task).then(getTasks);
+		}
 
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
-				resolve: {
-					item: task
-				}
-			}).result
-				.then(function(response) {
-					return createOrUpdateTask(response).then(getTasks);
-				}, function(response) {
-					if (response.task_id) {
-						return deleteTask(response).then(getTasks);
-					}
-				});
+		function updateTask(id, task) {
+			return vm.task.update(id, task).then(promiseComplete);
 		}
 
 		function promiseComplete(response) {

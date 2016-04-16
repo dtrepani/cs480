@@ -152,7 +152,7 @@ abstract class CRUD
     * @return   mixed[]                     Promise results with affeced row count.
     *                                       See Database->query().
     */
-    public function update($id, $bindings = array())
+    public function update($id, $bindings)
     {
         $bindingSetList = ConvertArray::toBindingSetList($bindings);
         $bindings['id'] = $id;

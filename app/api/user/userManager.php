@@ -15,7 +15,9 @@ $manager = new CrudManager(
     $_SERVER['REQUEST_METHOD'],
     new User(),
     $request,
-    isset($_GET['id']) ? $_GET['id'] : null
+    isset($_GET['id']) ? $_GET['id'] : null,
+    isset($_GET['usewhere']) ? $_GET['usewhere'] : null,
+    isset($_GET['where']) ? $_GET['where'] : null
 );
 
 echo json_encode($manager->getResponse());

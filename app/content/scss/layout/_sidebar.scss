@@ -23,6 +23,7 @@
 }
 
 #header-sidebar {
+	@include font-size($font-large);
 	padding: ($body-padding / 2);
 	background-color: $color-primary-dark;
 	width: inherit;
@@ -38,6 +39,11 @@
 
 	.selected {
  		background-color: $color-bg-content;
+	}
+
+	a {
+		color: $color-text;
+		text-decoration: none;
 	}
 }
 
@@ -58,19 +64,39 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
 	}
 
 	i {
+		@include font-size($font-medium);
 		vertical-align: middle;
 		margin-right: 9px;
 	}
 }
 
-.sub-nav-list li a {
-	padding: ($body-padding / 4) $body-padding;
-	@include rem('padding-left', ($body-padding * 3 + $font-medium));
-	margin: 2px 0;
+.sub-nav-list {
+	@include font-size(14px);
+}
+
+.sub-nav-list li {
+	a {
+		padding: ($body-padding / 4) $body-padding;
+		@include rem('padding-left', ($body-padding * 3 + $font-medium));
+		margin: 2px 0;
+	}
 
 	i {
+		@include font-size($font-small);
 		@include rem('margin-bottom', 2.5px);
 		vertical-align: middle;
 		line-height: inherit;
 	}
+}
+
+li[id*="nav-"] {
+	@include rem('line-height', $font-medium);
+
+	i {
+		@include font-size($font-medium);
+	}
+}
+
+[class*="square-icon-"].disabled + span {
+	color: $color-dim-darker;
 }

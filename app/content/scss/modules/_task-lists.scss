@@ -1,6 +1,7 @@
 .task-list li {
 	@include property('border-bottom', 1px solid $color-dim);
 	@include property('border-radius', 3px);
+	@include rem('line-height', $font-medium);
 	@include rem('padding', 10px);
 	display: table;
 	table-layout: fixed;
@@ -20,11 +21,29 @@
 		display: table-cell;
 		@include rem('width', $icon-width);
 	}
+}
 
-	.task-summary {
-		@extend %one-line;
-		display: table-cell;
-		text-overflow: ellipsis;
+.task-summary {
+	@extend %one-line;
+	display: table-cell;
+	text-overflow: ellipsis;
+
+	.completed & {
+		color: $color-dim-dark;
+		text-decoration: line-through;
+	}
+}
+
+.check-icon {
+	color: $color-dim;
+
+	&:hover {
+		color: $color-dim-dark;
+	}
+
+	.completed & {
+		color: $color-text;
+		text-decoration: none;
 	}
 }
 

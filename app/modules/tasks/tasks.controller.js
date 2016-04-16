@@ -5,11 +5,12 @@
 		.module('app')
 		.controller('TasksController', TasksController);
 
-	TasksController.$inject = ['tasksService'];
-	function TasksController(tasksService) {
+	TasksController.$inject = ['tasksService', 'taskModalService'];
+	function TasksController(tasksService, taskModalService) {
 		var vm = this;
-		vm.tasks = {};
+		vm.tasks = [];
 		vm.showTaskDialog = showTaskDialog;
+		vm.toggleCompleted = toggleCompleted;
 
 		activate();
 
@@ -18,7 +19,11 @@
 		}
 
 		function showTaskDialog(task) {
-			tasksService.openTaskModal(task).then(updateTasks);
+			taskModalService.openTaskModal(task).then(updateTasks);
+		}
+
+		function toggleCompleted(task) {
+			tasksService.toggleCompleted(task).then(updateTasks);
 		}
 
 		function updateTasks(response) {

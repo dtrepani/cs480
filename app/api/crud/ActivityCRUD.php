@@ -55,43 +55,31 @@ abstract class ActivityCRUD
     {
         if (!$result) {
             $this->db->rollBack();
-            throw new \Exception('Error when inserting entry in CRUD->create().');
+            throw new \Exception('Error when inserting entry in ActivityCRUD->create().');
         }
     }
 
     /**
     * Create the corresponding entries in recurrence and activity information
     * used by the activity.
-    *
-    * @param  int        $parentID              ID of the parent of the activity.
-    * @param  mixed[]    $bindings              Bindings for the activity. MUST include
-    *                                           parent id (label_id or calendar_id).
-    * @param  mixed[]    $infoBindings          Bindings for the activity information.
-    * @param  mixed[]    $recurrenceBindings    Bindings for the recurrence.
-    *
+    * @param  mixed[] $bindings Bindings for the activity. MUST include
+    *                           parent id (label_id or calendar_id).
     * @return mixed[] Promise results with whether or not activity and its corresponding
     *                 entries were created successfully. See Database->query().
     */
-    public function create(
-        $parentID,
-        $bindings,
-        $infoBindings,
-        $recurrenceBindings = array()
-    ) {
+    public function create($bindings)
+    {
         try {
             $result = $this->db->beginTransaction();
             $this->checkForError($result);
 
-            $bindingsNameForParent = ($this->table === 'cal_event'
-                ? 'calendar_id'
-                : 'label_id');
-            $bindings[$bindingsNameForParent] = $parentID;
+            $bindings = ConvertArray::toSubgroups($bindings);
 
-            $this->createActivityInfo($infoBindings);
-            $bindings['activity_info_id'] = $recurrenceBindings['activity_info_id'] = $this->db->lastInsertId();
+            $this->createActivityInfo($bindings['info']);
+            $bindings['activity']['activity_info_id'] = $bindings['recurrence']['activity_info_id'] = $this->db->lastInsertId();
 
-            $this->createRecurrence($recurrenceBindings);
-            $result = $this->createSelf($bindings);
+            $this->createRecurrence($bindings['recurrence']);
+            $result = $this->createSelf($bindings['activity']);
             $this->checkForError($result['success']);
 
             return $this->db->commit();

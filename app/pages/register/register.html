@@ -1,39 +1,55 @@
-<form	name="registerForm" ng-submit="registerForm.$valid && vm.register()"
-		ng-model-options="{ updateOn: 'blur' }" novalidate>
-	<div class="input-group">
-		<label>Username</label><br/>
-		<input	type="text" placeholder="Username" name="name"
-				ng-model="vm.user.name" minlength="4" maxlength="32"
-				ng-pattern="/^[a-zA-Z]*$/" required />
-		<p ng-show="registerForm.name.$error.required && !registerForm.name.$pristine">Username is required.</p>
-		<p ng-show="registerForm.name.$error.minlength">Username is too short. Must be between 4 and 32 characters.</p>
-		<p ng-show="registerForm.name.$error.maxlength">Username is too long. Must be between 4 and 32 characters.</p>
-		<p ng-show="registerForm.name.$error.pattern">Username can only contain letters.</p>
-	</div>
+<div class="row">
+<div class="col-md-5">
+	<form	name="registerForm" class="form-horizontal"
+			ng-submit="registerForm.$valid && vm.register()"
+			ng-model-options="{ updateOn: 'blur' }" novalidate>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Username</label>
+			<div class="col-sm-10">
+				<input	type="text" name="name"
+					class="form-control" ng-model="vm.user.name"
+					minlength="4" maxlength="32"
+					ng-pattern="/^[a-zA-Z]*$/" required />
+				<p class="text-danger" ng-show="registerForm.name.$error.required && !registerForm.name.$pristine">Username is required.</p>
+				<p class="text-danger" ng-show="registerForm.name.$error.minlength">Username is too short. Must be between 4 and 32 characters.</p>
+				<p class="text-danger" ng-show="registerForm.name.$error.maxlength">Username is too long. Must be between 4 and 32 characters.</p>
+				<p class="text-danger" ng-show="registerForm.name.$error.pattern">Username can only contain letters.</p>
+			</div>
+		</div>
 
-	<div class="input-group">
-		<label>Password</label><br/>
-		<input	type="password" placeholder="Password" name="password"
-				ng-model="vm.user.password" minlength="6" maxlength="64" /><br/>
-		<p ng-show="registerForm.password.$error.required && !registerForm.password.$pristine">Password is required.</p>
-		<p ng-show="registerForm.password.$error.minlength">Password is too short. Must be between 6 and 64 characters.</p>
-	</div>
-	<div class="input-group">
-		<label>Confirm Password</label><br/>
-		<input	type="password" placeholder="Retype Password" name="password2"
-				ng-model="vm.password2" minlength="6" maxlength="64" required sp-compare-to="registerForm.password" /><br/>
-		<p ng-show="registerForm.password2.$error.spCompareTo">Passwords do not match.</p>
-	</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Password</label>
+			<div class="col-sm-10">
+				<input	type="password" name="password"
+					class="form-control" ng-model="vm.user.password"
+					minlength="6" maxlength="64" />
+				<p class="text-danger" ng-show="registerForm.password.$error.required && !registerForm.password.$pristine">Password is required.</p>
+				<p class="text-danger" ng-show="registerForm.password.$error.minlength">Password is too short. Must be between 6 and 64 characters.</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Confirm Password</label>
+			<div class="col-sm-10">
+				<input	type="password" name="password2"
+					class="form-control" ng-model="vm.password2" minlength="6"
+					maxlength="64" required sp-compare-to="registerForm.password" />
+				<p class="text-danger" ng-show="registerForm.password2.$error.spCompareTo">Passwords do not match.</p>
+			</div>
+		</div>
 
-	<div class="input-group">
-		<label>Email</label><br/>
-		<input	type="email" placeholder="Email" name="email"
-				ng-model="vm.user.email" required /><br/>
-		<p ng-show="registerForm.email.$invalid && !registerForm.email.$pristine">Invalid email.</p>
-	</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Email</label>
+			<div class="col-sm-10">
+				<input	type="email" name="email" class="form-control"
+					ng-model="vm.user.email" required />
+				<p class="text-danger" ng-show="registerForm.email.$invalid && !registerForm.email.$pristine">Invalid email.</p>
+			</div>
+		</div>
 
-	<input type="submit" value="Register" />
-	<i ng-if="vm.loading" class="fa fa-spinner fa-pulse"></i>
-</form>
+		<input class="btn btn-primary form-control" type="submit" value="Register" />
+		<i ng-if="vm.loading" class="fa fa-spinner fa-pulse"></i>
+	</form>
 
-<p class="error">{{ vm.error }}</p>
+	<p class="error text-danger">{{ vm.error }}</p>
+</div>
+</div>

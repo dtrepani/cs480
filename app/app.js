@@ -162,7 +162,7 @@
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function getWhere(where, userID) {
-			return $http.get(this.base + '?where=true&id=' + userID, where) // jshint ignore:line
+			return $http.get(this.base + '?usewhere=true&where=' + escape(where) + '&id=' + userID) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -411,9 +411,10 @@
 		.module('app')
 		.controller('ModalController', ModalController);
 
-	ModalController.$inject = ['$uibModalInstance', 'item'];
-	function ModalController($uibModalInstance, item) {
+	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
+	function ModalController($uibModalInstance, groups, item) {
 		var vm = this;
+		vm.groups = groups;
 		vm.item = item;
 		vm.close = close;
 		vm.cancel = cancel;
@@ -444,11 +445,12 @@
 		.module('app')
 		.controller('TasksController', TasksController);
 
-	TasksController.$inject = ['tasksService'];
-	function TasksController(tasksService) {
+	TasksController.$inject = ['tasksService', 'taskModalService'];
+	function TasksController(tasksService, taskModalService) {
 		var vm = this;
-		vm.tasks = {};
+		vm.tasks = [];
 		vm.showTaskDialog = showTaskDialog;
+		vm.toggleCompleted = toggleCompleted;
 
 		activate();
 
@@ -457,7 +459,11 @@
 		}
 
 		function showTaskDialog(task) {
-			tasksService.openTaskModal(task).then(updateTasks);
+			taskModalService.openTaskModal(task).then(updateTasks);
+		}
+
+		function toggleCompleted(task) {
+			tasksService.toggleCompleted(task).then(updateTasks);
 		}
 
 		function updateTasks(response) {
@@ -490,27 +496,33 @@
 		.module('app')
 		.factory('tasksService', tasksService);
 
-	tasksService.$inject = ['$http', '$log', '$uibModal', 'crudService', 'sessionService'];
-	function tasksService($http, $log, $uibModal, crudService, sessionService) {
+	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function tasksService($http, $log, crudService, sessionService) {
 		var vm = this;  // jshint ignore:line
 		vm.task = new crudService('task');
 
 		return {
+			createTask: createTask,
 			createOrUpdateTask: createOrUpdateTask,
 			deleteTask: deleteTask,
 			getTasks: getTasks,
-			openTaskModal: openTaskModal
+			toggleCompleted: toggleCompleted,
+			updateTask: updateTask
 		};
+
+		function createTask(task) {
+			return vm.task.create(task).then(promiseComplete);
+		}
 
 		function createOrUpdateTask(task) {
 			if (!task.task_id) {
-				return vm.task.create(task).then(promiseComplete);
+				return createTask(task);
 			}
-			return vm.task.update(task.task_id, task).then(promiseComplete);
+			return updateTask(task.task_id, task);
 		}
 
-		function deleteTask(task) {
-			return vm.task.remove(task.task_id).then(promiseComplete);
+		function deleteTask(id) {
+			return vm.task.remove(id).then(promiseComplete);
 		}
 
 		function getTasks() {
@@ -526,29 +538,13 @@
 			}
 		}
 
-		function openTaskModal(task) {
-			if (angular.isString(task.due)) {
-				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(task.reminder)) {
-				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
+		function toggleCompleted(task) {
+			task.completed = !parseInt(task.completed);
+			return updateTask(task.task_id, task).then(getTasks);
+		}
 
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
-				resolve: {
-					item: task
-				}
-			}).result
-				.then(function(response) {
-					return createOrUpdateTask(response).then(getTasks);
-				}, function(response) {
-					if (response.task_id) {
-						return deleteTask(response).then(getTasks);
-					}
-				});
+		function updateTask(id, task) {
+			return vm.task.update(id, task).then(promiseComplete);
 		}
 
 		function promiseComplete(response) {
@@ -680,6 +676,105 @@
 			UNAUTHORIZED: 401,
 			FORBIDDEN: 403
 		};
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('taskModalService', taskModalService);
+
+	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
+	function taskModalService($uibModal, labelService, tasksService) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			openTaskModal: openTaskModal
+		};
+
+		function openTaskModal(task) {
+			if (angular.isString(task.due)) {
+				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+			if (angular.isString(task.reminder)) {
+				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/task.modal.html',
+				resolve: {
+					groups: labelService.getLabels(),
+					item: task
+				}
+			}).result
+				.then(function(response) {
+					return tasksService.createOrUpdateTask(response)
+						.then(tasksService.getTasks);
+				}, function(response) {
+					if (response) {
+						return tasksService.deleteTask(response)
+							.then(tasksService.getTasks);
+					}
+				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('labelService', labelService);
+
+	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function labelService($http, $log, crudService, sessionService) {
+		var vm = this;  // jshint ignore:line
+		vm.label = new crudService('label');
+
+		return {
+			createLabel: createLabel,
+			deleteLabel: deleteLabel,
+			getLabels: getLabels,
+			updateLabel: updateLabel
+		};
+
+		function createLabel(label) {
+			return vm.label.create(label).then(promiseComplete);
+		}
+
+		function deleteLabel(id) {
+			return vm.label.remove(id).then(promiseComplete);
+		}
+
+		function getLabels() {
+			return sessionService.getVar('id')
+				.then(getLabelWithUserID);
+
+			function getLabelWithUserID(response) {
+				var res = response.data;
+				if (res.success) {
+					return vm.label.getWhere('person_id=' + res.data, '').then(promiseComplete);
+				}
+				return res.title;
+			}
+		}
+
+		function updateLabel(id, label) {
+			return vm.label.update(id, label).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
+			}
+			return res.title;
+		}
 	}
 })();
 

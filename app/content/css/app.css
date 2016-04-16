@@ -48,7 +48,7 @@ table {
 #calendar:after, #calendar-header:after {
   clear: both; }
 
-.all-day-events, .events, .task-list li .task-summary {
+.all-day-events, .events, .task-summary {
   white-space: nowrap;
   overflow-x: hidden; }
 
@@ -67,84 +67,6 @@ table {
   display: inline-block;
   vertical-align: middle; }
 
-html {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
-  font-size: 12px; }
-
-body {
-  color: #444; }
-
-h1 {
-  font-size: 24px;
-  font-size: 1.5rem;
-  font-weight: bold; }
-
-@media screen and (min-width: 768px) {
-  html {
-    font-size: 16px; } }
-
-.header {
-  font-size: 32px;
-  font-size: 2rem;
-  color: #fff; }
-
-#header-main {
-  text-align: right; }
-
-#nav a {
-  color: #444;
-  text-decoration: none; }
-
-#header-sidebar {
-  font-size: 32px;
-  font-size: 2rem; }
-
-li[id*="nav-"] {
-  line-height: 24px;
-  line-height: 1.5rem; }
-  li[id*="nav-"] i {
-    font-size: 24px;
-    font-size: 1.5rem; }
-
-.sub-nav-list {
-  font-size: 14px;
-  font-size: 0.875rem; }
-  .sub-nav-list li i {
-    font-size: 12px;
-    font-size: 0.75rem; }
-
-[class*="square-icon-"].disabled + span {
-  color: #888; }
-
-.task-list li {
-  line-height: 24px;
-  line-height: 1.5rem; }
-
-.edit-icon {
-  color: #ddd; }
-  .edit-icon:hover {
-    color: #444; }
-
-.check-icon {
-  color: #ddd; }
-  .check-icon:hover {
-    color: #aaa; }
-  .complete .check-icon {
-    color: #444;
-    text-decoration: none; }
-
-.complete .task-name {
-  color: #aaa;
-  text-decoration: line-through; }
-
-#calendar-month {
-  font-size: 14px;
-  font-size: 0.875rem; }
-
-#calendar-views {
-  font-size: 12px;
-  font-size: 0.75rem; }
-
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -156,10 +78,21 @@ html, body {
   height: 100%;
   width: 100%; }
 
+html {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-size: 12px; }
+  @media screen and (min-width: 768px) {
+    html {
+      font-size: 16px; } }
+
 body {
+  color: #444;
   background-color: #ddd; }
 
 h1 {
+  font-size: 24px;
+  font-size: 1.5rem;
+  font-weight: bold;
   margin-bottom: 10px; }
 
 i {
@@ -184,6 +117,9 @@ i {
   height: 100%; }
 
 .header {
+  font-size: 32px;
+  font-size: 2rem;
+  color: #fff;
   position: fixed;
   height: 45px;
   background-color: #3272BB;
@@ -209,7 +145,8 @@ i {
   visibility: visible !important; }
 
 #header-main {
-  width: 100%; }
+  width: 100%;
+  text-align: right; }
   #header-main i {
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
@@ -259,6 +196,8 @@ i {
       width: 54px !important; } }
 
 #header-sidebar {
+  font-size: 32px;
+  font-size: 2rem;
   padding: 5px;
   background-color: #2d67a8;
   width: inherit; }
@@ -276,6 +215,9 @@ i {
   height: inherit; }
   #nav .selected {
     background-color: #fff; }
+  #nav a {
+    color: #444;
+    text-decoration: none; }
 
 ul[id*="nav-"] {
   margin-bottom: 30px;
@@ -290,24 +232,45 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
     cursor: pointer;
     background-color: #fff; }
   li[id*="nav-"] a i, li[id*="nav-"] > div i {
+    font-size: 24px;
+    font-size: 1.5rem;
     vertical-align: middle;
     margin-right: 9px; }
+
+.sub-nav-list {
+  font-size: 14px;
+  font-size: 0.875rem; }
 
 .sub-nav-list li a {
   padding: 2.5px 10px;
   padding-left: 54px;
   padding-left: 3.375rem;
   margin: 2px 0; }
-  .sub-nav-list li a i {
-    margin-bottom: 2.5px;
-    margin-bottom: 0.15625rem;
-    vertical-align: middle;
-    line-height: inherit; }
+
+.sub-nav-list li i {
+  font-size: 12px;
+  font-size: 0.75rem;
+  margin-bottom: 2.5px;
+  margin-bottom: 0.15625rem;
+  vertical-align: middle;
+  line-height: inherit; }
+
+li[id*="nav-"] {
+  line-height: 24px;
+  line-height: 1.5rem; }
+  li[id*="nav-"] i {
+    font-size: 24px;
+    font-size: 1.5rem; }
+
+[class*="square-icon-"].disabled + span {
+  color: #888; }
 
 #month-name {
   float: left; }
 
 #calendar-views {
+  font-size: 12px;
+  font-size: 0.75rem;
   float: right; }
   #calendar-views li {
     display: inline-block; }
@@ -336,6 +299,10 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
   padding-right: 10px;
   padding-right: 0.625rem;
   vertical-align: top; }
+
+#calendar-month {
+  font-size: 14px;
+  font-size: 0.875rem; }
 
 #calendar-month > ul > li {
   width: 14.28571%;
@@ -376,14 +343,6 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
   padding: 0 1px; }
   .month-day-row .day-number, .month-day-row .events {
     display: table-cell; }
-
-.modal-body .input-group {
-  margin-bottom: 5px; }
-  .modal-body .input-group:last-child {
-    margin-bottom: 0; }
-
-.modal-title input {
-  border: none; }
 
 .modal-footer .btn-danger {
   float: left; }
@@ -491,6 +450,8 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
+  line-height: 24px;
+  line-height: 1.5rem;
   padding: 10px;
   padding: 0.625rem;
   display: table;
@@ -510,9 +471,21 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
     display: table-cell;
     width: 30px;
     width: 1.875rem; }
-  .task-list li .task-summary {
-    display: table-cell;
-    text-overflow: ellipsis; }
+
+.task-summary {
+  display: table-cell;
+  text-overflow: ellipsis; }
+  .completed .task-summary {
+    color: #aaa;
+    text-decoration: line-through; }
+
+.check-icon {
+  color: #ddd; }
+  .check-icon:hover {
+    color: #aaa; }
+  .completed .check-icon {
+    color: #444;
+    text-decoration: none; }
 
 .add-task {
   background: #FAFAFA;

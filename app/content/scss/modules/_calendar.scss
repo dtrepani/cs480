@@ -7,6 +7,7 @@
 }
 
 #calendar-views {
+	@include font-size($font-small);
 	float: right;
 
 	li {
@@ -50,6 +51,10 @@
 
 // MONTH
 // ----------------------------
+#calendar-month {
+	@include font-size(14px);
+}
+
 #calendar-month > ul > li {
 	width: $month-day-width;
  	float: left;

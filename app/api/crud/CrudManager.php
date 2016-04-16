@@ -7,27 +7,30 @@ class CrudManager
     protected $itemType;
     protected $data;
     protected $id;
+    protected $useWhere;
     protected $where;
 
     /**
     * @param    string      $aReqMethod     Request method.
     * @param    CRUD        $anItemType     Item type to act on.
-    * @param    mixed[]     $aData          Bindings (only applicable to create and
-    *                                       update) or where clause, if $aWhere is true.
+    * @param    mixed[]     $aData          Bindings (only applies to create and update).
     * @param    int         $anId           ID of item.
-    * @param    string      $aWhere          Whether or not to use where.
+    * @param    string      $aUseWhere         Whether or not to use where.
+    * @param    string      $aWhere         Where clause.
     */
     public function __construct(
         $aReqMethod,
         $anItemType,
         $aData = array(),
         $anId = null,
+        $aUseWhere = null,
         $aWhere = null
     ) {
         $this->reqMethod = $aReqMethod;
         $this->itemType = $anItemType;
         $this->data = $aData;
         $this->id = $anId;
+        $this->useWhere = $aUseWhere;
         $this->where = $aWhere;
     }
 
@@ -58,11 +61,11 @@ class CrudManager
     */
     private function getGetResponse()
     {
-        if ($this->where) {
+        if ($this->useWhere) {
             if ($this->itemType instanceof ActivityCRUD) {
-                return $this->itemType->getWhere($this->id, $this->data, '', '');
+                return $this->itemType->getWhere($this->id, $this->where);
             }
-            return $this->itemType->getWhere($this->data, '', '');
+            return $this->itemType->getWhere($this->where);
         }
         return $this->itemType->get($this->id);
     }
