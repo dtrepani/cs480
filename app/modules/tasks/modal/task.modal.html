@@ -1,16 +1,16 @@
 <form name="taskForm" class="form-horizontal" novalidate>
-	<div class="modal-header">
-		<div class="form-group modal-title">
-			<input class="form-control input-lg" ng-model="vm.item.summary" placeholder="Add task" required />
-		</div>
-	</div>
-
 	<div class="modal-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label">Label</label>
-			<div class="col-sm-10">
-				<select class="form-control" ng-init="vm.item.label_id ? vm.item.label_id : vm.item.label_id = vm.groups[0].id" ng-model="vm.item.label_id" ng-options="grp.id as grp.name for grp in vm.groups" required>
+			<input class="form-control input-lg" ng-model="vm.item.summary" placeholder="Add task" required />
+		</div>
+		<div class="form-group">
+			<div class="col-sm-3">
+				<select class="form-control input-sm" ng-init="vm.item.label_id ? vm.item.label_id : vm.item.label_id = vm.groups[0].id" ng-model="vm.item.label_id" ng-options="grp.id as grp.name for grp in vm.groups" required>
 				</select>
+			</div>
+			<div class="col-sm-1 priority">
+				<input id="priority-icon" type="checkbox" ng-model="vm.item.priority" ng-true-value="'high'" ng-false-value="'normal'" />
+				<label for="priority-icon"> </label>
 			</div>
 		</div>
 		<div class="form-group">

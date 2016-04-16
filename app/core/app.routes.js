@@ -28,7 +28,9 @@
 				controller: 'DashboardController',
 				controllerAs: 'vm',
 				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated]
+					isAuthenticated: ['accessService', isAuthenticated],
+					tasks: ['tasksService', getTasks],
+					events: ['eventsService', getEvents]
 				}
 			})
 			.when('/admin', {
@@ -42,6 +44,14 @@
 			.otherwise({
 				redirectTo: '/login'
 			});
+
+		function getEvents(eventsService) {
+			return eventsService.getEvents();
+		}
+
+		function getTasks(tasksService) {
+			return tasksService.getTasks();
+		}
 
 		function isAuthenticated(accessService) {
 			return accessService.isAuthenticated();

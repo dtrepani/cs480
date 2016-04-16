@@ -1,5 +1,10 @@
 <h1>Inbox</h1>
-<sp-tasks></sp-tasks>
+<div ng-if="vm.tasks">
+	<sp-tasks tasks="vm.tasks" order="'-created'"></sp-tasks>
+</div>
+<div ng-if="vm.events">
+	<sp-events events="vm.events"></sp-events>
+</div>
 
 <div id="calendar">
 	<div id="calendar-header">

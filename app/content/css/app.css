@@ -487,6 +487,21 @@ li[id*="nav-"] {
     color: #444;
     text-decoration: none; }
 
+.priority input[type=checkbox] {
+  display: none; }
+
+.priority input[type=checkbox] + label:before {
+  font-size: 24px;
+  font-size: 1.5rem;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f006";
+  position: relative;
+  top: 6px; }
+
+.priority input[type=checkbox]:checked + label:before {
+  content: "\f005"; }
+
 .add-task {
   background: #FAFAFA;
   color: #888; }

@@ -47,6 +47,24 @@
 	}
 }
 
+.priority input[type=checkbox] {
+	display: none;
+
+}
+
+.priority input[type=checkbox] + label:before {
+	@include font-size($font-medium);
+	font-family: FontAwesome;
+	display: inline-block;
+	content: "\f006";
+	position: relative;
+	top: 6px;
+}
+
+.priority input[type=checkbox]:checked + label:before {
+	content: "\f005";
+}
+
 .add-task {
 	background: $color-dim-lighter;
 	color: $color-dim-darker;

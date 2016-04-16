@@ -174,7 +174,7 @@ class Database
                 $fetchArgs
             );
 
-            if ($result === false || (is_array($result) && empty($result))) {
+            if ($result === false) {
                 return array(
                     'success'=>false,
                     'title'=>'DB: Query could not be completed successfully.',

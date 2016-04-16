@@ -3,16 +3,16 @@
 
 	angular
 		.module('app')
-		.directive('spTasks', tasksDirective);
+		.directive('spEvents', eventsDirective);
 
-	function tasksDirective() {
+	function eventsDirective() {
 		return {
-			templateUrl: 'modules/tasks/tasks.html',
-			controller: 'TasksController',
+			templateUrl: 'modules/events/events.html',
+			controller: 'EventsController',
 			controllerAs: 'vm',
 			bindToController: true,
 			scope: {
-				tasks: '=',
+				events: '=',
 				order: '='
 			}
 		};

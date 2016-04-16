@@ -40,7 +40,9 @@
 				controller: 'DashboardController',
 				controllerAs: 'vm',
 				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated]
+					isAuthenticated: ['accessService', isAuthenticated],
+					tasks: ['tasksService', getTasks],
+					events: ['eventsService', getEvents]
 				}
 			})
 			.when('/admin', {
@@ -54,6 +56,14 @@
 			.otherwise({
 				redirectTo: '/login'
 			});
+
+		function getEvents(eventsService) {
+			return eventsService.getEvents();
+		}
+
+		function getTasks(tasksService) {
+			return tasksService.getTasks();
+		}
 
 		function isAuthenticated(accessService) {
 			return accessService.isAuthenticated();
@@ -303,6 +313,111 @@
 (function() {
 	'use strict';
 
+	angular
+		.module('app')
+		.controller('EventsController', EventsController);
+
+	EventsController.$inject = ['eventsService', 'eventModalService'];
+	function EventsController(eventsService, eventModalService) {
+		var vm = this;
+		vm.showEventModal = showEventModal;
+
+		function showEventModal(event) {
+			eventModalService.openEventModal(event).then(updateEvents);
+		}
+
+		function updateEvents(response) {
+			if (response) {
+				vm.events = response;
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spEvents', eventsDirective);
+
+	function eventsDirective() {
+		return {
+			templateUrl: 'modules/events/events.html',
+			controller: 'EventsController',
+			controllerAs: 'vm',
+			bindToController: true,
+			scope: {
+				events: '=',
+				order: '='
+			}
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('eventsService', eventsService);
+
+	eventsService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function eventsService($http, $log, crudService, sessionService) {
+		var vm = this;  // jshint ignore:line
+		vm.event = new crudService('event');
+
+		return {
+			createEvent: createEvent,
+			createOrUpdateEvent: createOrUpdateEvent,
+			deleteEvent: deleteEvent,
+			getEvents: getEvents,
+			updateEvent: updateEvent
+		};
+
+		function createEvent(event) {
+			return vm.event.create(event).then(promiseComplete);
+		}
+
+		function createOrUpdateEvent(event) {
+			if (!event.event_id) {
+				return createEvent(event);
+			}
+			return updateEvent(event.event_id, event);
+		}
+
+		function deleteEvent(id) {
+			return vm.event.remove(id).then(promiseComplete);
+		}
+
+		function getEvents() {
+			return sessionService.getVar('id')
+				.then(getEventWithUserID);
+
+			function getEventWithUserID(response) {
+				var res = response.data;
+				if (res.success) {
+					return vm.event.getWhere('', res.data).then(promiseComplete);
+				}
+				return res.title;
+			}
+		}
+
+		function updateEvent(id, event) {
+			return vm.event.update(id, event).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
+			}
+			return res.title;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
 	/**
 	* Compare an input field to another field, determined by the dev.
 	*/
@@ -448,17 +563,10 @@
 	TasksController.$inject = ['tasksService', 'taskModalService'];
 	function TasksController(tasksService, taskModalService) {
 		var vm = this;
-		vm.tasks = [];
-		vm.showTaskDialog = showTaskDialog;
+		vm.showTaskModal = showTaskModal;
 		vm.toggleCompleted = toggleCompleted;
 
-		activate();
-
-		function activate() {
-			tasksService.getTasks().then(updateTasks);
-		}
-
-		function showTaskDialog(task) {
+		function showTaskModal(task) {
 			taskModalService.openTaskModal(task).then(updateTasks);
 		}
 
@@ -485,7 +593,11 @@
 			templateUrl: 'modules/tasks/tasks.html',
 			controller: 'TasksController',
 			controllerAs: 'vm',
-			bindToController: true
+			bindToController: true,
+			scope: {
+				tasks: '=',
+				order: '='
+			}
 		};
 	}
 })();
@@ -564,8 +676,11 @@
 		.module('app')
 		.controller('DashboardController', DashboardController);
 
-	function DashboardController() {
-
+	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events'];
+	function DashboardController(isAuthenticated, tasks, events) {
+		var vm = this;
+		vm.tasks = tasks;
+		vm.events = events;
 	}
 })();
 (function() {
@@ -684,42 +799,96 @@
 
 	angular
 		.module('app')
-		.factory('taskModalService', taskModalService);
+		.factory('eventModalService', eventModalService);
 
-	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
-	function taskModalService($uibModal, labelService, tasksService) {
+	eventModalService.$inject = ['$uibModal', 'calendarService', 'eventsService'];
+	function eventModalService($uibModal, calendarService, eventsService) {
 		var vm = this;  // jshint ignore:line
 
 		return {
-			openTaskModal: openTaskModal
+			openEventModal: openEventModal
 		};
 
-		function openTaskModal(task) {
-			if (angular.isString(task.due)) {
-				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
+		function openEventModal(event) {
+			if (angular.isString(event.due)) {
+				event.due = new Date(event.due.replace(/(.+) (.+)/, "$1T$2Z"));
 			}
-			if (angular.isString(task.reminder)) {
-				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
+			if (angular.isString(event.reminder)) {
+				event.reminder = new Date(event.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
 			}
 
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
+				templateUrl: 'modules/events/modal/event.modal.html',
 				resolve: {
-					groups: labelService.getLabels(),
-					item: task
+					groups: calendarService.getCalendars(),
+					item: event
 				}
 			}).result
 				.then(function(response) {
-					return tasksService.createOrUpdateTask(response)
-						.then(tasksService.getTasks);
+					return eventsService.createOrUpdateEvent(response)
+						.then(eventsService.getEvents);
 				}, function(response) {
-					if (response) {
-						return tasksService.deleteTask(response)
-							.then(tasksService.getTasks);
+					if (typeof response !== 'string') {
+						return eventsService.deleteEvent(response)
+							.then(eventsService.getEvents);
 					}
 				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('calendarService', calendarService);
+
+	calendarService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function calendarService($http, $log, crudService, sessionService) {
+		var vm = this;  // jshint ignore:line
+		vm.calendar = new crudService('calendar');
+
+		return {
+			createCalendar: createCalendar,
+			deleteCalendar: deleteCalendar,
+			getCalendars: getCalendars,
+			updateCalendar: updateCalendar
+		};
+
+		function createCalendar(calendar) {
+			return vm.calendar.create(calendar).then(promiseComplete);
+		}
+
+		function deleteCalendar(id) {
+			return vm.calendar.remove(id).then(promiseComplete);
+		}
+
+		function getCalendars() {
+			return sessionService.getVar('id')
+				.then(getCalendarWithUserID);
+
+			function getCalendarWithUserID(response) {
+				var res = response.data;
+				if (res.success) {
+					return vm.calendar.getWhere('person_id=' + res.data, '').then(promiseComplete);
+				}
+				return res.title;
+			}
+		}
+
+		function updateCalendar(id, calendar) {
+			return vm.calendar.update(id, calendar).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
+			}
+			return res.title;
 		}
 	}
 })();
@@ -847,6 +1016,51 @@
 				}
 				return {name: res.data, url: '#/dashboard'};
 			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('taskModalService', taskModalService);
+
+	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
+	function taskModalService($uibModal, labelService, tasksService) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			openTaskModal: openTaskModal
+		};
+
+		function openTaskModal(task) {
+			if (angular.isString(task.due)) {
+				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+			if (angular.isString(task.reminder)) {
+				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/task.modal.html',
+				resolve: {
+					groups: labelService.getLabels(),
+					item: task
+				}
+			}).result
+				.then(function(response) {
+					return tasksService.createOrUpdateTask(response)
+						.then(tasksService.getTasks);
+				}, function(response) {
+					if (typeof response !== 'string') {
+						return tasksService.deleteTask(response)
+							.then(tasksService.getTasks);
+					}
+				});
 		}
 	}
 })();

@@ -8,17 +8,10 @@
 	TasksController.$inject = ['tasksService', 'taskModalService'];
 	function TasksController(tasksService, taskModalService) {
 		var vm = this;
-		vm.tasks = [];
-		vm.showTaskDialog = showTaskDialog;
+		vm.showTaskModal = showTaskModal;
 		vm.toggleCompleted = toggleCompleted;
 
-		activate();
-
-		function activate() {
-			tasksService.getTasks().then(updateTasks);
-		}
-
-		function showTaskDialog(task) {
+		function showTaskModal(task) {
 			taskModalService.openTaskModal(task).then(updateTasks);
 		}
 

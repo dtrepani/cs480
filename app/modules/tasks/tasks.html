@@ -1,11 +1,11 @@
 <ul class="task-list">
-	<li class="add-task" ng-click="vm.showTaskDialog({})">
+	<li class="add-task" ng-click="vm.showTaskModal({})">
 		<i class="fa fa-plus"></i>
 		<span class="task-summary">Add a task</span>
 	</li>
 
-	<li ng-repeat="task in vm.tasks | orderBy:'-created'" ng-class="{completed: task.completed == true}">
+	<li ng-repeat="task in vm.tasks | orderBy:vm.order" ng-class="{completed: task.completed == true}">
 		<i class="fa fa-check check-icon" ng-click="vm.toggleCompleted(task)"></i>
-		<span class="task-summary" ng-click="vm.showTaskDialog(task)">{{ task.summary }}</span>
+		<span class="task-summary" ng-click="vm.showTaskModal(task)">{{ task.summary }}</span>
 	</li>
 </ul>

@@ -34,7 +34,7 @@
 					return tasksService.createOrUpdateTask(response)
 						.then(tasksService.getTasks);
 				}, function(response) {
-					if (response) {
+					if (typeof response !== 'string') {
 						return tasksService.deleteTask(response)
 							.then(tasksService.getTasks);
 					}
