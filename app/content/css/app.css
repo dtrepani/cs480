@@ -41,11 +41,11 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-#calendar:before, #calendar-header:before, #calendar:after, #calendar-header:after {
+.calendar:before, .calendar-header:before, .calendar:after, .calendar-header:after {
   display: table;
   content: ""; }
 
-#calendar:after, #calendar-header:after {
+.calendar:after, .calendar-header:after {
   clear: both; }
 
 .all-day-events, .events, .task-summary {
@@ -97,6 +97,13 @@ h1 {
 
 i {
   cursor: pointer; }
+
+.btn-primary {
+  background: #3272BB;
+  border-color: #3272BB; }
+  .btn-primary:hover {
+    background: #235083;
+    border-color: #235083; }
 
 .wrapper {
   height: 100%; }
@@ -265,21 +272,21 @@ li[id*="nav-"] {
 [class*="square-icon-"].disabled + span {
   color: #888; }
 
-#month-name {
+.calendar-header {
+  margin-bottom: 10px; }
+
+.month-name {
   float: left; }
 
-#calendar-views {
+.calendar-views {
   font-size: 12px;
   font-size: 0.75rem;
   float: right; }
-  #calendar-views li {
+  .calendar-views li {
     display: inline-block; }
 
 .today {
   background: #F0F0F0; }
-
-#calendar-month .selected {
-  background: #ebf1f8; }
 
 .all-day-events {
   width: 100%;
@@ -300,19 +307,26 @@ li[id*="nav-"] {
   padding-right: 0.625rem;
   vertical-align: top; }
 
-#calendar-month {
+.selected {
+  background: #ebf1f8; }
+
+.calendar-month {
   font-size: 14px;
   font-size: 0.875rem; }
 
-#calendar-month > ul > li {
+.calendar-month > ul li {
   width: 14.28571%;
   float: left;
   margin: -1px 0 0 -1px; }
 
-#month-day-names li {
+.other-month {
+  background: #F0F0F0;
+  color: #aaa; }
+
+.month-day-names li {
   padding-bottom: 2px; }
 
-#month > li {
+.month .day {
   -webkit-border: 1px solid #ddd;
   -moz-border: 1px solid #ddd;
   -ms-border: 1px solid #ddd;
@@ -320,21 +334,21 @@ li[id*="nav-"] {
   border: 1px solid #ddd;
   height: 45px; }
   @media screen and (min-width: 768px) {
-    #month > li {
+    .month .day {
       height: 75px; } }
   @media screen and (min-width: 1200px) {
-    #month > li {
+    .month .day {
       height: 135px; } }
 
-#month ul li {
+.month ul li {
   height: 3px;
   background-color: #3272BB;
   margin: 1px 0; }
   @media screen and (min-width: 768px) {
-    #month ul li {
+    .month ul li {
       height: 5px; } }
   @media screen and (min-width: 1200px) {
-    #month ul li {
+    .month ul li {
       height: 9px; } }
 
 .month-day-row {
@@ -344,8 +358,11 @@ li[id*="nav-"] {
   .month-day-row .day-number, .month-day-row .events {
     display: table-cell; }
 
-.modal-footer .btn-danger {
+.modal-footer-custom .btn-danger {
   float: left; }
+
+.modal-footer-custom {
+  text-align: right; }
 
 .check-icon {
   margin-right: 10px; }
@@ -494,6 +511,7 @@ li[id*="nav-"] {
   font-size: 24px;
   font-size: 1.5rem;
   font-family: FontAwesome;
+  color: #F2BD1A;
   display: inline-block;
   content: "\f006";
   position: relative;

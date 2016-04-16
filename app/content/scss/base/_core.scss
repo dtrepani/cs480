@@ -32,3 +32,13 @@ h1 {
 i {
 	cursor: pointer;
 }
+
+.btn-primary {
+	background: $color-primary;
+	border-color: $color-primary;
+
+	&:hover {
+		background: $color-primary-darker;
+		border-color: $color-primary-darker;
+	}
+}

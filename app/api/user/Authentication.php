@@ -22,11 +22,7 @@ class Authentication
     private function getPassword()
     {
         $crud = new User();
-        return $crud->getAll(
-            array('password'),
-            array('name'=>$this->user['name']),
-            'name = :name'
-        );
+        return $crud->getBy('name', $this->user['name']);
     }
 
     /**

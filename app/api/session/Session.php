@@ -55,11 +55,8 @@ class Session extends CRUD
     public function setSessionVariables($username)
     {
         $user = new User($this->db);
-        $userInfo = $user->getAll(
-            array('id', 'name', 'admin', 'theme', 'avatar'),
-            array('name'=>$username),
-            'name = :name'
-        )['data'][0];
+        $userInfo = $user->getBy('name', $username)['data'][0];
+        unset($userInfo['password']);
 
         foreach ($userInfo as $key => $value) {
             $_SESSION[$key] = $value;

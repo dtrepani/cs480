@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('app', ['ngRoute', 'ui.bootstrap'])
+		.module('app', ['ngRoute', 'ui.bootstrap', 'angularMoment'])
 		.controller('AppController', AppController);
 
 	AppController.$inject = ['$rootScope', 'appService'];

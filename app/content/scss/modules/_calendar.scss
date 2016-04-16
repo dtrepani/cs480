@@ -1,12 +1,16 @@
-#calendar, #calendar-header {
+.calendar, .calendar-header {
 	@extend %clearfix;
 }
 
-#month-name {
+.calendar-header {
+	margin-bottom: 10px;
+}
+
+.month-name {
 	float: left;
 }
 
-#calendar-views {
+.calendar-views {
 	@include font-size($font-small);
 	float: right;
 
@@ -17,10 +21,6 @@
 
 .today {
 	background: $color-dim-light;
-}
-
-#calendar-month .selected {
-	background: $color-primary-light;
 }
 
 .all-day-events {
@@ -48,25 +48,34 @@
 	vertical-align: top;
 }
 
+.selected {
+	background: $color-primary-light;
+}
+
 
 // MONTH
 // ----------------------------
-#calendar-month {
+.calendar-month {
 	@include font-size(14px);
 }
 
-#calendar-month > ul > li {
+.calendar-month > ul li {
 	width: $month-day-width;
  	float: left;
 	margin: -1px 0 0 -1px;
 }
 
-#month-day-names li {
+.other-month {
+	background: $color-dim-light;
+	color: $color-dim-dark;
+}
+
+.month-day-names li {
 	padding-bottom: 2px;
 }
 
-#month {
-	> li {
+.month {
+	.day {
 	 	@include property('border', 1px solid #{$color-dim});
 	 	height: $event-height-small * 15;
 

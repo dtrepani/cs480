@@ -55,6 +55,7 @@
 .priority input[type=checkbox] + label:before {
 	@include font-size($font-medium);
 	font-family: FontAwesome;
+	color: #F2BD1A;
 	display: inline-block;
 	content: "\f006";
 	position: relative;

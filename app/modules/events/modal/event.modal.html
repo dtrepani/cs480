@@ -1,0 +1,37 @@
+<form name="eventForm" class="form-horizontal" novalidate>
+	<div class="modal-body">
+		<div class="form-group">
+			<input class="form-control input-lg" ng-model="vm.item.summary" placeholder="Add event" required />
+		</div>
+		<div class="form-group">
+			<div class="col-sm-4">
+				<select class="form-control input-sm" ng-init="vm.item.calendar_id ? vm.item.calendar_id : vm.item.calendar_id = vm.groups[0].id" ng-model="vm.item.calendar_id" ng-options="grp.id as grp.name for grp in vm.groups" required>
+				</select>
+			</div>
+			<div class="col-sm-4">
+				<input type="datetime" class="form-control input-sm" placeholder="Start" ng-model="vm.item.dt_start | amUtc | amLocal | amDateFormat:'MM.DD.YYYY HH:mm:ss'" />
+			</div>
+			<div class="col-sm-4">
+				<input type="datetime" class="form-control input-sm" placeholder="End" ng-model="vm.item.dt_end" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Description</label>
+			<div class="col-sm-10">
+				<textarea class="form-control" ng-model="vm.item.note" rows="3"></textarea>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Location</label>
+			<div class="col-sm-10">
+				<input class="form-control input-lg" ng-model="vm.item.location" />
+			</div>
+		</div>
+
+		<div class="modal-footer-custom">
+			<button class="btn btn-danger" type="button" ng-click="vm.remove(vm.item.event_id)" ng-hide="vm.item.event_id == null">Delete</button>
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-primary" type="button" ng-click="vm.confirm(vm.item)" ng-disabled="eventForm.$invalid">Confirm</button>
+		</div>
+	</div>
+</form>

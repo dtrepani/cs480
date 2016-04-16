@@ -36,7 +36,7 @@ class SessionHandler implements \SessionHandlerInterface
     {
         $result = $this->session->get($id, array());
 
-        if ($result['success']) {
+        if ($result['success'] && !empty($result['data'])) {
             $result = $this->session->update($id, array('data'=>$data, 'last_accessed'=>date('Y-m-d H:i:s')));
         } else {
             $result = $this->session->create(array(

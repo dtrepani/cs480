@@ -75,7 +75,6 @@ CREATE TABLE IF NOT EXISTS cal_event (
 	activity_info_id	INT				NOT NULL,
 	dt_start			DATETIME,
 	dt_end				DATETIME,
-	description			TEXT,
 	location			VARCHAR(256),
 	PRIMARY KEY (id),
 	FOREIGN KEY (calendar_id)

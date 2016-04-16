@@ -1,0 +1,109 @@
+<div class="calendar">
+	<div class="calendar-header">
+		<h1 class="month-name">{{ vm.today.format("MMMM YYYY") }}</h1>
+		<ul class="btn-group calendar-views">
+			<li class="btn btn-primary btn-sm">Day</li>
+			<li class="btn btn-primary btn-sm">Week</li>
+			<li class="btn btn-primary btn-sm">Month</li>
+			<li class="btn btn-primary btn-sm">Agenda</li>
+		</ul>
+	</div>
+	<ul class="calendar-month">
+		<ul class="month-day-names">
+			<li>Sun</li>
+			<li>Mon</li>
+			<li>Tue</li>
+			<li>Wed</li>
+			<li>Thur</li>
+			<li>Fri</li>
+			<li>Sat</li>
+		</ul>
+
+		<ul class="month">
+			<div class="month-week" ng-repeat="week in vm.month">
+				<li class="day" ng-repeat="day in week" ng-class="{ today: day.isToday, 'other-month': !day.isTargetMonth, selected: vm.isSameDayAsSelected(day) }" ng-click="vm.isSameDayAsSelected(day) ? vm.showEventModal({dt_start: day.fullDate}) : vm.selectDay(day)">
+					<span class="day-number">{{ day.number }}</span>
+				</li>
+			</div>
+		</ul>
+<!--
+		<ul class="month">
+			<li>
+				<ul class="all-day-events">
+					<li></li>
+					<li></li>
+				</ul>
+				<div class="month-day-row">
+					<span class="day-number">1</span>
+					<ul class="events">
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
+			</li>
+			<li class="today">
+				<ul class="all-day-events">
+					<li></li>
+				</ul>
+				<div class="month-day-row">
+					<span class="day-number">2</span>
+					<ul class="events">
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
+			</li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+
+			<li>
+				<ul class="all-day-events">
+					<li></li>
+				</ul>
+				<div class="month-day-row">
+					<span class="day-number">22</span>
+					<ul class="events">
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
+			</li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul> -->
+	</ul>
+</div>

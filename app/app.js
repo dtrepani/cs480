@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('app', ['ngRoute', 'ui.bootstrap'])
+		.module('app', ['ngRoute', 'ui.bootstrap', 'angularMoment'])
 		.controller('AppController', AppController);
 
 	AppController.$inject = ['$rootScope', 'appService'];
@@ -317,10 +317,28 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['eventsService', 'eventModalService'];
-	function EventsController(eventsService, eventModalService) {
+	EventsController.$inject = ['calendarWidgetService', 'eventsService', 'eventModalService'];
+	function EventsController(calendarWidgetService, eventsService, eventModalService) {
 		var vm = this;
+		vm.isSameDayAsSelected = isSameDayAsSelected;
+		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
+
+		activate();
+
+		function activate() {
+			vm.today = calendarWidgetService.getToday();
+			vm.selectedDay = vm.today;
+			vm.month = calendarWidgetService.getMonth(vm.today);
+		}
+
+		function isSameDayAsSelected(day) {
+			return calendarWidgetService.isSameDay(day.fullDate, vm.selectedDay);
+		}
+
+		function selectDay(day) {
+			vm.selectedDay = day.fullDate;
+		}
 
 		function showEventModal(event) {
 			eventModalService.openEventModal(event).then(updateEvents);
@@ -799,51 +817,6 @@
 
 	angular
 		.module('app')
-		.factory('eventModalService', eventModalService);
-
-	eventModalService.$inject = ['$uibModal', 'calendarService', 'eventsService'];
-	function eventModalService($uibModal, calendarService, eventsService) {
-		var vm = this;  // jshint ignore:line
-
-		return {
-			openEventModal: openEventModal
-		};
-
-		function openEventModal(event) {
-			if (angular.isString(event.due)) {
-				event.due = new Date(event.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(event.reminder)) {
-				event.reminder = new Date(event.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/events/modal/event.modal.html',
-				resolve: {
-					groups: calendarService.getCalendars(),
-					item: event
-				}
-			}).result
-				.then(function(response) {
-					return eventsService.createOrUpdateEvent(response)
-						.then(eventsService.getEvents);
-				}, function(response) {
-					if (typeof response !== 'string') {
-						return eventsService.deleteEvent(response)
-							.then(eventsService.getEvents);
-					}
-				});
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.factory('calendarService', calendarService);
 
 	calendarService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
@@ -898,6 +871,120 @@
 
 	angular
 		.module('app')
+		.factory('eventModalService', eventModalService);
+
+	eventModalService.$inject = ['$uibModal', 'calendarService', 'eventsService'];
+	function eventModalService($uibModal, calendarService, eventsService) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			openEventModal: openEventModal
+		};
+
+		function openEventModal(event) {
+			if (angular.isString(event.due)) {
+				event.due = new Date(event.due.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+			if (angular.isString(event.reminder)) {
+				event.reminder = new Date(event.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/events/modal/event.modal.html',
+				resolve: {
+					groups: calendarService.getCalendars(),
+					item: event
+				}
+			}).result
+				.then(function(response) {
+					return eventsService.createOrUpdateEvent(response)
+						.then(eventsService.getEvents);
+				}, function(response) {
+					if (typeof response !== 'string') {
+						return eventsService.deleteEvent(response)
+							.then(eventsService.getEvents);
+					}
+				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('calendarWidgetService', calendarWidgetService);
+
+	calendarWidgetService.$inject = ['moment'];
+	function calendarWidgetService(moment) {
+		return {
+			getMonth: getMonth,
+			getWeek: getWeek,
+			getToday: getToday,
+			isSameDay: isSameDay
+		};
+
+		/**
+		* @param {Moment Object} aDay Day to build month around.
+		* @return {Moment Object[][]}
+		*/
+		function getMonth(aDay) {
+			var month = [];
+			var day = aDay.clone().date(1).startOf('week');
+			for (var i = aDay.month(); i === aDay.month(); i = day.month()) {
+				month.push(getWeek(day, aDay.month()));
+				day = day.add(1, 'weeks');
+			}
+			return month;
+		}
+
+		function getToday() {
+			return moment();
+		}
+
+		/**
+		* @param {Moment Object}	startDay	Starting day of a week.
+		* @param {int}				targetMonth	Month number being built.
+		*
+		* @return {Moment Object[]}
+		*/
+		function getWeek(startDay, targetMonth) {
+			var week = [];
+
+			var day = startDay.clone();
+			for (var i = 0; i < 7; i++) {
+				week.push({
+					number: day.date(),
+					isTargetMonth: (day.month() === targetMonth),
+					isToday: day.isSame(moment(), 'day'),
+					fullDate: day
+				});
+				day = day.clone().add(1, 'days');
+			}
+
+			return week;
+		}
+
+		/**
+		* @param {Moment Object}	day1
+		* @param {Moment Object}	day2
+		*
+		* @return {bool}
+		*/
+		function isSameDay(day1, day2) {
+			return day1.isSame(day2, 'day');
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.factory('labelService', labelService);
 
 	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
@@ -943,6 +1030,51 @@
 				return res.data;
 			}
 			return res.title;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('taskModalService', taskModalService);
+
+	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
+	function taskModalService($uibModal, labelService, tasksService) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			openTaskModal: openTaskModal
+		};
+
+		function openTaskModal(task) {
+			if (angular.isString(task.due)) {
+				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+			if (angular.isString(task.reminder)) {
+				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
+			}
+
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/task.modal.html',
+				resolve: {
+					groups: labelService.getLabels(),
+					item: task
+				}
+			}).result
+				.then(function(response) {
+					return tasksService.createOrUpdateTask(response)
+						.then(tasksService.getTasks);
+				}, function(response) {
+					if (typeof response !== 'string') {
+						return tasksService.deleteTask(response)
+							.then(tasksService.getTasks);
+					}
+				});
 		}
 	}
 })();
@@ -1016,51 +1148,6 @@
 				}
 				return {name: res.data, url: '#/dashboard'};
 			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('taskModalService', taskModalService);
-
-	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
-	function taskModalService($uibModal, labelService, tasksService) {
-		var vm = this;  // jshint ignore:line
-
-		return {
-			openTaskModal: openTaskModal
-		};
-
-		function openTaskModal(task) {
-			if (angular.isString(task.due)) {
-				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(task.reminder)) {
-				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
-				resolve: {
-					groups: labelService.getLabels(),
-					item: task
-				}
-			}).result
-				.then(function(response) {
-					return tasksService.createOrUpdateTask(response)
-						.then(tasksService.getTasks);
-				}, function(response) {
-					if (typeof response !== 'string') {
-						return tasksService.deleteTask(response)
-							.then(tasksService.getTasks);
-					}
-				});
 		}
 	}
 })();
