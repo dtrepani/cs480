@@ -13,6 +13,7 @@
 			bindToController: true,
 			scope: {
 				tasks: '=',
+				labels: '=',
 				order: '='
 			}
 		};

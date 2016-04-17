@@ -30,7 +30,9 @@
 				resolve: {
 					isAuthenticated: ['accessService', isAuthenticated],
 					tasks: ['tasksService', getTasks],
-					events: ['eventsService', getEvents]
+					events: ['eventsService', getEvents],
+					labels: ['labelService', getLabels],
+					calendars: ['calendarService', getCalendars]
 				}
 			})
 			.when('/admin', {
@@ -45,8 +47,16 @@
 				redirectTo: '/login'
 			});
 
+		function getCalendars(calendarService) {
+			return calendarService.getCalendars();
+		}
+
 		function getEvents(eventsService) {
 			return eventsService.getEvents();
+		}
+
+		function getLabels(labelService) {
+			return labelService.getLabels();
 		}
 
 		function getTasks(tasksService) {

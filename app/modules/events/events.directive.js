@@ -13,7 +13,7 @@
 			bindToController: true,
 			scope: {
 				events: '=',
-				order: '='
+				calendars: '='
 			}
 		};
 	}

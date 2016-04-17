@@ -8,11 +8,16 @@
 	calendarWidgetService.$inject = ['moment'];
 	function calendarWidgetService(moment) {
 		return {
+			getEndOfDay: getEndOfDay,
 			getMonth: getMonth,
-			getWeek: getWeek,
 			getToday: getToday,
+			getWeek: getWeek,
 			isSameDay: isSameDay
 		};
+
+		function getEndOfDay(day) {
+			return day.clone().add(1, 'day').subtract(1, 'ms');
+		}
 
 		/**
 		* @param {Moment Object} aDay Day to build month around.

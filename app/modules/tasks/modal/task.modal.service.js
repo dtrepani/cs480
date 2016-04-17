@@ -13,20 +13,13 @@
 			openTaskModal: openTaskModal
 		};
 
-		function openTaskModal(task) {
-			if (angular.isString(task.due)) {
-				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(task.reminder)) {
-				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-
+		function openTaskModal(task, labels) {
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/tasks/modal/task.modal.html',
 				resolve: {
-					groups: labelService.getLabels(),
+					groups: function() { return labels; },
 					item: task
 				}
 			}).result

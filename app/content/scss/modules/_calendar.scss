@@ -1,5 +1,5 @@
 .calendar, .calendar-header {
-	@extend %clearfix;
+	// @extend %clearfix;
 }
 
 .calendar-header {
@@ -21,31 +21,6 @@
 
 .today {
 	background: $color-dim-light;
-}
-
-.all-day-events {
-	@extend %one-line;
-	width: 100%;
-	height: $event-height-small * 3 + $event-height-small / 2;
-	padding: 0 $month-day-padding;
-
-	@include breakpoint(small) {
-		height: $event-height-medium * 2 + $event-height-medium / 2;
-	}
-
-	@include breakpoint(large) {
-		height: $event-height-large * 2 + $event-height-large / 2;
-	}
-}
-
-.events {
-	@extend %one-line;
-	width: 100%;
-}
-
-.day-number {
-	@include rem('padding-right', 10px);
-	vertical-align: top;
 }
 
 .selected {
@@ -74,6 +49,26 @@
 	padding-bottom: 2px;
 }
 
+.all-day-events {
+	@extend %one-line;
+	width: 100%;
+	height: $event-height-small * 3 + $event-height-small / 2;
+	padding: 0 $month-day-padding;
+
+	@include breakpoint(small) {
+		height: $event-height-medium * 2 + $event-height-medium / 2;
+	}
+
+	@include breakpoint(large) {
+		height: $event-height-large * 2 + $event-height-large / 2;
+	}
+}
+
+.day-number {
+	@include rem('padding-right', 10px);
+	vertical-align: top;
+}
+
 .month {
 	.day {
 	 	@include property('border', 1px solid #{$color-dim});
@@ -88,18 +83,26 @@
 	 	}
 	}
 
-	ul li {
-		height: $event-height-small;
-		background-color: $color-primary;
-		margin: 1px 0;
+	.events {
+		@extend %one-line;
+		width: 100%;
+		overflow-y: none;
 
-	 	@include breakpoint(small) {
-			height: $event-height-medium;
+		&:hover {
+			overflow-y: auto;
 		}
+	}
+}
 
-		@include breakpoint(large) {
-			height: $event-height-large;
-		}
+.month .events li {
+	padding: 1px;
+	color: $color-bg-content;
+	width: 100%;
+	background-color: $color-primary;
+	margin-bottom: 2px;
+
+	@include breakpoint(small) {
+		padding: 3px;
 	}
 }
 

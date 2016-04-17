@@ -42,7 +42,9 @@
 				resolve: {
 					isAuthenticated: ['accessService', isAuthenticated],
 					tasks: ['tasksService', getTasks],
-					events: ['eventsService', getEvents]
+					events: ['eventsService', getEvents],
+					labels: ['labelService', getLabels],
+					calendars: ['calendarService', getCalendars]
 				}
 			})
 			.when('/admin', {
@@ -57,8 +59,16 @@
 				redirectTo: '/login'
 			});
 
+		function getCalendars(calendarService) {
+			return calendarService.getCalendars();
+		}
+
 		function getEvents(eventsService) {
 			return eventsService.getEvents();
+		}
+
+		function getLabels(labelService) {
+			return labelService.getLabels();
 		}
 
 		function getTasks(tasksService) {
@@ -97,6 +107,34 @@
 	}
 })();
 
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.filter('sameDayAs', sameDayAs);
+
+	sameDayAs.$inject = ['moment'];
+	function sameDayAs(moment) {
+		return function(events, day) {
+			var sameDayEvents = [];
+
+			for (var i = 0; i < events.length; i++) {
+				var result = day.isSame(moment(events[i].dt_start), 'day');
+
+				if (!result) {
+					result = day.isSame(moment(events[i].dt_end), 'day');
+				}
+
+				if(result) {
+					sameDayEvents.push(events[i]);
+				}
+			}
+
+			return sameDayEvents;
+		};
+	}
+})();
 (function() {
 	'use strict';
 
@@ -313,14 +351,55 @@
 (function() {
 	'use strict';
 
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
+
+	angular
+		.module('app')
+		.directive('spCompareTo', compareTo);
+
+	function compareTo() {
+		var directive = {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
+		};
+		return directive;
+
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
+
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
 	angular
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['calendarWidgetService', 'eventsService', 'eventModalService'];
-	function EventsController(calendarWidgetService, eventsService, eventModalService) {
+	EventsController.$inject = ['moment', 'calendarWidgetService', 'eventsService', 'eventModalService'];
+	function EventsController(moment, calendarWidgetService, eventsService, eventModalService) {
 		var vm = this;
 		vm.isSameDayAsSelected = isSameDayAsSelected;
+		vm.getEndOfDay = getEndOfDay;
 		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
 
@@ -332,8 +411,12 @@
 			vm.month = calendarWidgetService.getMonth(vm.today);
 		}
 
+		function getEndOfDay(day) {
+			return calendarWidgetService.getEndOfDay(day);
+		}
+
 		function isSameDayAsSelected(day) {
-			return calendarWidgetService.isSameDay(day.fullDate, vm.selectedDay);
+			return calendarWidgetService.isSameDay(day, vm.selectedDay);
 		}
 
 		function selectDay(day) {
@@ -341,7 +424,7 @@
 		}
 
 		function showEventModal(event) {
-			eventModalService.openEventModal(event).then(updateEvents);
+			eventModalService.openEventModal(event, vm.calendars).then(updateEvents);
 		}
 
 		function updateEvents(response) {
@@ -366,7 +449,7 @@
 			bindToController: true,
 			scope: {
 				events: '=',
-				order: '='
+				calendars: '='
 			}
 		};
 	}
@@ -436,43 +519,120 @@
 (function() {
 	'use strict';
 
-	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
-
 	angular
 		.module('app')
-		.directive('spCompareTo', compareTo);
+		.controller('TasksController', TasksController);
 
-	function compareTo() {
-		var directive = {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
-		};
-		return directive;
+	TasksController.$inject = ['tasksService', 'taskModalService'];
+	function TasksController(tasksService, taskModalService) {
+		var vm = this;
+		vm.showTaskModal = showTaskModal;
+		vm.toggleCompleted = toggleCompleted;
 
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
+		function showTaskModal(task) {
+			taskModalService.openTaskModal(task, vm.labels).then(updateTasks);
+		}
 
-			function cleanUp() {
-				unbindWatch();
-			}
+		function toggleCompleted(task) {
+			tasksService.toggleCompleted(task).then(updateTasks);
+		}
 
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
+		function updateTasks(response) {
+			if (response) {
+				vm.tasks = response;
 			}
 		}
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spTasks', tasksDirective);
+
+	function tasksDirective() {
+		return {
+			templateUrl: 'modules/tasks/tasks.html',
+			controller: 'TasksController',
+			controllerAs: 'vm',
+			bindToController: true,
+			scope: {
+				tasks: '=',
+				labels: '=',
+				order: '='
+			}
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('tasksService', tasksService);
+
+	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function tasksService($http, $log, crudService, sessionService) {
+		var vm = this;  // jshint ignore:line
+		vm.task = new crudService('task');
+
+		return {
+			createTask: createTask,
+			createOrUpdateTask: createOrUpdateTask,
+			deleteTask: deleteTask,
+			getTasks: getTasks,
+			toggleCompleted: toggleCompleted,
+			updateTask: updateTask
+		};
+
+		function createTask(task) {
+			return vm.task.create(task).then(promiseComplete);
+		}
+
+		function createOrUpdateTask(task) {
+			if (!task.task_id) {
+				return createTask(task);
+			}
+			return updateTask(task.task_id, task);
+		}
+
+		function deleteTask(id) {
+			return vm.task.remove(id).then(promiseComplete);
+		}
+
+		function getTasks() {
+			return sessionService.getVar('id')
+				.then(getTaskWithUserID);
+
+			function getTaskWithUserID(response) {
+				var res = response.data;
+				if (res.success) {
+					return vm.task.getWhere('', res.data).then(promiseComplete);
+				}
+				return res.title;
+			}
+		}
+
+		function toggleCompleted(task) {
+			task.completed = !parseInt(task.completed);
+			return updateTask(task.task_id, task).then(getTasks);
+		}
+
+		function updateTask(id, task) {
+			return vm.task.update(id, task).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
+			}
+			return res.title;
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -576,129 +736,15 @@
 
 	angular
 		.module('app')
-		.controller('TasksController', TasksController);
-
-	TasksController.$inject = ['tasksService', 'taskModalService'];
-	function TasksController(tasksService, taskModalService) {
-		var vm = this;
-		vm.showTaskModal = showTaskModal;
-		vm.toggleCompleted = toggleCompleted;
-
-		function showTaskModal(task) {
-			taskModalService.openTaskModal(task).then(updateTasks);
-		}
-
-		function toggleCompleted(task) {
-			tasksService.toggleCompleted(task).then(updateTasks);
-		}
-
-		function updateTasks(response) {
-			if (response) {
-				vm.tasks = response;
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spTasks', tasksDirective);
-
-	function tasksDirective() {
-		return {
-			templateUrl: 'modules/tasks/tasks.html',
-			controller: 'TasksController',
-			controllerAs: 'vm',
-			bindToController: true,
-			scope: {
-				tasks: '=',
-				order: '='
-			}
-		};
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('tasksService', tasksService);
-
-	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function tasksService($http, $log, crudService, sessionService) {
-		var vm = this;  // jshint ignore:line
-		vm.task = new crudService('task');
-
-		return {
-			createTask: createTask,
-			createOrUpdateTask: createOrUpdateTask,
-			deleteTask: deleteTask,
-			getTasks: getTasks,
-			toggleCompleted: toggleCompleted,
-			updateTask: updateTask
-		};
-
-		function createTask(task) {
-			return vm.task.create(task).then(promiseComplete);
-		}
-
-		function createOrUpdateTask(task) {
-			if (!task.task_id) {
-				return createTask(task);
-			}
-			return updateTask(task.task_id, task);
-		}
-
-		function deleteTask(id) {
-			return vm.task.remove(id).then(promiseComplete);
-		}
-
-		function getTasks() {
-			return sessionService.getVar('id')
-				.then(getTaskWithUserID);
-
-			function getTaskWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.task.getWhere('', res.data).then(promiseComplete);
-				}
-				return res.title;
-			}
-		}
-
-		function toggleCompleted(task) {
-			task.completed = !parseInt(task.completed);
-			return updateTask(task.task_id, task).then(getTasks);
-		}
-
-		function updateTask(id, task) {
-			return vm.task.update(id, task).then(promiseComplete);
-		}
-
-		function promiseComplete(response) {
-			var res = response.data;
-			if (res.success) {
-				return res.data;
-			}
-			return res.title;
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('DashboardController', DashboardController);
 
-	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events'];
-	function DashboardController(isAuthenticated, tasks, events) {
+	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
+	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
 		var vm = this;
 		vm.tasks = tasks;
 		vm.events = events;
+		vm.labels = labels;
+		vm.calendars = calendars;
 	}
 })();
 (function() {
@@ -881,20 +927,13 @@
 			openEventModal: openEventModal
 		};
 
-		function openEventModal(event) {
-			if (angular.isString(event.due)) {
-				event.due = new Date(event.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(event.reminder)) {
-				event.reminder = new Date(event.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-
+		function openEventModal(event, calendars) {
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/events/modal/event.modal.html',
 				resolve: {
-					groups: calendarService.getCalendars(),
+					groups: function() { return calendars; },
 					item: event
 				}
 			}).result
@@ -921,11 +960,16 @@
 	calendarWidgetService.$inject = ['moment'];
 	function calendarWidgetService(moment) {
 		return {
+			getEndOfDay: getEndOfDay,
 			getMonth: getMonth,
-			getWeek: getWeek,
 			getToday: getToday,
+			getWeek: getWeek,
 			isSameDay: isSameDay
 		};
+
+		function getEndOfDay(day) {
+			return day.clone().add(1, 'day').subtract(1, 'ms');
+		}
 
 		/**
 		* @param {Moment Object} aDay Day to build month around.
@@ -1049,20 +1093,13 @@
 			openTaskModal: openTaskModal
 		};
 
-		function openTaskModal(task) {
-			if (angular.isString(task.due)) {
-				task.due = new Date(task.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(task.reminder)) {
-				task.reminder = new Date(task.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-
+		function openTaskModal(task, labels) {
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/tasks/modal/task.modal.html',
 				resolve: {
-					groups: labelService.getLabels(),
+					groups: function() { return labels; },
 					item: task
 				}
 			}).result

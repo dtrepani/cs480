@@ -1,6 +1,12 @@
 <div class="calendar">
 	<div class="calendar-header">
+		<div class="btn-group">
+			<i class="btn btn-primary btn-sm fa fa-angle-left" ng-click="vm.lastMonth()"></i>
+			<i class="btn btn-primary btn-sm fa fa-angle-right" ng-click="vm.nextMonth()"></i>
+		</div>
+
 		<h1 class="month-name">{{ vm.today.format("MMMM YYYY") }}</h1>
+
 		<ul class="btn-group calendar-views">
 			<li class="btn btn-primary btn-sm">Day</li>
 			<li class="btn btn-primary btn-sm">Week</li>
@@ -21,8 +27,22 @@
 
 		<ul class="month">
 			<div class="month-week" ng-repeat="week in vm.month">
-				<li class="day" ng-repeat="day in week" ng-class="{ today: day.isToday, 'other-month': !day.isTargetMonth, selected: vm.isSameDayAsSelected(day) }" ng-click="vm.isSameDayAsSelected(day) ? vm.showEventModal({dt_start: day.fullDate}) : vm.selectDay(day)">
+				<li class="day" ng-repeat="day in week"
+				ng-class="{ today: day.isToday,
+					'other-month': !day.isTargetMonth,
+					selected: vm.isSameDayAsSelected(day.fullDate) }"
+				ng-click="vm.isSameDayAsSelected(day.fullDate)
+					? vm.showEventModal({
+						dt_start: day.fullDate.format('YYYY-MM-DD HH:mm:ss'),
+						dt_end: vm.getEndOfDay(day.fullDate).format('YYYY-MM-DD HH:mm:ss') })
+					: vm.selectDay(day)">
 					<span class="day-number">{{ day.number }}</span>
+					<ul class="events">
+						<li ng-repeat="event in vm.events | orderBy:'dt_start' | sameDayAs:day.fullDate"
+							ng-click="vm.showEventModal(event); $event.stopPropagation();">
+							{{ event.summary }}
+						</li>
+					</ul>
 				</li>
 			</div>
 		</ul>

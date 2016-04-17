@@ -13,20 +13,13 @@
 			openEventModal: openEventModal
 		};
 
-		function openEventModal(event) {
-			if (angular.isString(event.due)) {
-				event.due = new Date(event.due.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-			if (angular.isString(event.reminder)) {
-				event.reminder = new Date(event.reminder.replace(/(.+) (.+)/, "$1T$2Z"));
-			}
-
+		function openEventModal(event, calendars) {
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/events/modal/event.modal.html',
 				resolve: {
-					groups: calendarService.getCalendars(),
+					groups: function() { return calendars; },
 					item: event
 				}
 			}).result

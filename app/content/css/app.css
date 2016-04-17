@@ -41,14 +41,7 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-.calendar:before, .calendar-header:before, .calendar:after, .calendar-header:after {
-  display: table;
-  content: ""; }
-
-.calendar:after, .calendar-header:after {
-  clear: both; }
-
-.all-day-events, .events, .task-summary {
+.all-day-events, .month .events, .task-summary {
   white-space: nowrap;
   overflow-x: hidden; }
 
@@ -288,25 +281,6 @@ li[id*="nav-"] {
 .today {
   background: #F0F0F0; }
 
-.all-day-events {
-  width: 100%;
-  height: 10.5px;
-  padding: 0 1px; }
-  @media screen and (min-width: 768px) {
-    .all-day-events {
-      height: 12.5px; } }
-  @media screen and (min-width: 1200px) {
-    .all-day-events {
-      height: 22.5px; } }
-
-.events {
-  width: 100%; }
-
-.day-number {
-  padding-right: 10px;
-  padding-right: 0.625rem;
-  vertical-align: top; }
-
 .selected {
   background: #ebf1f8; }
 
@@ -326,6 +300,22 @@ li[id*="nav-"] {
 .month-day-names li {
   padding-bottom: 2px; }
 
+.all-day-events {
+  width: 100%;
+  height: 10.5px;
+  padding: 0 1px; }
+  @media screen and (min-width: 768px) {
+    .all-day-events {
+      height: 12.5px; } }
+  @media screen and (min-width: 1200px) {
+    .all-day-events {
+      height: 22.5px; } }
+
+.day-number {
+  padding-right: 10px;
+  padding-right: 0.625rem;
+  vertical-align: top; }
+
 .month .day {
   -webkit-border: 1px solid #ddd;
   -moz-border: 1px solid #ddd;
@@ -340,16 +330,21 @@ li[id*="nav-"] {
     .month .day {
       height: 135px; } }
 
-.month ul li {
-  height: 3px;
+.month .events {
+  width: 100%;
+  overflow-y: none; }
+  .month .events:hover {
+    overflow-y: auto; }
+
+.month .events li {
+  padding: 1px;
+  color: #fff;
+  width: 100%;
   background-color: #3272BB;
-  margin: 1px 0; }
+  margin-bottom: 2px; }
   @media screen and (min-width: 768px) {
-    .month ul li {
-      height: 5px; } }
-  @media screen and (min-width: 1200px) {
-    .month ul li {
-      height: 9px; } }
+    .month .events li {
+      padding: 3px; } }
 
 .month-day-row {
   display: table;

@@ -12,7 +12,7 @@
 		vm.toggleCompleted = toggleCompleted;
 
 		function showTaskModal(task) {
-			taskModalService.openTaskModal(task).then(updateTasks);
+			taskModalService.openTaskModal(task, vm.labels).then(updateTasks);
 		}
 
 		function toggleCompleted(task) {

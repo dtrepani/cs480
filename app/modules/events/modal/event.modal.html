@@ -9,10 +9,10 @@
 				</select>
 			</div>
 			<div class="col-sm-4">
-				<input type="datetime" class="form-control input-sm" placeholder="Start" ng-model="vm.item.dt_start | amUtc | amLocal | amDateFormat:'MM.DD.YYYY HH:mm:ss'" />
+				<input type="datetime" class="form-control input-sm" placeholder="Start" ng-model="vm.item.dt_start" required />
 			</div>
 			<div class="col-sm-4">
-				<input type="datetime" class="form-control input-sm" placeholder="End" ng-model="vm.item.dt_end" />
+				<input type="datetime" class="form-control input-sm" placeholder="End" ng-model="vm.item.dt_end" required />
 			</div>
 		</div>
 		<div class="form-group">

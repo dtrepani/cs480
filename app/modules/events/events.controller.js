@@ -5,10 +5,11 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['calendarWidgetService', 'eventsService', 'eventModalService'];
-	function EventsController(calendarWidgetService, eventsService, eventModalService) {
+	EventsController.$inject = ['moment', 'calendarWidgetService', 'eventsService', 'eventModalService'];
+	function EventsController(moment, calendarWidgetService, eventsService, eventModalService) {
 		var vm = this;
 		vm.isSameDayAsSelected = isSameDayAsSelected;
+		vm.getEndOfDay = getEndOfDay;
 		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
 
@@ -20,8 +21,12 @@
 			vm.month = calendarWidgetService.getMonth(vm.today);
 		}
 
+		function getEndOfDay(day) {
+			return calendarWidgetService.getEndOfDay(day);
+		}
+
 		function isSameDayAsSelected(day) {
-			return calendarWidgetService.isSameDay(day.fullDate, vm.selectedDay);
+			return calendarWidgetService.isSameDay(day, vm.selectedDay);
 		}
 
 		function selectDay(day) {
@@ -29,7 +34,7 @@
 		}
 
 		function showEventModal(event) {
-			eventModalService.openEventModal(event).then(updateEvents);
+			eventModalService.openEventModal(event, vm.calendars).then(updateEvents);
 		}
 
 		function updateEvents(response) {
