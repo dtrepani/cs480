@@ -44,7 +44,7 @@
 				}
 			})
 			.otherwise({
-				redirectTo: '/login'
+				redirectTo: '/dashboard'
 			});
 
 		function getCalendars(calendarService) {

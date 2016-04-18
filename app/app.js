@@ -56,7 +56,7 @@
 				}
 			})
 			.otherwise({
-				redirectTo: '/login'
+				redirectTo: '/dashboard'
 			});
 
 		function getCalendars(calendarService) {
@@ -351,46 +351,6 @@
 (function() {
 	'use strict';
 
-	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
-
-	angular
-		.module('app')
-		.directive('spCompareTo', compareTo);
-
-	function compareTo() {
-		var directive = {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
-		};
-		return directive;
-
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
-
-			function cleanUp() {
-				unbindWatch();
-			}
-
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
 	angular
 		.module('app')
 		.controller('EventsController', EventsController);
@@ -519,6 +479,144 @@
 (function() {
 	'use strict';
 
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
+
+	angular
+		.module('app')
+		.directive('spCompareTo', compareTo);
+
+	function compareTo() {
+		var directive = {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
+		};
+		return directive;
+
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
+
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('LoginController', LoginController);
+
+	LoginController.$inject = ['loginService'];
+	function LoginController(loginService) {
+		var vm = this;
+		vm.loading = false;
+		vm.error = '';
+
+		vm.login = login;
+
+		/**
+		* LoginService will redirect if there is no error. Thus, there's only a
+		* need to return a promise if there's an error.
+		*/
+		function login() {
+			vm.loading = true;
+			loginService.login(vm.user)
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('loginService', loginService);
+
+	loginService.$inject = ['$http', '$location', '$log'];
+	function loginService($http, $location, $log) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			login: login
+		};
+
+		function login(user) {
+			return $http.post('api/user/loginManager.php', user)
+				.then(loginComplete)
+				.catch(loginFailed);
+
+			function loginComplete(response) {
+				if (response.data.success === false) {
+					return response.data.title;
+				}
+				$location.path('/dashboard');
+			}
+
+			function loginFailed(error) {
+				$log.error(error);
+				return 'Something went wrong. Please try again.';
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('ModalController', ModalController);
+
+	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
+	function ModalController($uibModalInstance, groups, item) {
+		var vm = this;
+		vm.groups = groups;
+		vm.item = item;
+		vm.close = close;
+		vm.cancel = cancel;
+		vm.confirm = confirm;
+		vm.remove = remove;
+
+		function close() {
+			$uibModalInstance.close();
+		}
+
+		function cancel() {
+			$uibModalInstance.dismiss('cancel');
+		}
+
+		function remove(data) {
+			$uibModalInstance.dismiss(data);
+		}
+
+		function confirm(data) {
+			$uibModalInstance.close(data);
+		}
+	}
+})();
+(function() {
+	'use strict';
+
 	angular
 		.module('app')
 		.controller('TasksController', TasksController);
@@ -638,27 +736,16 @@
 
 	angular
 		.module('app')
-		.controller('LoginController', LoginController);
+		.controller('UploadController', UploadController);
 
-	LoginController.$inject = ['loginService'];
-	function LoginController(loginService) {
-		var vm = this;
-		vm.loading = false;
-		vm.error = '';
+	UploadController.$inject = ['$scope', '$http', 'uploadService'];
+	function UploadController($scope, $http, uploadService) {
+		var uc = this;
+		uc.uploadFile = uploadFile;
 
-		vm.login = login;
-
-		/**
-		* LoginService will redirect if there is no error. Thus, there's only a
-		* need to return a promise if there's an error.
-		*/
-		function login() {
-			vm.loading = true;
-			loginService.login(vm.user)
-				.then(function(response) {
-					vm.loading = false;
-					vm.error = response;
-				});
+		function uploadFile(file) {
+			return uploadService.uploadFile(file)
+				.then(function(filePath) { return filePath; });
 		}
 	}
 })();
@@ -667,67 +754,71 @@
 
 	angular
 		.module('app')
-		.factory('loginService', loginService);
+		.directive('spFileChange', spFileChange);
 
-	loginService.$inject = ['$http', '$location', '$log'];
-	function loginService($http, $location, $log) {
-		var vm = this;  // jshint ignore:line
-
+	spFileChange.$inject = ['$parse'];
+	function spFileChange($parse) {
 		return {
-			login: login
+			restrict: 'A',
+			controller: 'UploadController',
+			controllerAs: 'uc',
+			link: link,
+			scope: {
+				spFileChange: '=',
+			}
 		};
 
-		function login(user) {
-			return $http.post('api/user/loginManager.php', user)
-				.then(loginComplete)
-				.catch(loginFailed);
+		function link(scope, element, attrs) {
+			var maxFileSize = 2 * 1024 * 1024;
+			var fileModel = $parse(attrs.spFileChange);
+			element[0].addEventListener('change', fileHandler, false);
 
-			function loginComplete(response) {
-				if (response.data.success === false) {
-					return response.data.title;
-				}
-				$location.path('/dashboard');
-			}
+			function fileHandler(event) {
+				scope.$apply(function() {
+					var file = element[0].files[0];
 
-			function loginFailed(error) {
-				$log.error(error);
-				return 'Something went wrong. Please try again.';
+					if (file.size <= maxFileSize) {
+						scope.uc.uploadFile(file)
+							.then(function(filePath) { scope.spFileChange = filePath; });
+					} else {
+						alert("File must be less than " + (maxFileSize / 1024 / 1024) + "MB.");// jshint ignore:line
+					}
+				});
 			}
 		}
 	}
 })();
-
 (function() {
 	'use strict';
 
 	angular
 		.module('app')
-		.controller('ModalController', ModalController);
+		.factory('uploadService', uploadService);
 
-	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
-	function ModalController($uibModalInstance, groups, item) {
-		var vm = this;
-		vm.groups = groups;
-		vm.item = item;
-		vm.close = close;
-		vm.cancel = cancel;
-		vm.confirm = confirm;
-		vm.remove = remove;
+	uploadService.$inject = ['$http', '$log'];
+	function uploadService($http, $log) {
+		return {
+			uploadFile: uploadFile
+		};
 
-		function close() {
-			$uibModalInstance.close();
-		}
+		function uploadFile(file) {
+			var formData = new FormData();
+			formData.append('file', file);
 
-		function cancel() {
-			$uibModalInstance.dismiss('cancel');
-		}
-
-		function remove(data) {
-			$uibModalInstance.dismiss(data);
-		}
-
-		function confirm(data) {
-			$uibModalInstance.close(data);
+			return $http.post('api/upload/uploadManager.php', formData, {
+				transformRequest: angular.identity,
+				headers: { 'Content-Type': undefined }
+			})
+				.then(function(res) {
+					if (res.data.success) {
+						return res.data.data;
+					}
+					$log.error(res.title);
+					return '';
+				})
+				.catch(function(res) {
+					$log.error(res);
+				});
 		}
 	}
 })();
@@ -1121,6 +1212,52 @@
 
 	angular
 		.module('app')
+		.controller('SidebarController', SidebarController);
+
+	function SidebarController() {
+		var vm = this;
+
+		vm.collapsed = true;
+
+		vm.toggleSidebar = function() {
+			vm.collapsed = !vm.collapsed;
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spSidebar', sidebarDirective);
+
+	function sidebarDirective() {
+		return {
+			link: link,
+			templateUrl: 'pages/layout/sidebar/sidebar.html',
+			controller: 'SidebarController',
+			controllerAs: 'vm',
+			bindToController: true
+		};
+
+		function link(scope, element, attrs) {
+			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+
+			function toggleSidebar(collapsed) {
+				if (collapsed) {
+					element.removeClass('collapsed');
+				} else {
+					element.addClass('collapsed');
+				}
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.controller('HeaderController', HeaderController);
 
 	HeaderController.$inject = ['$scope', 'headerService'];
@@ -1184,53 +1321,6 @@
 					return {name: false, url: '#/login'};
 				}
 				return {name: res.data, url: '#/dashboard'};
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('SidebarController', SidebarController);
-
-	function SidebarController() {
-		var vm = this;
-
-		vm.collapsed = true;
-
-		vm.toggleSidebar = function() {
-			vm.collapsed = !vm.collapsed;
-		};
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spSidebar', sidebarDirective);
-
-	function sidebarDirective() {
-		return {
-			link: link,
-			templateUrl: 'pages/layout/sidebar/sidebar.html',
-			controller: 'SidebarController',
-			controllerAs: 'vm',
-			bindToController: true
-		};
-
-		function link(scope, element, attrs) {
-			scope.$watch(attrs.sidebarDirective, toggleSidebar);
-
-			function toggleSidebar(collapsed) {
-				if (collapsed) {
-					element.removeClass('collapsed');
-				} else {
-					element.addClass('collapsed');
-				}
 			}
 		}
 	}

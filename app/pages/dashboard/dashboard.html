@@ -1,3 +1,15 @@
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">Avatar</label>
+	<div class="col-sm-10">
+		<input type="file" name="file" sp-file-change="vm.user.avatar" accept="image/x-png, image/jpeg"/>
+		<div ng-if="vm.user.avatar !== ''">
+			<img ng-src="{{ vm.user.avatar }}"/>
+		</div>
+	</div>
+</div>
+
 <h1>Inbox</h1>
 <div ng-if="vm.tasks && vm.labels">
 	<sp-tasks tasks="vm.tasks" labels="vm.labels" order="'-created'"></sp-tasks>

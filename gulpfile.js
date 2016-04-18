@@ -26,7 +26,8 @@ var filePaths = {
 	scss: [dirPaths.scss + 'app.scss'],
 	scssWatch: [dirPaths.scss + '**/*.scss'], // Watch for changes in any of the scss partials.
 	js: [
-		dirPaths.js + '**/*.js',
+		dirPaths.js + 'core/*.js',
+		dirPaths.js + '!(core)*/**/*.js',
 		'!' + dirPaths.js + 'app.js',
 		'!' + dirPaths.js + 'app.min.js'
 	],
