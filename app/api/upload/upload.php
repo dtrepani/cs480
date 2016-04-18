@@ -36,18 +36,11 @@ class Upload
     /**
     * For security reasons and to prevent overlapping file names, generate a
     * unique file name.
-    * TODO: Find better solution besides spinlock.
     * @return string
     */
     private static function getUniqueFileName()
     {
-        $fileName = uniqid();
-        while (true) {
-            if (!file_exists(sys_get_temp_dir() . $fileName)) {
-                break;
-            }
-            $fileName = uniqid();
-        }
+        $fileName = time() . uniqid();
         $ext = $_FILES['file']['type'] === 'image/png' ? '.png' : '.jpg';
         return "{$fileName}{$ext}";
     }
