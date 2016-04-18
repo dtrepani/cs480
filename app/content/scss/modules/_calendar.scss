@@ -87,6 +87,7 @@
 		@extend %one-line;
 		width: 100%;
 		overflow-y: none;
+		cursor: pointer;
 
 		&:hover {
 			overflow-y: auto;

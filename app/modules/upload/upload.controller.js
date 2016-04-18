@@ -10,7 +10,7 @@
 		var uc = this;
 		uc.uploadFile = uploadFile;
 
-		function uploadFile(file) {
+		function uploadFile(file, oldFile) {
 			return uploadService.uploadFile(file)
 				.then(function(filePath) { return filePath; });
 		}

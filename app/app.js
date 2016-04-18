@@ -743,7 +743,7 @@
 		var uc = this;
 		uc.uploadFile = uploadFile;
 
-		function uploadFile(file) {
+		function uploadFile(file, oldFile) {
 			return uploadService.uploadFile(file)
 				.then(function(filePath) { return filePath; });
 		}
@@ -1212,52 +1212,6 @@
 
 	angular
 		.module('app')
-		.controller('SidebarController', SidebarController);
-
-	function SidebarController() {
-		var vm = this;
-
-		vm.collapsed = true;
-
-		vm.toggleSidebar = function() {
-			vm.collapsed = !vm.collapsed;
-		};
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spSidebar', sidebarDirective);
-
-	function sidebarDirective() {
-		return {
-			link: link,
-			templateUrl: 'pages/layout/sidebar/sidebar.html',
-			controller: 'SidebarController',
-			controllerAs: 'vm',
-			bindToController: true
-		};
-
-		function link(scope, element, attrs) {
-			scope.$watch(attrs.sidebarDirective, toggleSidebar);
-
-			function toggleSidebar(collapsed) {
-				if (collapsed) {
-					element.removeClass('collapsed');
-				} else {
-					element.addClass('collapsed');
-				}
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('HeaderController', HeaderController);
 
 	HeaderController.$inject = ['$scope', 'headerService'];
@@ -1321,6 +1275,53 @@
 					return {name: false, url: '#/login'};
 				}
 				return {name: res.data, url: '#/dashboard'};
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('SidebarController', SidebarController);
+
+	function SidebarController() {
+		var vm = this;
+
+		vm.collapsed = true;
+
+		vm.toggleSidebar = function() {
+			vm.collapsed = !vm.collapsed;
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spSidebar', sidebarDirective);
+
+	function sidebarDirective() {
+		return {
+			link: link,
+			templateUrl: 'pages/layout/sidebar/sidebar.html',
+			controller: 'SidebarController',
+			controllerAs: 'vm',
+			bindToController: true
+		};
+
+		function link(scope, element, attrs) {
+			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+
+			function toggleSidebar(collapsed) {
+				if (collapsed) {
+					element.removeClass('collapsed');
+				} else {
+					element.addClass('collapsed');
+				}
 			}
 		}
 	}

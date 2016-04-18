@@ -332,7 +332,8 @@ li[id*="nav-"] {
 
 .month .events {
   width: 100%;
-  overflow-y: none; }
+  overflow-y: none;
+  cursor: pointer; }
   .month .events:hover {
     overflow-y: auto; }
 
@@ -358,6 +359,33 @@ li[id*="nav-"] {
 
 .modal-footer-custom {
   text-align: right; }
+
+.btn-file {
+  position: relative;
+  overflow: hidden; }
+  .btn-file input[type=file] {
+    -webkit-opacity: 0;
+    -moz-opacity: 0;
+    -ms-opacity: 0;
+    -o-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    cursor: pointer; }
+
+.btn.btn-file {
+  min-width: 100%; }
+
+.file-image {
+  text-align: center;
+  width: 100%; }
+  .file-image img {
+    max-width: 100%;
+    max-height: 300px; }
 
 .check-icon {
   margin-right: 10px; }
@@ -451,6 +479,13 @@ li[id*="nav-"] {
 [class*="square-icon-"].disabled {
   background-color: initial; }
 
+.task-list {
+  display: table;
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  overflow: hidden; }
+
 .task-list li {
   -webkit-border-bottom: 1px solid #ddd;
   -moz-border-bottom: 1px solid #ddd;
@@ -462,14 +497,7 @@ li[id*="nav-"] {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
-  line-height: 24px;
-  line-height: 1.5rem;
-  padding: 10px;
-  padding: 0.625rem;
-  display: table;
-  table-layout: fixed;
-  overflow: hidden;
-  width: 100%; }
+  display: table-row; }
   .task-list li:hover {
     background: #FAFAFA;
     cursor: pointer; }
@@ -480,11 +508,17 @@ li[id*="nav-"] {
     -o-border-bottom: none;
     border-bottom: none; }
   .task-list li i {
-    display: table-cell;
+    padding-left: 10px;
+    padding-left: 0.625rem;
     width: 30px;
-    width: 1.875rem; }
+    width: 1.875rem;
+    display: table-cell; }
 
 .task-summary {
+  line-height: 24px;
+  line-height: 1.5rem;
+  padding: 10px;
+  padding: 0.625rem;
   display: table-cell;
   text-overflow: ellipsis; }
   .completed .task-summary {
@@ -499,6 +533,12 @@ li[id*="nav-"] {
     color: #444;
     text-decoration: none; }
 
+.add-task {
+  background: #FAFAFA;
+  color: #888; }
+  .add-task:hover {
+    background: #F0F0F0 !important; }
+
 .priority input[type=checkbox] {
   display: none; }
 
@@ -506,17 +546,12 @@ li[id*="nav-"] {
   font-size: 24px;
   font-size: 1.5rem;
   font-family: FontAwesome;
-  color: #F2BD1A;
+  color: #ddd;
   display: inline-block;
   content: "\f006";
   position: relative;
   top: 6px; }
 
 .priority input[type=checkbox]:checked + label:before {
-  content: "\f005"; }
-
-.add-task {
-  background: #FAFAFA;
-  color: #888; }
-  .add-task:hover {
-    background: #F0F0F0 !important; }
+  content: "\f005";
+  color: #F2BD1A; }

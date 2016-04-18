@@ -1,12 +1,15 @@
+.task-list {
+	display: table;
+	table-layout: fixed;
+	border-collapse: collapse;
+	width: 100%;
+	overflow: hidden;
+}
+
 .task-list li {
 	@include property('border-bottom', 1px solid $color-dim);
 	@include property('border-radius', 3px);
-	@include rem('line-height', $font-medium);
-	@include rem('padding', 10px);
-	display: table;
-	table-layout: fixed;
-	overflow: hidden;
-	width: 100%;
+	display: table-row;
 
 	&:hover {
 		background: $color-dim-lighter;
@@ -18,12 +21,15 @@
 	}
 
 	i {
-		display: table-cell;
+		@include rem('padding-left', 10px);
 		@include rem('width', $icon-width);
+		display: table-cell;
 	}
 }
 
 .task-summary {
+	@include rem('line-height', $font-medium);
+	@include rem('padding', 10px);
 	@extend %one-line;
 	display: table-cell;
 	text-overflow: ellipsis;
@@ -47,15 +53,23 @@
 	}
 }
 
+.add-task {
+	background: $color-dim-lighter;
+	color: $color-dim-darker;
+
+	&:hover {
+		background: $color-dim-light !important;
+	}
+}
+
 .priority input[type=checkbox] {
 	display: none;
-
 }
 
 .priority input[type=checkbox] + label:before {
 	@include font-size($font-medium);
 	font-family: FontAwesome;
-	color: #F2BD1A;
+	color: $color-dim;
 	display: inline-block;
 	content: "\f006";
 	position: relative;
@@ -64,13 +78,5 @@
 
 .priority input[type=checkbox]:checked + label:before {
 	content: "\f005";
-}
-
-.add-task {
-	background: $color-dim-lighter;
-	color: $color-dim-darker;
-
-	&:hover {
-		background: $color-dim-light !important;
-	}
+	color: #F2BD1A;
 }
