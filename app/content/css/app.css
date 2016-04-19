@@ -98,6 +98,13 @@ i {
     background: #235083;
     border-color: #235083; }
 
+.capitalize {
+  text-transform: capitalize; }
+
+.font-small {
+  font-size: 12px;
+  font-size: 0.75rem; }
+
 .wrapper {
   height: 100%; }
 
@@ -146,7 +153,9 @@ i {
 
 #header-main {
   width: 100%;
-  text-align: right; }
+  text-align: right;
+  display: table;
+  vertical-align: middle; }
   #header-main i {
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
@@ -171,6 +180,14 @@ i {
   @media screen and (min-width: 768px) {
     #content {
       margin-left: 54px; } }
+
+a {
+  color: #fff;
+  display: table-cell;
+  vertical-align: middle; }
+  a:hover, a:focus {
+    color: #ddd;
+    text-decoration: none; }
 
 #sidebar {
   -webkit-transition: all 0.5s ease 0.1s;
@@ -387,6 +404,12 @@ li[id*="nav-"] {
     max-width: 100%;
     max-height: 300px; }
 
+.form-control.form-inline {
+  display: inline-block;
+  width: auto;
+  line-height: 1;
+  padding: 0 5px; }
+
 .check-icon {
   margin-right: 10px; }
 
@@ -539,6 +562,19 @@ li[id*="nav-"] {
   .add-task:hover {
     background: #F0F0F0 !important; }
 
+.checkbox-repeat {
+  font-size: 13px;
+  font-size: 0.8125rem;
+  color: #aaa; }
+  .checkbox-repeat input[type=checkbox] {
+    margin-right: 5px; }
+
+.form-radio {
+  width: auto; }
+
+.priority {
+  display: inline-block; }
+
 .priority input[type=checkbox] {
   display: none; }
 
@@ -548,9 +584,7 @@ li[id*="nav-"] {
   font-family: FontAwesome;
   color: #ddd;
   display: inline-block;
-  content: "\f006";
-  position: relative;
-  top: 6px; }
+  content: "\f006"; }
 
 .priority input[type=checkbox]:checked + label:before {
   content: "\f005";

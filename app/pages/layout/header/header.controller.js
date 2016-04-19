@@ -15,7 +15,7 @@
 			.then(getUserComplete);
 
 		function getUserComplete(response) {
-			$scope.$evalAsync(function() {
+			$scope.$applyAsync(function() {
 				vm.name = (response.name === false) ? 'Login' : response.name;
 				vm.url = response.url;
 			});

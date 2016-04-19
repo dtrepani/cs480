@@ -1,0 +1,4 @@
+<h1>Inbox</h1>
+<div ng-if="vm.items && vm.groups">
+	<sp-tasks tasks="vm.items" labels="vm.groups" order="['!!due', 'due']"></sp-tasks>
+</div>

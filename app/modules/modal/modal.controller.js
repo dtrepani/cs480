@@ -10,25 +10,26 @@
 		var vm = this;
 		vm.groups = groups;
 		vm.item = item;
-		vm.close = close;
+
 		vm.cancel = cancel;
+		vm.close = close;
 		vm.confirm = confirm;
 		vm.remove = remove;
-
-		function close() {
-			$uibModalInstance.close();
-		}
 
 		function cancel() {
 			$uibModalInstance.dismiss('cancel');
 		}
 
-		function remove(data) {
-			$uibModalInstance.dismiss(data);
+		function close() {
+			$uibModalInstance.close();
 		}
 
 		function confirm(data) {
 			$uibModalInstance.close(data);
+		}
+
+		function remove(data) {
+			$uibModalInstance.dismiss(data);
 		}
 	}
 })();

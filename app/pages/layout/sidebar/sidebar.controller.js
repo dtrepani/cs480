@@ -7,11 +7,6 @@
 
 	function SidebarController() {
 		var vm = this;
-
 		vm.collapsed = true;
-
-		vm.toggleSidebar = function() {
-			vm.collapsed = !vm.collapsed;
-		};
 	}
 })();

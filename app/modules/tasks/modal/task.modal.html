@@ -13,10 +13,13 @@
 				<input id="priority-icon" type="checkbox" ng-model="vm.item.priority" ng-true-value="'high'" ng-false-value="'normal'" />
 				<label for="priority-icon"> </label>
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 				<input type="datetime" class="form-control input-sm" placeholder="Due" ng-model="vm.item.due" />
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-2">
+				<sp-repeat item="vm.item"></sp-repeat>
+			</div>
+			<div class="col-sm-3">
 				<input type="datetime" class="form-control input-sm" placeholder="Reminder" ng-model="vm.item.reminder" />
 			</div>
 		</div>

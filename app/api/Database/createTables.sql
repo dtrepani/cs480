@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS activity_info (
 	note			TEXT,
 	reminder		DATETIME,
 	attachment 		TEXT,
+	recurrence 		BOOLEAN DEFAULT false,
 	priority		ENUM('normal', 'low', 'high') NOT NULL,
 	PRIMARY KEY (id)
 );
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS recurrence (
 	id					INT		NOT NULL AUTO_INCREMENT,
 	activity_info_id	INT				NOT NULL,
 	freq			ENUM('daily', 'secondly', 'minutely', 'hourly', 'weekly', 'monthly', 'yearly') NOT NULL,
-	until			DATETIME,
+	until			DATE,
 	count			INT,
 	repeat_interval	INT		NOT NULL DEFAULT 1,
 	# by_(?!set_pos).* are stored in serialized arrays

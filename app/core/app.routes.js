@@ -43,6 +43,46 @@
 					isAdmin: ['accessService', isAdmin]
 				}
 			})
+			.when('/inbox', {
+				templateUrl: 'pages/tasks/inbox.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['tasksService', getTasks],
+					groups: ['labelService', getLabels]
+				}
+			})
+			.when('/today', {
+				templateUrl: 'pages/tasks/today.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['tasksService', getTasks],
+					groups: ['labelService', getLabels]
+				}
+			})
+			.when('/week', {
+				templateUrl: 'pages/tasks/week.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['tasksService', getTasks],
+					groups: ['labelService', getLabels]
+				}
+			})
+			.when('/calendar', {
+				templateUrl: 'pages/calendar/calendar.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['eventsService', getEvents],
+					groups: ['calendarService', getCalendars]
+				}
+			})
 			.otherwise({
 				redirectTo: '/dashboard'
 			});

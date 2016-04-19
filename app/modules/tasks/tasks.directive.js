@@ -5,7 +5,8 @@
 		.module('app')
 		.directive('spTasks', tasksDirective);
 
-	function tasksDirective() {
+	tasksDirective.$inject = ['$filter'];
+	function tasksDirective($filter) {
 		return {
 			templateUrl: 'modules/tasks/tasks.html',
 			controller: 'TasksController',
@@ -14,7 +15,8 @@
 			scope: {
 				tasks: '=',
 				labels: '=',
-				order: '='
+				order: '=',
+				days: '=withinDays'
 			}
 		};
 	}

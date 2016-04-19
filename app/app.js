@@ -55,6 +55,46 @@
 					isAdmin: ['accessService', isAdmin]
 				}
 			})
+			.when('/inbox', {
+				templateUrl: 'pages/tasks/inbox.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['tasksService', getTasks],
+					groups: ['labelService', getLabels]
+				}
+			})
+			.when('/today', {
+				templateUrl: 'pages/tasks/today.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['tasksService', getTasks],
+					groups: ['labelService', getLabels]
+				}
+			})
+			.when('/week', {
+				templateUrl: 'pages/tasks/week.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['tasksService', getTasks],
+					groups: ['labelService', getLabels]
+				}
+			})
+			.when('/calendar', {
+				templateUrl: 'pages/calendar/calendar.html',
+				controller: 'ActivityController',
+				controllerAs: 'vm',
+				resolve: {
+					isAuthenticated: ['accessService', isAuthenticated],
+					items: ['eventsService', getEvents],
+					groups: ['calendarService', getCalendars]
+				}
+			})
 			.otherwise({
 				redirectTo: '/dashboard'
 			});
@@ -133,6 +173,50 @@
 
 			return sameDayEvents;
 		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.filter('withinDays', withinDays);
+
+	withinDays.$inject = ['moment'];
+	function withinDays(moment) {
+		return function(tasks, numOfDays) {
+			if (!numOfDays) {
+				return tasks;
+			}
+
+			var tasksWithinDays = [];
+
+			for (var i = 0; i < tasks.length; i++) {
+				var result;
+
+				if (!tasks[i].due || (tasks[i].due &&
+					moment(tasks[i].due).isBefore(moment().add(numOfDays, 'days')))
+				) {
+					tasksWithinDays.push(tasks[i]);
+				}
+			}
+
+			return tasksWithinDays;
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('ActivityController', ActivityController);
+
+	ActivityController.$inject = ['isAuthenticated', 'items', 'groups'];
+	function ActivityController(isAuthenticated, items, groups) {
+		var vm = this;
+		vm.items = items;
+		vm.groups = groups;
 	}
 })();
 (function() {
@@ -614,28 +698,96 @@
 		var vm = this;
 		vm.groups = groups;
 		vm.item = item;
-		vm.close = close;
+
 		vm.cancel = cancel;
+		vm.close = close;
 		vm.confirm = confirm;
 		vm.remove = remove;
-
-		function close() {
-			$uibModalInstance.close();
-		}
 
 		function cancel() {
 			$uibModalInstance.dismiss('cancel');
 		}
 
-		function remove(data) {
-			$uibModalInstance.dismiss(data);
+		function close() {
+			$uibModalInstance.close();
 		}
 
 		function confirm(data) {
 			$uibModalInstance.close(data);
 		}
+
+		function remove(data) {
+			$uibModalInstance.dismiss(data);
+		}
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('RecurrenceController', RecurrenceController);
+
+	RecurrenceController.$inject = ['recurrenceModalService'];
+	function RecurrenceController(recurrenceModalService) {
+		var rc = this;
+		rc.showRecurrenceModal = showRecurrenceModal;
+
+		function showRecurrenceModal() {
+			if (rc.item.recurrence) {
+				recurrenceModalService.openRecurrenceModal(rc.item);
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spRepeat', recurrenceDirective);
+
+	function recurrenceDirective() {
+		return {
+			templateUrl: 'modules/recurrence/recurrence.html',
+			controller: 'RecurrenceController',
+			controllerAs: 'rc',
+			bindToController: true,
+			scope: {
+				item: '='
+			}
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('recurrenceService', recurrenceService);
+
+	function recurrenceService() {
+		var recurrenceCols = {
+			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
+			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
+			by: ['by_hour', 'by_day', 'by_month_day', 'by_year_day', 'by_week_no', 'by_month']
+		};
+
+		return {
+			clearRecurrence: clearRecurrence,
+			constructRecurrence: constructRecurrence
+		};
+
+		function clearRecurrence(item) {
+			item.recurrence = false;
+		}
+
+		function constructRecurrence(item) {
+
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -671,7 +823,8 @@
 		.module('app')
 		.directive('spTasks', tasksDirective);
 
-	function tasksDirective() {
+	tasksDirective.$inject = ['$filter'];
+	function tasksDirective($filter) {
 		return {
 			templateUrl: 'modules/tasks/tasks.html',
 			controller: 'TasksController',
@@ -680,7 +833,8 @@
 			scope: {
 				tasks: '=',
 				labels: '=',
-				order: '='
+				order: '=',
+				days: '=withinDays'
 			}
 		};
 	}
@@ -1142,66 +1296,34 @@
 
 	angular
 		.module('app')
-		.factory('subtaskModalService', subtaskModalService);
+		.factory('recurrenceModalService', recurrenceModalService);
 
-	subtaskModalService.$inject = ['$uibModal', 'labelService', 'subtasksService'];
-	function subtaskModalService($uibModal, labelService, subtasksService) {
-		return {
-			openSubtaskModal: openSubtaskModal
+	recurrenceModalService.$inject = ['$uibModal', 'recurrenceService'];
+	function recurrenceModalService($uibModal, recurrenceService) {
+		var rc = this; // jshint ignore: line
+		var recurrenceInfo = {
+			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
+			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
 		};
 
-		function openSubtaskModal(subtask, task) {
-			$uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/subtask.modal.html',
-				resolve: {
-					groups: task,
-					item: subtask
-				}
-			}).result
-				.then(function(res) {
-					subtasksService.createOrUpdateSubtask(res.subtask, res.task);
-				}, function(res) {
-					if (typeof res !== 'string') {
-						subtasksService.deleteSubtask(res.subtask, res.task);
-					}
-				});
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('taskModalService', taskModalService);
-
-	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
-	function taskModalService($uibModal, labelService, tasksService) {
 		return {
-			openTaskModal: openTaskModal
+			openRecurrenceModal: openRecurrenceModal
 		};
 
-		function openTaskModal(task, labels) {
+		function openRecurrenceModal(item) {
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
+				templateUrl: 'modules/recurrence/modal/recurrence.modal.html',
 				resolve: {
-					groups: function() { return labels; },
-					item: task
+					groups: function() { return recurrenceInfo; },
+					item: item
 				}
 			}).result
 				.then(function(response) {
-					return tasksService.createOrUpdateTask(response)
-						.then(tasksService.getTasks);
+					recurrenceService.constructRecurrence(item);
 				}, function(response) {
-					if (typeof response !== 'string') {
-						return tasksService.deleteTask(response)
-							.then(tasksService.getTasks);
-					}
+					recurrenceService.clearRecurrence(item);
 				});
 		}
 	}
@@ -1257,6 +1379,78 @@
 				return res.data;
 			}
 			return res.title;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('subtaskModalService', subtaskModalService);
+
+	subtaskModalService.$inject = ['$uibModal', 'labelService', 'subtasksService'];
+	function subtaskModalService($uibModal, labelService, subtasksService) {
+		return {
+			openSubtaskModal: openSubtaskModal
+		};
+
+		function openSubtaskModal(subtask, task) {
+			$uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/subtask.modal.html',
+				resolve: {
+					groups: task,
+					item: subtask
+				}
+			}).result
+				.then(function(res) {
+					subtasksService.createOrUpdateSubtask(res.subtask, res.task);
+				}, function(res) {
+					if (typeof res !== 'string') {
+						subtasksService.deleteSubtask(res.subtask, res.task);
+					}
+				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('taskModalService', taskModalService);
+
+	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
+	function taskModalService($uibModal, labelService, tasksService) {
+		var vm = this; // jshint ignore: line
+
+		return {
+			openTaskModal: openTaskModal
+		};
+
+		function openTaskModal(task, labels) {
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/task.modal.html',
+				resolve: {
+					groups: function() { return labels; },
+					item: task
+				}
+			}).result
+				.then(function(response) {
+					return tasksService.createOrUpdateTask(response)
+						.then(tasksService.getTasks);
+				}, function(response) {
+					if (typeof response !== 'string') {
+						return tasksService.deleteTask(response)
+							.then(tasksService.getTasks);
+					}
+				});
 		}
 	}
 })();
@@ -1365,7 +1559,7 @@
 			.then(getUserComplete);
 
 		function getUserComplete(response) {
-			$scope.$evalAsync(function() {
+			$scope.$applyAsync(function() {
 				vm.name = (response.name === false) ? 'Login' : response.name;
 				vm.url = response.url;
 			});
@@ -1430,12 +1624,7 @@
 
 	function SidebarController() {
 		var vm = this;
-
 		vm.collapsed = true;
-
-		vm.toggleSidebar = function() {
-			vm.collapsed = !vm.collapsed;
-		};
 	}
 })();
 (function() {
@@ -1447,23 +1636,25 @@
 
 	function sidebarDirective() {
 		return {
-			link: link,
 			templateUrl: 'pages/layout/sidebar/sidebar.html',
 			controller: 'SidebarController',
 			controllerAs: 'vm',
-			bindToController: true
+			bindToController: true,
+			link: link
 		};
 
 		function link(scope, element, attrs) {
-			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+			// scope.$watch(attrs.sidebarDirective, toggleSidebar);
 
-			function toggleSidebar(collapsed) {
-				if (collapsed) {
-					element.removeClass('collapsed');
-				} else {
-					element.addClass('collapsed');
-				}
-			}
+			// function toggleSidebar(collapsed) {
+			// 	if (collapsed) {
+			// 		element.removeClass('collapsed');
+			// 	} else {
+			// 		element.addClass('collapsed');
+			// 	}
+			// }
+
+			scope.vm.collapse = true;
 		}
 	}
 })();

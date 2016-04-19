@@ -40,6 +40,8 @@
 #header-main {
 	width: 100%;
 	text-align: right;
+	display: table;
+	vertical-align: middle;
 
 	i {
 		@include vertical-center();
@@ -57,5 +59,16 @@
 
 	@include breakpoint(small) {
 		margin-left: $sidebar-collapsed-width;
+	}
+}
+
+a {
+	color: $color-bg-content;
+	display: table-cell;
+	vertical-align: middle;
+
+	&:hover, &:focus {
+		color: $color-dim;
+		text-decoration: none;
 	}
 }

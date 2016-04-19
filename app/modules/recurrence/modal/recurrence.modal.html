@@ -1,0 +1,66 @@
+<form name="recurrenceForm" class="form-horizontal" novalidate>
+	<div class="modal-body">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Frequency</label>
+			<div class="col-sm-10">
+				<select class="form-control capitalize"
+					ng-init="vm.item.freq ? vm.item.freq : vm.item.freq = vm.groups.freq"
+					ng-model="vm.item.freq" ng-options="freq as freq for freq in vm.groups.freq" required>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Every</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control form-inline input-sm" ng-model="vm.item.interval">
+				<label ng-show="vm.item.freq == 'hourly'">hours</label>
+				<label ng-show="vm.item.freq == 'daily'">days</label>
+				<label ng-show="vm.item.freq == 'weekly'">weeks</label>
+				<label ng-show="vm.item.freq == 'monthly'">months</label>
+				<label ng-show="vm.item.freq == 'yearly'">years</label>
+			</div>
+		</div>
+
+		<div class="form-group" ng-if="vm.item.freq == 'weekly'">
+			<label class="col-sm-2 control-label">On</label>
+			<div class="col-sm-10">
+				<label class="checkbox-inline capitalize" ng-repeat="day in vm.groups.days">
+					<input type="checkbox">{{ day }}
+
+					<!-- TODO: call function to concat or remove day from proper by_* function -->
+
+				</label>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">End</label>
+			<div class="col-sm-10">
+				<div class="radio">
+					<label>
+						<input type="radio" name="end" ng-value="vm.none" checked="">
+						Never
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" name="end" ng-value="vm.count">
+						After <input type="number" class="form-control form-inline input-sm" ng-model="vm.item.count"> occurrences
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" name="end" ng-value="vm.until">
+						Until <input type="datetime" class="form-control form-inline input-sm" ng-model="vm.item.until">
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-footer-custom">
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-primary" type="button" ng-click="vm.confirm()" ng-disabled="recurrenceForm.$invalid">Confirm</button>
+		</div>
+	</div>
+</form>

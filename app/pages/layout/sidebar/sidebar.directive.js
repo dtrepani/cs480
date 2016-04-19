@@ -7,23 +7,25 @@
 
 	function sidebarDirective() {
 		return {
-			link: link,
 			templateUrl: 'pages/layout/sidebar/sidebar.html',
 			controller: 'SidebarController',
 			controllerAs: 'vm',
-			bindToController: true
+			bindToController: true,
+			link: link
 		};
 
 		function link(scope, element, attrs) {
-			scope.$watch(attrs.sidebarDirective, toggleSidebar);
+			// scope.$watch(attrs.sidebarDirective, toggleSidebar);
 
-			function toggleSidebar(collapsed) {
-				if (collapsed) {
-					element.removeClass('collapsed');
-				} else {
-					element.addClass('collapsed');
-				}
-			}
+			// function toggleSidebar(collapsed) {
+			// 	if (collapsed) {
+			// 		element.removeClass('collapsed');
+			// 	} else {
+			// 		element.addClass('collapsed');
+			// 	}
+			// }
+
+			scope.vm.collapse = true;
 		}
 	}
 })();

@@ -42,3 +42,11 @@ i {
 		border-color: $color-primary-darker;
 	}
 }
+
+.capitalize {
+	text-transform: capitalize;
+}
+
+.font-small {
+	@include font-size($font-small);
+}

@@ -62,6 +62,23 @@
 	}
 }
 
+.checkbox-repeat {
+	@include font-size(13px);
+	color: $color-dim-dark;
+
+	input[type=checkbox] {
+		margin-right: 5px;
+	}
+}
+
+.form-radio {
+	width: auto;
+}
+
+.priority {
+	display: inline-block;
+}
+
 .priority input[type=checkbox] {
 	display: none;
 }
@@ -72,8 +89,8 @@
 	color: $color-dim;
 	display: inline-block;
 	content: "\f006";
-	position: relative;
-	top: 6px;
+	// position: relative;
+	// top: 6px;
 }
 
 .priority input[type=checkbox]:checked + label:before {

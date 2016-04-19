@@ -7,6 +7,8 @@
 
 	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
 	function taskModalService($uibModal, labelService, tasksService) {
+		var vm = this; // jshint ignore: line
+
 		return {
 			openTaskModal: openTaskModal
 		};
