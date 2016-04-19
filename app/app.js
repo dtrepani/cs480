@@ -480,22 +480,44 @@
 	'use strict';
 
 	/**
+	* To be used in conjunction with autofocus attribute to auto-focus
+	* modal inputs.
+	*/
+
+	angular
+		.module('app')
+		.directive('spAutoFocus', autoFocusDirective);
+
+	function autoFocusDirective() {
+		return {
+			restrict: 'A',
+			link: link
+		};
+
+		function link(scope, element, attrs, ngModel) {
+			element[0].focus();
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	/**
 	* Compare an input field to another field, determined by the dev.
 	*/
 
 	angular
 		.module('app')
-		.directive('spCompareTo', compareTo);
+		.directive('spCompareTo', compareToDirective);
 
-	function compareTo() {
-		var directive = {
+	function compareToDirective() {
+		return {
 			require: 'ngModel',
 			scope: {
 				otherModel: '=spCompareTo'
 			},
 			link: link
 		};
-		return directive;
 
 		function link(scope, element, attrs, ngModel) {
 			var unbindWatch = scope.$watch('otherModel', validateOnChange);
@@ -754,10 +776,10 @@
 
 	angular
 		.module('app')
-		.directive('spFileChange', spFileChange);
+		.directive('spFileChange', uploadDirective);
 
-	spFileChange.$inject = ['$parse'];
-	function spFileChange($parse) {
+	uploadDirective.$inject = ['$parse'];
+	function uploadDirective($parse) {
 		return {
 			restrict: 'A',
 			controller: 'UploadController',
@@ -1120,6 +1142,76 @@
 
 	angular
 		.module('app')
+		.factory('subtaskModalService', subtaskModalService);
+
+	subtaskModalService.$inject = ['$uibModal', 'labelService', 'subtasksService'];
+	function subtaskModalService($uibModal, labelService, subtasksService) {
+		return {
+			openSubtaskModal: openSubtaskModal
+		};
+
+		function openSubtaskModal(subtask, task) {
+			$uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/subtask.modal.html',
+				resolve: {
+					groups: task,
+					item: subtask
+				}
+			}).result
+				.then(function(res) {
+					subtasksService.createOrUpdateSubtask(res.subtask, res.task);
+				}, function(res) {
+					if (typeof res !== 'string') {
+						subtasksService.deleteSubtask(res.subtask, res.task);
+					}
+				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('taskModalService', taskModalService);
+
+	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
+	function taskModalService($uibModal, labelService, tasksService) {
+		return {
+			openTaskModal: openTaskModal
+		};
+
+		function openTaskModal(task, labels) {
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/tasks/modal/task.modal.html',
+				resolve: {
+					groups: function() { return labels; },
+					item: task
+				}
+			}).result
+				.then(function(response) {
+					return tasksService.createOrUpdateTask(response)
+						.then(tasksService.getTasks);
+				}, function(response) {
+					if (typeof response !== 'string') {
+						return tasksService.deleteTask(response)
+							.then(tasksService.getTasks);
+					}
+				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.factory('labelService', labelService);
 
 	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
@@ -1174,35 +1266,84 @@
 
 	angular
 		.module('app')
-		.factory('taskModalService', taskModalService);
+		.controller('SubtasksController', SubtasksController);
 
-	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
-	function taskModalService($uibModal, labelService, tasksService) {
-		var vm = this;  // jshint ignore:line
+	SubtasksController.$inject = ['subtasksService', 'subtaskModalService'];
+	function SubtasksController(subtasksService, subtaskModalService) {
+		var st = this;
+		st.showSubtaskModal = showSubtaskModal;
+		st.toggleCompleted = toggleCompleted;
 
+		function showSubtaskModal(subtask) {
+			subtaskModalService.openSubtaskModal(subtask, st.task);
+		}
+
+		function toggleCompleted(subtask) {
+			subtasksService.toggleCompleted(subtask);
+		}
+
+		function updateSubtasks(response) {
+			if (response) {
+				st.subtasks = response;
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spSubtasks', subtasksDirective);
+
+	function subtasksDirective() {
 		return {
-			openTaskModal: openTaskModal
+			templateUrl: 'modules/tasks/subtasks/subtasks.html',
+			controller: 'SubtasksController',
+			controllerAs: 'st',
+			bindToController: true,
+			scope: {
+				task: '='
+			}
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('subtasksService', subtasksService);
+
+	subtasksService.$inject = ['$http', '$log'];
+	function subtasksService($http, $log) {
+		return {
+			createOrUpdateSubtask: createOrUpdateSubtask,
+			deleteSubtask: deleteSubtask,
+			toggleCompleted: toggleCompleted
 		};
 
-		function openTaskModal(task, labels) {
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
-				resolve: {
-					groups: function() { return labels; },
-					item: task
-				}
-			}).result
-				.then(function(response) {
-					return tasksService.createOrUpdateTask(response)
-						.then(tasksService.getTasks);
-				}, function(response) {
-					if (typeof response !== 'string') {
-						return tasksService.deleteTask(response)
-							.then(tasksService.getTasks);
-					}
-				});
+		function createOrUpdateSubtask(subtask, task) {
+			if (!task.subtasks) {
+				task.subtasks = {
+					currentId: 1,
+					list: []
+				};
+			}
+
+			if (subtask.id === undefined) {
+				subtask.id = task.subtasks.currentId++;
+				subtask.completed = false;
+				task.subtasks.list.push(subtask);
+			}
+		}
+
+		function deleteSubtask(subtask, task) {
+			task.subtasks.list.splice(task.subtasks.list.indexOf(subtask), 1);
+		}
+
+		function toggleCompleted(subtask) {
+			subtask.completed = !subtask.completed;
 		}
 	}
 })();

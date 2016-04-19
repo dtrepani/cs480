@@ -11,6 +11,10 @@ use SP\App\Api\CRUD\CrudManager;
 */
 $request = json_decode(file_get_contents('php://input'), true);
 
+if (isset($request['subtasks'])) {
+    $request['subtasks'] = base64_encode(serialize($request['subtasks']));
+}
+
 $manager = new CrudManager(
     $_SERVER['REQUEST_METHOD'],
     new Task(),
@@ -20,4 +24,12 @@ $manager = new CrudManager(
     isset($_GET['where']) ? $_GET['where'] : null
 );
 
-echo json_encode($manager->getResponse());
+$response = $manager->getResponse();
+
+foreach ($response['data'] as &$task) {
+    if (!empty($task['subtasks'])) {
+        $task['subtasks'] = unserialize(base64_decode($task['subtasks']));
+    }
+}
+
+echo json_encode($response);

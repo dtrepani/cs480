@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS activity_info (
 	color			VARCHAR(32),
 	note			TEXT,
 	reminder		DATETIME,
+	attachment 		TEXT,
 	priority		ENUM('normal', 'low', 'high') NOT NULL,
 	PRIMARY KEY (id)
 );
@@ -104,7 +105,7 @@ CREATE TABLE IF NOT EXISTS task (
 	activity_info_id	INT				NOT NULL,
 	due					DATETIME,
 	completed			BOOLEAN DEFAULT false,
-	picture				TEXT,
+	subtasks			TEXT,
 	PRIMARY KEY (id),
 	FOREIGN KEY (label_id)
 		REFERENCES label(id)

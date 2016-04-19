@@ -1,0 +1,11 @@
+<ul class="task-list">
+	<li class="add-task" ng-click="st.showSubtaskModal({})">
+		<i class="fa fa-plus"></i>
+		<span class="task-summary">Add a subtask</span>
+	</li>
+
+	<li ng-repeat="subtask in st.task.subtasks.list" ng-class="{completed: subtask.completed == true}">
+		<i class="fa fa-check check-icon" ng-click="st.toggleCompleted(subtask)"></i>
+		<span class="task-summary" ng-click="st.showSubtaskModal(subtask)">{{ subtask.summary }}</span>
+	</li>
+</ul>

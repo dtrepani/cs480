@@ -7,17 +7,16 @@
 
 	angular
 		.module('app')
-		.directive('spCompareTo', compareTo);
+		.directive('spCompareTo', compareToDirective);
 
-	function compareTo() {
-		var directive = {
+	function compareToDirective() {
+		return {
 			require: 'ngModel',
 			scope: {
 				otherModel: '=spCompareTo'
 			},
 			link: link
 		};
-		return directive;
 
 		function link(scope, element, attrs, ngModel) {
 			var unbindWatch = scope.$watch('otherModel', validateOnChange);

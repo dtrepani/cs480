@@ -3,10 +3,10 @@
 
 	angular
 		.module('app')
-		.directive('spFileChange', spFileChange);
+		.directive('spFileChange', uploadDirective);
 
-	spFileChange.$inject = ['$parse'];
-	function spFileChange($parse) {
+	uploadDirective.$inject = ['$parse'];
+	function uploadDirective($parse) {
 		return {
 			restrict: 'A',
 			controller: 'UploadController',
