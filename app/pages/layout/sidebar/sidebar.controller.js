@@ -6,7 +6,6 @@
 		.controller('SidebarController', SidebarController);
 
 	function SidebarController() {
-		var vm = this;
-		vm.collapsed = true;
+		this.collapsed = true;
 	}
 })();

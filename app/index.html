@@ -2,7 +2,7 @@
 <html lang="en" ng-app="app">
 <head>
 	<meta charset="utf-8" />
-	<base href="/cs480/app/">
+	<base href="/cs480/app/"></base>
 
 	<title>Senior Project</title>
 
@@ -12,23 +12,23 @@
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
-	<script type="text/javascript" src="../node_modules/angular-route/angular-route.js"></script>
+	<script type="text/javascript" src="../node_modules/angular-ui-router/release/angular-ui-router.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-animate/angular-animate.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 	<script type="text/javascript" src="../node_modules/moment/moment.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-moment/angular-moment.js"></script>
 	<script type="text/javascript" src="app.min.js"></script>
 </head>
-<body ng-controller="AppController">
+<body>
 	<div class="wrapper">
-		<sp-sidebar></sp-sidebar>
+		<div ui-view="sidebar"></div>
 
 		<div id="content-wrapper">
 			<div id="overlay"></div>
 
-			<sp-header></sp-header>
+			<div ui-view="header"></div>
 
-			<main id="content" ng-view></main>
+			<main id="content" ui-view="content"></main>
 		</div>
 	</div>
 </body>

@@ -8,13 +8,13 @@
 	appService.$inject = ['$location', 'statusService'];
 	function appService($location, statusService) {
 		return {
-			routeChangeError: routeChangeError
+			stateChangeError: stateChangeError
 		};
 
-		function routeChangeError(event, current, previous, rejection) {
-			if (rejection === statusService.UNAUTHORIZED) {
+		function stateChangeError(event, unfoundState, fromState, fromParams) {
+			if (fromParams === statusService.UNAUTHORIZED) {
 				$location.path('/login');
-			} else if (rejection === statusService.FORBIDDEN) {
+			} else if (fromParams === statusService.FORBIDDEN) {
 				$location.path('/forbidden');
 			}
 		}

@@ -2,12 +2,12 @@
 	'use strict';
 
 	angular
-		.module('app', ['ngRoute', 'ui.bootstrap', 'angularMoment'])
+		.module('app', ['ui.router', 'ui.bootstrap', 'angularMoment'])
 		.controller('AppController', AppController);
 
 	AppController.$inject = ['$rootScope', 'appService'];
 	function AppController($rootScope, appService) {
-		$rootScope.$on('$routeChangeError', appService.routeChangeError);
+		$rootScope.$on('$stateChangeError', appService.stateChangeError);
 	}
 })();
 (function() {
@@ -17,87 +17,155 @@
 		.module('app')
 		.config(appConfig);
 
-	appConfig.$inject = ['$routeProvider'];
-	function appConfig($routeProvider) {
-		$routeProvider
-			.when('/login', {
-				templateUrl: 'modules/login/login.html',
-				controller: 'LoginController',
-				controllerAs: 'vm',
-			})
-			.when('/logout', {
-				templateUrl: 'modules/logout/logout.html',
-				controller: 'LogoutController',
-				controllerAs: 'vm'
-			})
-			.when('/register', {
-				templateUrl: 'pages/register/register.html',
-				controller: 'RegisterController',
-				controllerAs: 'vm'
-			})
-			.when('/dashboard', {
-				templateUrl: 'pages/dashboard/dashboard.html',
-				controller: 'DashboardController',
-				controllerAs: 'vm',
+	appConfig.$inject = ['$stateProvider', '$urlRouterProvider'];
+	function appConfig($stateProvider, $urlRouterProvider) {
+
+		$stateProvider
+			.state('root', {
+				url: '',
+				templateUrl: 'index.html',
+				abstract: true,
+				controller: 'AppController',
+				controllerAs: 'app',
 				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated],
 					tasks: ['tasksService', getTasks],
 					events: ['eventsService', getEvents],
 					labels: ['labelService', getLabels],
 					calendars: ['calendarService', getCalendars]
+				},
+				views: {
+					'header': {
+						templateUrl: 'pages/layout/header/header.html',
+						controller: 'HeaderController',
+						controllerAs: 'hc',
+						resolve: {
+							user: ['headerService', getUser]
+						}
+					},
+					'sidebar': {
+						templateUrl: 'pages/layout/sidebar/sidebar.html',
+						controller: 'SidebarController',
+						controllerAs: 'sc'
+					}
 				}
 			})
-			.when('/admin', {
-				templateUrl: 'pages/admin/admin.html',
-				controller: 'AdminController',
-				controllerAs: 'vm',
-				resolve: {
-					isAdmin: ['accessService', isAdmin]
+			.state('login', {
+				url: '/login',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'modules/login/login.html',
+						controller: 'LoginController',
+						controllerAs: 'vm'
+					}
 				}
 			})
-			.when('/inbox', {
-				templateUrl: 'pages/tasks/inbox.html',
-				controller: 'ActivityController',
-				controllerAs: 'vm',
-				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated],
-					items: ['tasksService', getTasks],
-					groups: ['labelService', getLabels]
+			.state('logout', {
+				url: '/logout',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'modules/logout/logout.html',
+						controller: 'LogoutController',
+						controllerAs: 'vm'
+					}
 				}
 			})
-			.when('/today', {
-				templateUrl: 'pages/tasks/today.html',
-				controller: 'ActivityController',
-				controllerAs: 'vm',
-				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated],
-					items: ['tasksService', getTasks],
-					groups: ['labelService', getLabels]
+			.state('register', {
+				url: '/register',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/register/register.html',
+						controller: 'RegisterController',
+						controllerAs: 'vm'
+					}
 				}
 			})
-			.when('/week', {
-				templateUrl: 'pages/tasks/week.html',
-				controller: 'ActivityController',
-				controllerAs: 'vm',
-				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated],
-					items: ['tasksService', getTasks],
-					groups: ['labelService', getLabels]
+			.state('dashboard', {
+				url: '/dashboard',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/dashboard/dashboard.html',
+						controller: 'DashboardController',
+						controllerAs: 'vm',
+						resolve: {
+							isAuthenticated: ['accessService', isAuthenticated],
+							tasks: ['tasksService', getTasks],
+							events: ['eventsService', getEvents],
+							labels: ['labelService', getLabels],
+							calendars: ['calendarService', getCalendars]
+						}
+					}
 				}
 			})
-			.when('/calendar', {
-				templateUrl: 'pages/calendar/calendar.html',
-				controller: 'ActivityController',
-				controllerAs: 'vm',
-				resolve: {
-					isAuthenticated: ['accessService', isAuthenticated],
-					items: ['eventsService', getEvents],
-					groups: ['calendarService', getCalendars]
+			.state('inbox', {
+				url: '/inbox',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/tasks/inbox.html',
+						controller: 'ActivityController',
+						controllerAs: 'vm',
+						resolve: {
+							isAuthenticated: ['accessService', isAuthenticated],
+							items: ['tasksService', getTasks],
+							groups: ['labelService', getLabels]
+						}
+					}
 				}
 			})
-			.otherwise({
-				redirectTo: '/dashboard'
+			.state('today', {
+				url: '/today',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/tasks/today.html',
+						controller: 'ActivityController',
+						controllerAs: 'vm',
+						resolve: {
+							isAuthenticated: ['accessService', isAuthenticated],
+							items: ['tasksService', getTasks],
+							groups: ['labelService', getLabels]
+						}
+					}
+				}
+			})
+			.state('week', {
+				url: '/week',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/tasks/week.html',
+						controller: 'ActivityController',
+						controllerAs: 'vm',
+						resolve: {
+							isAuthenticated: ['accessService', isAuthenticated],
+							items: ['tasksService', getTasks],
+							groups: ['labelService', getLabels]
+						}
+					}
+				}
+			})
+			.state('calendar', {
+				url: '/calendar',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/calendar/calendar.html',
+						controller: 'ActivityController',
+						controllerAs: 'vm',
+						resolve: {
+							isAuthenticated: ['accessService', isAuthenticated],
+							items: ['eventsService', getEvents],
+							groups: ['calendarService', getCalendars]
+						}
+					}
+				}
 			});
+
+		$urlRouterProvider.otherwise('/dashboard');
 
 		function getCalendars(calendarService) {
 			return calendarService.getCalendars();
@@ -115,12 +183,12 @@
 			return tasksService.getTasks();
 		}
 
-		function isAuthenticated(accessService) {
-			return accessService.isAuthenticated();
+		function getUser(headerService) {
+			return headerService.getUser();
 		}
 
-		function isAdmin(accessService) {
-			return accessService.isAdmin();
+		function isAuthenticated(accessService) {
+			return accessService.isAuthenticated();
 		}
 	}
 })();
@@ -134,13 +202,13 @@
 	appService.$inject = ['$location', 'statusService'];
 	function appService($location, statusService) {
 		return {
-			routeChangeError: routeChangeError
+			stateChangeError: stateChangeError
 		};
 
-		function routeChangeError(event, current, previous, rejection) {
-			if (rejection === statusService.UNAUTHORIZED) {
+		function stateChangeError(event, unfoundState, fromState, fromParams) {
+			if (fromParams === statusService.UNAUTHORIZED) {
 				$location.path('/login');
-			} else if (rejection === statusService.FORBIDDEN) {
+			} else if (fromParams === statusService.FORBIDDEN) {
 				$location.path('/forbidden');
 			}
 		}
@@ -726,73 +794,6 @@
 
 	angular
 		.module('app')
-		.controller('RecurrenceController', RecurrenceController);
-
-	RecurrenceController.$inject = ['recurrenceModalService'];
-	function RecurrenceController(recurrenceModalService) {
-		var rc = this;
-		rc.showRecurrenceModal = showRecurrenceModal;
-
-		function showRecurrenceModal() {
-			if (rc.item.recurrence) {
-				recurrenceModalService.openRecurrenceModal(rc.item);
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spRepeat', recurrenceDirective);
-
-	function recurrenceDirective() {
-		return {
-			templateUrl: 'modules/recurrence/recurrence.html',
-			controller: 'RecurrenceController',
-			controllerAs: 'rc',
-			bindToController: true,
-			scope: {
-				item: '='
-			}
-		};
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('recurrenceService', recurrenceService);
-
-	function recurrenceService() {
-		var recurrenceCols = {
-			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
-			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
-			by: ['by_hour', 'by_day', 'by_month_day', 'by_year_day', 'by_week_no', 'by_month']
-		};
-
-		return {
-			clearRecurrence: clearRecurrence,
-			constructRecurrence: constructRecurrence
-		};
-
-		function clearRecurrence(item) {
-			item.recurrence = false;
-		}
-
-		function constructRecurrence(item) {
-
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('TasksController', TasksController);
 
 	TasksController.$inject = ['tasksService', 'taskModalService'];
@@ -903,6 +904,73 @@
 				return res.data;
 			}
 			return res.title;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('RecurrenceController', RecurrenceController);
+
+	RecurrenceController.$inject = ['recurrenceModalService'];
+	function RecurrenceController(recurrenceModalService) {
+		var rc = this;
+		rc.showRecurrenceModal = showRecurrenceModal;
+
+		function showRecurrenceModal() {
+			if (rc.item.recurrence) {
+				recurrenceModalService.openRecurrenceModal(rc.item);
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spRepeat', recurrenceDirective);
+
+	function recurrenceDirective() {
+		return {
+			templateUrl: 'modules/recurrence/recurrence.html',
+			controller: 'RecurrenceController',
+			controllerAs: 'rc',
+			bindToController: true,
+			scope: {
+				item: '='
+			}
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('recurrenceService', recurrenceService);
+
+	function recurrenceService() {
+		var recurrenceCols = {
+			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
+			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
+			by: ['by_hour', 'by_day', 'by_month_day', 'by_year_day', 'by_week_no', 'by_month']
+		};
+
+		return {
+			clearRecurrence: clearRecurrence,
+			constructRecurrence: constructRecurrence
+		};
+
+		function clearRecurrence(item) {
+			item.recurrence = false;
+		}
+
+		function constructRecurrence(item) {
+
 		}
 	}
 })();
@@ -1296,44 +1364,6 @@
 
 	angular
 		.module('app')
-		.factory('recurrenceModalService', recurrenceModalService);
-
-	recurrenceModalService.$inject = ['$uibModal', 'recurrenceService'];
-	function recurrenceModalService($uibModal, recurrenceService) {
-		var rc = this; // jshint ignore: line
-		var recurrenceInfo = {
-			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
-			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
-		};
-
-		return {
-			openRecurrenceModal: openRecurrenceModal
-		};
-
-		function openRecurrenceModal(item) {
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/recurrence/modal/recurrence.modal.html',
-				resolve: {
-					groups: function() { return recurrenceInfo; },
-					item: item
-				}
-			}).result
-				.then(function(response) {
-					recurrenceService.constructRecurrence(item);
-				}, function(response) {
-					recurrenceService.clearRecurrence(item);
-				});
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.factory('labelService', labelService);
 
 	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
@@ -1547,43 +1577,49 @@
 
 	angular
 		.module('app')
-		.controller('HeaderController', HeaderController);
+		.factory('recurrenceModalService', recurrenceModalService);
 
-	HeaderController.$inject = ['$scope', 'headerService'];
-	function HeaderController($scope, headerService) {
-		var vm = this;
-		vm.name = '';
-		vm.url = '';
+	recurrenceModalService.$inject = ['$uibModal', 'recurrenceService'];
+	function recurrenceModalService($uibModal, recurrenceService) {
+		var rc = this; // jshint ignore: line
+		var recurrenceInfo = {
+			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
+			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
+		};
 
-		headerService.getUser()
-			.then(getUserComplete);
+		return {
+			openRecurrenceModal: openRecurrenceModal
+		};
 
-		function getUserComplete(response) {
-			$scope.$applyAsync(function() {
-				vm.name = (response.name === false) ? 'Login' : response.name;
-				vm.url = response.url;
-			});
+		function openRecurrenceModal(item) {
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/recurrence/modal/recurrence.modal.html',
+				resolve: {
+					groups: function() { return recurrenceInfo; },
+					item: item
+				}
+			}).result
+				.then(function(response) {
+					recurrenceService.constructRecurrence(item);
+				}, function(response) {
+					recurrenceService.clearRecurrence(item);
+				});
 		}
 	}
 })();
+
 (function() {
 	'use strict';
 
 	angular
 		.module('app')
-		.directive('spHeader', headerDirective);
+		.controller('HeaderController', HeaderController);
 
-	function headerDirective() {
-		return {
-			link: link,
-			templateUrl: 'pages/layout/header/header.html',
-			controller: 'HeaderController',
-			controllerAs: 'vm',
-			bindToController: true
-		};
-
-		function link(scope, element, attrs) {
-		}
+	HeaderController.$inject = ['user'];
+	function HeaderController(user) {
+		this.user = user;
 	}
 })();
 (function() {
@@ -1623,38 +1659,6 @@
 		.controller('SidebarController', SidebarController);
 
 	function SidebarController() {
-		var vm = this;
-		vm.collapsed = true;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spSidebar', sidebarDirective);
-
-	function sidebarDirective() {
-		return {
-			templateUrl: 'pages/layout/sidebar/sidebar.html',
-			controller: 'SidebarController',
-			controllerAs: 'vm',
-			bindToController: true,
-			link: link
-		};
-
-		function link(scope, element, attrs) {
-			// scope.$watch(attrs.sidebarDirective, toggleSidebar);
-
-			// function toggleSidebar(collapsed) {
-			// 	if (collapsed) {
-			// 		element.removeClass('collapsed');
-			// 	} else {
-			// 		element.addClass('collapsed');
-			// 	}
-			// }
-
-			scope.vm.collapse = true;
-		}
+		this.collapsed = true;
 	}
 })();

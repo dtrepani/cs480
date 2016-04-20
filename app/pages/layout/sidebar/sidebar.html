@@ -1,12 +1,11 @@
-<div id="sidebar" ng-class="{ collapsed: vm.collapsed }">
+<div id="sidebar" ng-class="{ collapsed: sc.collapsed }">
 	<div id="header-sidebar" class="header">
-		<i id="sidebar-toggle" class="fa fa-bars fa-fw" ng-click="vm.collapsed = !vm.collapsed"></i>
-		{{ vm.collapsed }}
+		<i id="sidebar-toggle" class="fa fa-bars fa-fw" ng-click="sc.collapsed = !sc.collapsed"></i>
 	</div>
 	<nav id="nav">
 		<ul id="nav-calendar-list">
 			<li id="nav-calendar" class="selected">
-				<a href="#/calendar"> <i class="fa fa-calendar fa-fw"></i> <span>Calendar</span> </a>
+				<a ui-sref="calendar"> <i class="fa fa-calendar fa-fw"></i> <span>Calendar</span> </a>
 			</li>
 			<li id="nav-my-calendars" class="sub-nav">
 				<div><i class="fa fa-calendar-o fa-fw"></i> <span>My Calendars</span> </div>
@@ -21,13 +20,13 @@
 
 		<ul id="nav-task-list">
 			<li id="nav-inbox">
-				<a href="#/inbox"> <i class="fa fa-inbox fa-fw"></i> <span>Inbox</span> </a>
+				<a ui-sref="inbox"> <i class="fa fa-inbox fa-fw"></i> <span>Inbox</span> </a>
 			</li>
 			<li id="nav-today">
-				<a href="#/today"> <i class="fa fa-check-square-o fa-fw"></i> <span>Today</span> </a>
+				<a ui-sref="today"> <i class="fa fa-check-square-o fa-fw"></i> <span>Today</span> </a>
 			</li>
 			<li id="nav-7-days">
-				<a href="#/week"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
+				<a ui-sref="week"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
 			</li>
 			<li id="nav-my-labels" class="sub-nav">
 				<div><i class="fa fa-tag fa-fw"></i> <span>My Labels</span> </div>
