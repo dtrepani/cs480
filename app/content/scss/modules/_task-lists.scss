@@ -89,8 +89,6 @@
 	color: $color-dim;
 	display: inline-block;
 	content: "\f006";
-	// position: relative;
-	// top: 6px;
 }
 
 .priority input[type=checkbox]:checked + label:before {

@@ -4,6 +4,7 @@ $color-primary:			#3272BB;
 $color-primary-light:	mix($color-primary, white, 10%);
 $color-primary-dark:	mix($color-primary, black, 90%);
 $color-primary-darker:	mix($color-primary, black, 70%);
+$color-primary-dull:	mix($color-primary, grey, 60%);
 
 $color-dim:			#ddd;
 $color-dim-lighter:	#FAFAFA;
@@ -35,7 +36,7 @@ $z-index-header:	1010;
 $z-index-overlay:	1020;
 $z-index-sidebar:	1030;
 
-$animation-speed: 0.5s;
+$animation-speed: 0.3s;
 $ease-speed: 0.1s;
 
 // SIDEBAR
@@ -66,6 +67,7 @@ $icon-colors: (
 	'navy':		#000080,
 	'fuchsia':	#ff00ff,
 	'purple':	#800080,
+	'primary':  $color-primary
 );
 
 // CALENDAR

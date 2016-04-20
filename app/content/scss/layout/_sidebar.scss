@@ -4,12 +4,21 @@
 	position: fixed;
 	height: 100%;
 	width: $sidebar-expanded-width;
+	min-width: $sidebar-expanded-width;
 	overflow: hidden;
 	z-index: $z-index-sidebar;
 
 	&:hover {
 		overflow-y: auto;
 	}
+}
+
+#sidebar-placeholder {
+	@include transition('all #{$animation-speed} ease #{$ease-speed}');
+	width: $sidebar-expanded-width;
+	min-width: $sidebar-expanded-width;
+	height: 100%;
+	float: left;
 }
 
 .collapsed {
@@ -37,7 +46,7 @@
 	padding: ($header-height + $body-padding) 0 $body-padding;
 	height: inherit;
 
-	.selected {
+	.active {
  		background-color: $color-bg-content;
 	}
 
@@ -77,8 +86,12 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
 .sub-nav-list li {
 	a {
 		padding: ($body-padding / 4) $body-padding;
-		@include rem('padding-left', ($body-padding * 3 + $font-medium));
+		@include rem('padding-left', ($body-padding * 4 + $font-medium));
 		margin: 2px 0;
+
+		@include breakpoint(small) {
+			@include rem('padding-left', ($body-padding * 3 + $font-medium));
+		}
 	}
 
 	i {

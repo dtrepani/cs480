@@ -19,9 +19,9 @@
 	<script type="text/javascript" src="../node_modules/angular-moment/angular-moment.js"></script>
 	<script type="text/javascript" src="app.min.js"></script>
 </head>
-<body>
+<body ng-controller="AppController">
 	<div class="wrapper">
-		<div ui-view="sidebar"></div>
+		<div id="sidebar-wrapper" ui-view="sidebar"></div>
 
 		<div id="content-wrapper">
 			<div id="overlay"></div>

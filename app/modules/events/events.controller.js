@@ -8,10 +8,16 @@
 	EventsController.$inject = ['moment', 'calendarWidgetService', 'eventsService', 'eventModalService'];
 	function EventsController(moment, calendarWidgetService, eventsService, eventModalService) {
 		var vm = this;
+		vm.today = null;
+		vm.selectedDay = null;
+		vm.month = null;
+
 		vm.isSameDayAsSelected = isSameDayAsSelected;
 		vm.getEndOfDay = getEndOfDay;
 		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
+		vm.lastMonth = lastMonth;
+		vm.nextMonth = nextMonth;
 
 		activate();
 
@@ -35,6 +41,14 @@
 
 		function showEventModal(event) {
 			eventModalService.openEventModal(event, vm.calendars).then(updateEvents);
+		}
+
+		function lastMonth() {
+			vm.month = calendarWidgetService.lastMonth(vm.month);
+		}
+
+		function nextMonth() {
+			vm.month = calendarWidgetService.nextMonth(vm.month);
 		}
 
 		function updateEvents(response) {

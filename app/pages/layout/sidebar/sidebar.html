@@ -1,39 +1,45 @@
+<div id="sidebar-placeholder" ng-class="{ collapsed: sc.collapsed }">
+&nbsp;
+</div>
 <div id="sidebar" ng-class="{ collapsed: sc.collapsed }">
 	<div id="header-sidebar" class="header">
 		<i id="sidebar-toggle" class="fa fa-bars fa-fw" ng-click="sc.collapsed = !sc.collapsed"></i>
 	</div>
 	<nav id="nav">
 		<ul id="nav-calendar-list">
-			<li id="nav-calendar" class="selected">
-				<a ui-sref="calendar"> <i class="fa fa-calendar fa-fw"></i> <span>Calendar</span> </a>
+			<li id="nav-calendar">
+				<a ui-sref="calendar" ui-sref-active="active"> <i class="fa fa-calendar fa-fw"></i> <span>Calendar</span> </a>
 			</li>
 			<li id="nav-my-calendars" class="sub-nav">
 				<div><i class="fa fa-calendar-o fa-fw"></i> <span>My Calendars</span> </div>
 				<ul id="sub-nav-calendars" class="sub-nav-list">
-					<li><a href="#"> <div class="square-icon-maroon disabled"></div> <span>Personal</span> </a></li>
-					<li><a href="#"> <div class="square-icon-aqua"></div> <span>Appointments</span> </a></li>
-					<li><a href="#"> <div class="square-icon-yellow"></div> <span>Classes</span> </a></li>
-					<li><a href="#"> <div class="square-icon-lime"></div> <span>Work</span> </a></li>
+					<li ng-repeat="calendar in sc.calendars">
+						<a href="#">
+							<div class="square-icon-primary"></div> <span>{{ calendar.name }}</span>
+						</a>
+					</li>
 				</ul>
 			</li>
 		</ul>
 
 		<ul id="nav-task-list">
 			<li id="nav-inbox">
-				<a ui-sref="inbox"> <i class="fa fa-inbox fa-fw"></i> <span>Inbox</span> </a>
+				<a ui-sref="inbox" ui-sref-active="active"> <i class="fa fa-inbox fa-fw"></i> <span>Inbox</span> </a>
 			</li>
 			<li id="nav-today">
-				<a ui-sref="today"> <i class="fa fa-check-square-o fa-fw"></i> <span>Today</span> </a>
+				<a ui-sref="today" ui-sref-active="active"> <i class="fa fa-check-square-o fa-fw"></i> <span>Today</span> </a>
 			</li>
 			<li id="nav-7-days">
-				<a ui-sref="week"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
+				<a ui-sref="week" ui-sref-active="active"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
 			</li>
 			<li id="nav-my-labels" class="sub-nav">
 				<div><i class="fa fa-tag fa-fw"></i> <span>My Labels</span> </div>
 				<ul id="sub-nav-labels" class="sub-nav-list">
-					<li><a href="#"> <div class="square-icon-purple"></div> <span>Personal</span> </a></li>
-					<li><a href="#"> <div class="square-icon-blue"></div> <span>Shopping</span> </a></li>
-					<li><a href="#"> <div class="square-icon-red"></div> Project</span> </a></li>
+					<li ng-repeat="label in sc.labels">
+						<a ui-sref="labels.label({ labelId: label.label_id })" ui-sref-active="active">
+							<div class="square-icon-primary"></div> <span>{{ label.name }}</span>
+						</a>
+					</li>
 				</ul>
 			</li>
 		</ul>

@@ -1,12 +1,19 @@
+.calendar {
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+}
+
 .calendar, .calendar-header {
-	// @extend %clearfix;
+	@extend %clearfix;
 }
 
 .calendar-header {
 	margin-bottom: 10px;
 }
 
-.month-name {
+.calendar-nav {
+	@include property('margin-right', 10px);
 	float: left;
 }
 
@@ -24,7 +31,7 @@
 }
 
 .selected {
-	background: $color-primary-light;
+	background: $color-primary-light !important;
 }
 
 
@@ -40,9 +47,8 @@
 	margin: -1px 0 0 -1px;
 }
 
-.other-month {
-	background: $color-dim-light;
-	color: $color-dim-dark;
+.month-name {
+	float: left;
 }
 
 .month-day-names li {
@@ -69,10 +75,25 @@
 	vertical-align: top;
 }
 
+.other-month {
+	background: $color-dim-light;
+	color: $color-dim-dark;
+
+	.events li {
+		background-color: $color-primary-dull !important;
+		color: $color-dim-light !important;
+	}
+}
+
 .month {
 	.day {
 	 	@include property('border', 1px solid #{$color-dim});
 	 	height: $event-height-small * 15;
+	 	overflow-y: hidden;
+
+	 	&:hover {
+	 		overflow-y: auto;
+	 	}
 
 	 	@include breakpoint(small) {
 	 		height: $event-height-medium * 15;
@@ -86,24 +107,24 @@
 	.events {
 		@extend %one-line;
 		width: 100%;
-		overflow-y: none;
+		overflow-y: hidden;
 		cursor: pointer;
 
 		&:hover {
 			overflow-y: auto;
 		}
-	}
-}
 
-.month .events li {
-	padding: 1px;
-	color: $color-bg-content;
-	width: 100%;
-	background-color: $color-primary;
-	margin-bottom: 2px;
+		li {
+			padding: 1px;
+			color: $color-bg-content;
+			width: 100%;
+			background-color: $color-primary;
+			margin-bottom: 2px;
 
-	@include breakpoint(small) {
-		padding: 3px;
+			@include breakpoint(small) {
+				padding: 3px;
+			}
+		}
 	}
 }
 

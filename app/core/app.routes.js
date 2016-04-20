@@ -13,22 +13,18 @@
 				url: '',
 				templateUrl: 'index.html',
 				abstract: true,
-				controller: 'AppController',
-				controllerAs: 'app',
 				resolve: {
 					tasks: ['tasksService', getTasks],
 					events: ['eventsService', getEvents],
 					labels: ['labelService', getLabels],
-					calendars: ['calendarService', getCalendars]
+					calendars: ['calendarService', getCalendars],
+					user: ['headerService', getUser]
 				},
 				views: {
 					'header': {
 						templateUrl: 'pages/layout/header/header.html',
 						controller: 'HeaderController',
-						controllerAs: 'hc',
-						resolve: {
-							user: ['headerService', getUser]
-						}
+						controllerAs: 'hc'
 					},
 					'sidebar': {
 						templateUrl: 'pages/layout/sidebar/sidebar.html',
@@ -79,12 +75,20 @@
 						controller: 'DashboardController',
 						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							tasks: ['tasksService', getTasks],
-							events: ['eventsService', getEvents],
-							labels: ['labelService', getLabels],
-							calendars: ['calendarService', getCalendars]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
+					}
+				}
+			})
+			.state('labels', {
+				url: '/labels',
+				parent: 'root'
+			})
+			.state('labels.label', {
+				url: '/:labelId',
+				views: {
+					'content@': {
+						template: "In progress"
 					}
 				}
 			})

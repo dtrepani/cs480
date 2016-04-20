@@ -25,22 +25,18 @@
 				url: '',
 				templateUrl: 'index.html',
 				abstract: true,
-				controller: 'AppController',
-				controllerAs: 'app',
 				resolve: {
 					tasks: ['tasksService', getTasks],
 					events: ['eventsService', getEvents],
 					labels: ['labelService', getLabels],
-					calendars: ['calendarService', getCalendars]
+					calendars: ['calendarService', getCalendars],
+					user: ['headerService', getUser]
 				},
 				views: {
 					'header': {
 						templateUrl: 'pages/layout/header/header.html',
 						controller: 'HeaderController',
-						controllerAs: 'hc',
-						resolve: {
-							user: ['headerService', getUser]
-						}
+						controllerAs: 'hc'
 					},
 					'sidebar': {
 						templateUrl: 'pages/layout/sidebar/sidebar.html',
@@ -91,12 +87,20 @@
 						controller: 'DashboardController',
 						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							tasks: ['tasksService', getTasks],
-							events: ['eventsService', getEvents],
-							labels: ['labelService', getLabels],
-							calendars: ['calendarService', getCalendars]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
+					}
+				}
+			})
+			.state('labels', {
+				url: '/labels',
+				parent: 'root'
+			})
+			.state('labels.label', {
+				url: '/:labelId',
+				views: {
+					'content@': {
+						template: "In progress"
 					}
 				}
 			})
@@ -285,6 +289,76 @@
 		var vm = this;
 		vm.items = items;
 		vm.groups = groups;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('DashboardController', DashboardController);
+
+	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
+	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
+		var vm = this;
+		vm.tasks = tasks;
+		vm.events = events;
+		vm.labels = labels;
+		vm.calendars = calendars;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('RegisterController', RegisterController);
+
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
+		var vm = this;
+		vm.error = '';
+		vm.loading = false;
+		vm.register = register;
+
+		function register() {
+			vm.loading = true;
+			registerService.register(vm.user)
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('registerService', registerService);
+
+	registerService.$inject = ['$location', '$log', 'crudService'];
+	function registerService($location, $log, crudService) {
+		var vm = this;  // jshint ignore:line
+		vm.crud = new crudService('user');
+
+		return {
+			register: register
+		};
+
+		function register(user) {
+			return vm.crud.create(user)
+				.then(registrationComplete);
+
+			function registrationComplete(response) {
+				if (response.success === 'false') {
+					$log.error(response.title);
+					return response.title;
+				}
+				$location.url('/login');
+			}
+		}
 	}
 })();
 (function() {
@@ -505,15 +579,77 @@
 
 	angular
 		.module('app')
+		.controller('HeaderController', HeaderController);
+
+	HeaderController.$inject = ['user'];
+	function HeaderController(user) {
+		this.user = user;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('headerService', headerService);
+
+	headerService.$inject = ['$http', '$log', 'sessionService'];
+	function headerService($http, $log, sessionService) {
+		return {
+			getUser: getUser
+		};
+
+		function getUser() {
+			return sessionService.getVar('name')
+				.then(getNameComplete);
+
+			function getNameComplete(response) {
+				var res = response.data;
+
+				if (res.success === false) {
+					return {name: false, url: '#/login'};
+				}
+				return {name: res.data, url: '#/dashboard'};
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('SidebarController', SidebarController);
+
+	SidebarController.$inject = ['labels', 'calendars'];
+	function SidebarController(labels, calendars) {
+		var vm = this;
+		vm.collapsed = true;
+		vm.labels = labels;
+		vm.calendars = calendars;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.controller('EventsController', EventsController);
 
 	EventsController.$inject = ['moment', 'calendarWidgetService', 'eventsService', 'eventModalService'];
 	function EventsController(moment, calendarWidgetService, eventsService, eventModalService) {
 		var vm = this;
+		vm.today = null;
+		vm.selectedDay = null;
+		vm.month = null;
+
 		vm.isSameDayAsSelected = isSameDayAsSelected;
 		vm.getEndOfDay = getEndOfDay;
 		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
+		vm.lastMonth = lastMonth;
+		vm.nextMonth = nextMonth;
 
 		activate();
 
@@ -537,6 +673,14 @@
 
 		function showEventModal(event) {
 			eventModalService.openEventModal(event, vm.calendars).then(updateEvents);
+		}
+
+		function lastMonth() {
+			vm.month = calendarWidgetService.lastMonth(vm.month);
+		}
+
+		function nextMonth() {
+			vm.month = calendarWidgetService.nextMonth(vm.month);
 		}
 
 		function updateEvents(response) {
@@ -794,6 +938,73 @@
 
 	angular
 		.module('app')
+		.controller('RecurrenceController', RecurrenceController);
+
+	RecurrenceController.$inject = ['recurrenceModalService'];
+	function RecurrenceController(recurrenceModalService) {
+		var rc = this;
+		rc.showRecurrenceModal = showRecurrenceModal;
+
+		function showRecurrenceModal() {
+			if (rc.item.recurrence) {
+				recurrenceModalService.openRecurrenceModal(rc.item);
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.directive('spRepeat', recurrenceDirective);
+
+	function recurrenceDirective() {
+		return {
+			templateUrl: 'modules/recurrence/recurrence.html',
+			controller: 'RecurrenceController',
+			controllerAs: 'rc',
+			bindToController: true,
+			scope: {
+				item: '='
+			}
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('recurrenceService', recurrenceService);
+
+	function recurrenceService() {
+		var recurrenceCols = {
+			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
+			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
+			by: ['by_hour', 'by_day', 'by_month_day', 'by_year_day', 'by_week_no', 'by_month']
+		};
+
+		return {
+			clearRecurrence: clearRecurrence,
+			constructRecurrence: constructRecurrence
+		};
+
+		function clearRecurrence(item) {
+			item.recurrence = false;
+		}
+
+		function constructRecurrence(item) {
+
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.controller('TasksController', TasksController);
 
 	TasksController.$inject = ['tasksService', 'taskModalService'];
@@ -913,65 +1124,55 @@
 
 	angular
 		.module('app')
-		.controller('RecurrenceController', RecurrenceController);
+		.factory('accessService', accessService);
 
-	RecurrenceController.$inject = ['recurrenceModalService'];
-	function RecurrenceController(recurrenceModalService) {
-		var rc = this;
-		rc.showRecurrenceModal = showRecurrenceModal;
+	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
+	function accessService($location, $q, sessionService, statusService) {
+		var deferred = $q.defer();
 
-		function showRecurrenceModal() {
-			if (rc.item.recurrence) {
-				recurrenceModalService.openRecurrenceModal(rc.item);
+		return {
+			isAuthenticated: isAuthenticated,
+			isAdmin: isAdmin
+		};
+
+		function isAuthenticated() {
+			return sessionService.getVar('name')
+				.then(isAuthenticatedComplete);
+
+			function isAuthenticatedComplete(response) {
+				if (response.data.success !== false) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.UNAUTHORIZED);
+				}
+
+				return deferred.promise;
 			}
+		}
+
+		function isAdmin() {
+
 		}
 	}
 })();
+
 (function() {
 	'use strict';
 
-	angular
-		.module('app')
-		.directive('spRepeat', recurrenceDirective);
-
-	function recurrenceDirective() {
-		return {
-			templateUrl: 'modules/recurrence/recurrence.html',
-			controller: 'RecurrenceController',
-			controllerAs: 'rc',
-			bindToController: true,
-			scope: {
-				item: '='
-			}
-		};
-	}
-})();
-(function() {
-	'use strict';
+	/**
+	* Status codes used when accessing various pages in the app.
+	*/
 
 	angular
 		.module('app')
-		.factory('recurrenceService', recurrenceService);
+		.service('statusService', statusService);
 
-	function recurrenceService() {
-		var recurrenceCols = {
-			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
-			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
-			by: ['by_hour', 'by_day', 'by_month_day', 'by_year_day', 'by_week_no', 'by_month']
-		};
-
+	function statusService() {
 		return {
-			clearRecurrence: clearRecurrence,
-			constructRecurrence: constructRecurrence
+			OK: 200,
+			UNAUTHORIZED: 401,
+			FORBIDDEN: 403
 		};
-
-		function clearRecurrence(item) {
-			item.recurrence = false;
-		}
-
-		function constructRecurrence(item) {
-
-		}
 	}
 })();
 
@@ -1066,133 +1267,6 @@
 		}
 	}
 })();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('DashboardController', DashboardController);
-
-	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
-	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
-		var vm = this;
-		vm.tasks = tasks;
-		vm.events = events;
-		vm.labels = labels;
-		vm.calendars = calendars;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('RegisterController', RegisterController);
-
-	RegisterController.$inject = ['registerService'];
-	function RegisterController(registerService) {
-		var vm = this;
-		vm.error = '';
-		vm.loading = false;
-		vm.register = register;
-
-		function register() {
-			vm.loading = true;
-			registerService.register(vm.user)
-				.then(function(response) {
-					vm.loading = false;
-					vm.error = response;
-				});
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('registerService', registerService);
-
-	registerService.$inject = ['$location', '$log', 'crudService'];
-	function registerService($location, $log, crudService) {
-		var vm = this;  // jshint ignore:line
-		vm.crud = new crudService('user');
-
-		return {
-			register: register
-		};
-
-		function register(user) {
-			return vm.crud.create(user)
-				.then(registrationComplete);
-
-			function registrationComplete(response) {
-				if (response.success === 'false') {
-					$log.error(response.title);
-					return response.title;
-				}
-				$location.url('/login');
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('accessService', accessService);
-
-	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
-	function accessService($location, $q, sessionService, statusService) {
-		var deferred = $q.defer();
-
-		return {
-			isAuthenticated: isAuthenticated,
-			isAdmin: isAdmin
-		};
-
-		function isAuthenticated() {
-			return sessionService.getVar('name')
-				.then(isAuthenticatedComplete);
-
-			function isAuthenticatedComplete(response) {
-				if (response.data.success !== false) {
-					deferred.resolve(statusService.OK);
-				} else {
-					deferred.reject(statusService.UNAUTHORIZED);
-				}
-
-				return deferred.promise;
-			}
-		}
-
-		function isAdmin() {
-
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	/**
-	* Status codes used when accessing various pages in the app.
-	*/
-
-	angular
-		.module('app')
-		.service('statusService', statusService);
-
-	function statusService() {
-		return {
-			OK: 200,
-			UNAUTHORIZED: 401,
-			FORBIDDEN: 403
-		};
-	}
-})();
-
 (function() {
 	'use strict';
 
@@ -1299,7 +1373,9 @@
 			getMonth: getMonth,
 			getToday: getToday,
 			getWeek: getWeek,
-			isSameDay: isSameDay
+			isSameDay: isSameDay,
+			lastMonth: lastMonth,
+			nextMonth: nextMonth
 		};
 
 		function getEndOfDay(day) {
@@ -1313,7 +1389,7 @@
 		function getMonth(aDay) {
 			var month = [];
 			var day = aDay.clone().date(1).startOf('week');
-			for (var i = aDay.month(); i === aDay.month(); i = day.month()) {
+			for (var i = 0; i < 6; i++) {
 				month.push(getWeek(day, aDay.month()));
 				day = day.add(1, 'weeks');
 			}
@@ -1355,6 +1431,63 @@
 		*/
 		function isSameDay(day1, day2) {
 			return day1.isSame(day2, 'day');
+		}
+
+		/**
+		* Since srcMonth is an array of days by weeks, it contains days not in the
+		* source month. The first day of the third week of the given month is
+		* guaranteed to be a day within the source month.
+		*
+		* @param {Moment Object}	srcMonth
+		* @return {Moment Object[]}
+		*/
+		function lastMonth(srcMonth) {
+			return getMonth(srcMonth[3][0].fullDate.clone().subtract(1, 'months'));
+		}
+
+		/**
+		* @see lastMonth()
+		*/
+		function nextMonth(srcMonth) {
+			return getMonth(srcMonth[3][0].fullDate.clone().add(1, 'months'));
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('recurrenceModalService', recurrenceModalService);
+
+	recurrenceModalService.$inject = ['$uibModal', 'recurrenceService'];
+	function recurrenceModalService($uibModal, recurrenceService) {
+		var rc = this; // jshint ignore: line
+		var recurrenceInfo = {
+			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
+			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
+		};
+
+		return {
+			openRecurrenceModal: openRecurrenceModal
+		};
+
+		function openRecurrenceModal(item) {
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/recurrence/modal/recurrence.modal.html',
+				resolve: {
+					groups: function() { return recurrenceInfo; },
+					item: item
+				}
+			}).result
+				.then(function(response) {
+					recurrenceService.constructRecurrence(item);
+				}, function(response) {
+					recurrenceService.clearRecurrence(item);
+				});
 		}
 	}
 })();
@@ -1569,96 +1702,5 @@
 		function toggleCompleted(subtask) {
 			subtask.completed = !subtask.completed;
 		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('recurrenceModalService', recurrenceModalService);
-
-	recurrenceModalService.$inject = ['$uibModal', 'recurrenceService'];
-	function recurrenceModalService($uibModal, recurrenceService) {
-		var rc = this; // jshint ignore: line
-		var recurrenceInfo = {
-			freq: ['hourly', 'daily', 'weekly', 'monthly', 'yearly'],
-			days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
-		};
-
-		return {
-			openRecurrenceModal: openRecurrenceModal
-		};
-
-		function openRecurrenceModal(item) {
-			return $uibModal.open({
-				controller: 'ModalController',
-				controllerAs: 'vm',
-				templateUrl: 'modules/recurrence/modal/recurrence.modal.html',
-				resolve: {
-					groups: function() { return recurrenceInfo; },
-					item: item
-				}
-			}).result
-				.then(function(response) {
-					recurrenceService.constructRecurrence(item);
-				}, function(response) {
-					recurrenceService.clearRecurrence(item);
-				});
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('HeaderController', HeaderController);
-
-	HeaderController.$inject = ['user'];
-	function HeaderController(user) {
-		this.user = user;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('headerService', headerService);
-
-	headerService.$inject = ['$http', '$log', 'sessionService'];
-	function headerService($http, $log, sessionService) {
-		return {
-			getUser: getUser
-		};
-
-		function getUser() {
-			return sessionService.getVar('name')
-				.then(getNameComplete);
-
-			function getNameComplete(response) {
-				var res = response.data;
-
-				if (res.success === false) {
-					return {name: false, url: '#/login'};
-				}
-				return {name: res.data, url: '#/dashboard'};
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('SidebarController', SidebarController);
-
-	function SidebarController() {
-		this.collapsed = true;
 	}
 })();

@@ -12,7 +12,9 @@
 			getMonth: getMonth,
 			getToday: getToday,
 			getWeek: getWeek,
-			isSameDay: isSameDay
+			isSameDay: isSameDay,
+			lastMonth: lastMonth,
+			nextMonth: nextMonth
 		};
 
 		function getEndOfDay(day) {
@@ -26,7 +28,7 @@
 		function getMonth(aDay) {
 			var month = [];
 			var day = aDay.clone().date(1).startOf('week');
-			for (var i = aDay.month(); i === aDay.month(); i = day.month()) {
+			for (var i = 0; i < 6; i++) {
 				month.push(getWeek(day, aDay.month()));
 				day = day.add(1, 'weeks');
 			}
@@ -68,6 +70,25 @@
 		*/
 		function isSameDay(day1, day2) {
 			return day1.isSame(day2, 'day');
+		}
+
+		/**
+		* Since srcMonth is an array of days by weeks, it contains days not in the
+		* source month. The first day of the third week of the given month is
+		* guaranteed to be a day within the source month.
+		*
+		* @param {Moment Object}	srcMonth
+		* @return {Moment Object[]}
+		*/
+		function lastMonth(srcMonth) {
+			return getMonth(srcMonth[3][0].fullDate.clone().subtract(1, 'months'));
+		}
+
+		/**
+		* @see lastMonth()
+		*/
+		function nextMonth(srcMonth) {
+			return getMonth(srcMonth[3][0].fullDate.clone().add(1, 'months'));
 		}
 	}
 })();
