@@ -224,6 +224,34 @@
 
 	angular
 		.module('app')
+		.filter('inGroups', inGroups);
+
+	inGroups.$inject = [];
+	function inGroups() {
+		return function(activities, groups) {
+			if (!groups) {
+				return activities;
+			}
+
+			var activitiesInGroups = [];
+
+			for (var i = 0; i < activities.length; i++) {
+				if (activities[i].label_id === groups ||
+					activities[i].calendar_id === groups
+				) {
+					activitiesInGroups.push(activities[i]);
+				}
+			}
+
+			return activitiesInGroups;
+		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.filter('sameDayAs', sameDayAs);
 
 	sameDayAs.$inject = ['moment'];
@@ -289,76 +317,6 @@
 		var vm = this;
 		vm.items = items;
 		vm.groups = groups;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('DashboardController', DashboardController);
-
-	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
-	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
-		var vm = this;
-		vm.tasks = tasks;
-		vm.events = events;
-		vm.labels = labels;
-		vm.calendars = calendars;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('RegisterController', RegisterController);
-
-	RegisterController.$inject = ['registerService'];
-	function RegisterController(registerService) {
-		var vm = this;
-		vm.error = '';
-		vm.loading = false;
-		vm.register = register;
-
-		function register() {
-			vm.loading = true;
-			registerService.register(vm.user)
-				.then(function(response) {
-					vm.loading = false;
-					vm.error = response;
-				});
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('registerService', registerService);
-
-	registerService.$inject = ['$location', '$log', 'crudService'];
-	function registerService($location, $log, crudService) {
-		var vm = this;  // jshint ignore:line
-		vm.crud = new crudService('user');
-
-		return {
-			register: register
-		};
-
-		function register(user) {
-			return vm.crud.create(user)
-				.then(registrationComplete);
-
-			function registrationComplete(response) {
-				if (response.success === 'false') {
-					$log.error(response.title);
-					return response.title;
-				}
-				$location.url('/login');
-			}
-		}
 	}
 })();
 (function() {
@@ -574,62 +532,6 @@
 	}
 })();
 
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('HeaderController', HeaderController);
-
-	HeaderController.$inject = ['user'];
-	function HeaderController(user) {
-		this.user = user;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('headerService', headerService);
-
-	headerService.$inject = ['$http', '$log', 'sessionService'];
-	function headerService($http, $log, sessionService) {
-		return {
-			getUser: getUser
-		};
-
-		function getUser() {
-			return sessionService.getVar('name')
-				.then(getNameComplete);
-
-			function getNameComplete(response) {
-				var res = response.data;
-
-				if (res.success === false) {
-					return {name: false, url: '#/login'};
-				}
-				return {name: res.data, url: '#/dashboard'};
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('SidebarController', SidebarController);
-
-	SidebarController.$inject = ['labels', 'calendars'];
-	function SidebarController(labels, calendars) {
-		var vm = this;
-		vm.collapsed = true;
-		vm.labels = labels;
-		vm.calendars = calendars;
-	}
-})();
 (function() {
 	'use strict';
 
@@ -1046,7 +948,8 @@
 				tasks: '=',
 				labels: '=',
 				order: '=',
-				days: '=withinDays'
+				days: '=withinDays',
+				inLabels: '=inGroups'
 			}
 		};
 	}
@@ -1116,63 +1019,6 @@
 			}
 			return res.title;
 		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('accessService', accessService);
-
-	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
-	function accessService($location, $q, sessionService, statusService) {
-		var deferred = $q.defer();
-
-		return {
-			isAuthenticated: isAuthenticated,
-			isAdmin: isAdmin
-		};
-
-		function isAuthenticated() {
-			return sessionService.getVar('name')
-				.then(isAuthenticatedComplete);
-
-			function isAuthenticatedComplete(response) {
-				if (response.data.success !== false) {
-					deferred.resolve(statusService.OK);
-				} else {
-					deferred.reject(statusService.UNAUTHORIZED);
-				}
-
-				return deferred.promise;
-			}
-		}
-
-		function isAdmin() {
-
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	/**
-	* Status codes used when accessing various pages in the app.
-	*/
-
-	angular
-		.module('app')
-		.service('statusService', statusService);
-
-	function statusService() {
-		return {
-			OK: 200,
-			UNAUTHORIZED: 401,
-			FORBIDDEN: 403
-		};
 	}
 })();
 
@@ -1267,6 +1113,133 @@
 		}
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('DashboardController', DashboardController);
+
+	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
+	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
+		var vm = this;
+		vm.tasks = tasks;
+		vm.events = events;
+		vm.labels = labels;
+		vm.calendars = calendars;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('RegisterController', RegisterController);
+
+	RegisterController.$inject = ['registerService'];
+	function RegisterController(registerService) {
+		var vm = this;
+		vm.error = '';
+		vm.loading = false;
+		vm.register = register;
+
+		function register() {
+			vm.loading = true;
+			registerService.register(vm.user)
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('registerService', registerService);
+
+	registerService.$inject = ['$location', '$log', 'crudService'];
+	function registerService($location, $log, crudService) {
+		var vm = this;  // jshint ignore:line
+		vm.crud = new crudService('user');
+
+		return {
+			register: register
+		};
+
+		function register(user) {
+			return vm.crud.create(user)
+				.then(registrationComplete);
+
+			function registrationComplete(response) {
+				if (response.success === 'false') {
+					$log.error(response.title);
+					return response.title;
+				}
+				$location.url('/login');
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('accessService', accessService);
+
+	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
+	function accessService($location, $q, sessionService, statusService) {
+		var deferred = $q.defer();
+
+		return {
+			isAuthenticated: isAuthenticated,
+			isAdmin: isAdmin
+		};
+
+		function isAuthenticated() {
+			return sessionService.getVar('name')
+				.then(isAuthenticatedComplete);
+
+			function isAuthenticatedComplete(response) {
+				if (response.data.success !== false) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.UNAUTHORIZED);
+				}
+
+				return deferred.promise;
+			}
+		}
+
+		function isAdmin() {
+
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Status codes used when accessing various pages in the app.
+	*/
+
+	angular
+		.module('app')
+		.service('statusService', statusService);
+
+	function statusService() {
+		return {
+			OK: 200,
+			UNAUTHORIZED: 401,
+			FORBIDDEN: 403
+		};
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -1497,60 +1470,6 @@
 
 	angular
 		.module('app')
-		.factory('labelService', labelService);
-
-	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function labelService($http, $log, crudService, sessionService) {
-		var vm = this;  // jshint ignore:line
-		vm.label = new crudService('label');
-
-		return {
-			createLabel: createLabel,
-			deleteLabel: deleteLabel,
-			getLabels: getLabels,
-			updateLabel: updateLabel
-		};
-
-		function createLabel(label) {
-			return vm.label.create(label).then(promiseComplete);
-		}
-
-		function deleteLabel(id) {
-			return vm.label.remove(id).then(promiseComplete);
-		}
-
-		function getLabels() {
-			return sessionService.getVar('id')
-				.then(getLabelWithUserID);
-
-			function getLabelWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.label.getWhere('person_id=' + res.data, '').then(promiseComplete);
-				}
-				return res.title;
-			}
-		}
-
-		function updateLabel(id, label) {
-			return vm.label.update(id, label).then(promiseComplete);
-		}
-
-		function promiseComplete(response) {
-			var res = response.data;
-			if (res.success) {
-				return res.data;
-			}
-			return res.title;
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.factory('subtaskModalService', subtaskModalService);
 
 	subtaskModalService.$inject = ['$uibModal', 'labelService', 'subtasksService'];
@@ -1614,6 +1533,60 @@
 							.then(tasksService.getTasks);
 					}
 				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('labelService', labelService);
+
+	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
+	function labelService($http, $log, crudService, sessionService) {
+		var vm = this;  // jshint ignore:line
+		vm.label = new crudService('label');
+
+		return {
+			createLabel: createLabel,
+			deleteLabel: deleteLabel,
+			getLabels: getLabels,
+			updateLabel: updateLabel
+		};
+
+		function createLabel(label) {
+			return vm.label.create(label).then(promiseComplete);
+		}
+
+		function deleteLabel(id) {
+			return vm.label.remove(id).then(promiseComplete);
+		}
+
+		function getLabels() {
+			return sessionService.getVar('id')
+				.then(getLabelWithUserID);
+
+			function getLabelWithUserID(response) {
+				var res = response.data;
+				if (res.success) {
+					return vm.label.getWhere('person_id=' + res.data, '').then(promiseComplete);
+				}
+				return res.title;
+			}
+		}
+
+		function updateLabel(id, label) {
+			return vm.label.update(id, label).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
+			}
+			return res.title;
 		}
 	}
 })();
@@ -1702,5 +1675,62 @@
 		function toggleCompleted(subtask) {
 			subtask.completed = !subtask.completed;
 		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('HeaderController', HeaderController);
+
+	HeaderController.$inject = ['user'];
+	function HeaderController(user) {
+		this.user = user;
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('headerService', headerService);
+
+	headerService.$inject = ['$http', '$log', 'sessionService'];
+	function headerService($http, $log, sessionService) {
+		return {
+			getUser: getUser
+		};
+
+		function getUser() {
+			return sessionService.getVar('name')
+				.then(getNameComplete);
+
+			function getNameComplete(response) {
+				var res = response.data;
+
+				if (res.success === false) {
+					return {name: false, url: '#/login'};
+				}
+				return {name: res.data, url: '#/dashboard'};
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('SidebarController', SidebarController);
+
+	SidebarController.$inject = ['labels', 'calendars'];
+	function SidebarController(labels, calendars) {
+		var vm = this;
+		vm.collapsed = true;
+		vm.labels = labels;
+		vm.calendars = calendars;
 	}
 })();

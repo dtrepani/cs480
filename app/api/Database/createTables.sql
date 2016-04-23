@@ -4,8 +4,6 @@ CREATE TABLE IF NOT EXISTS person (
 	password		VARCHAR(512)			NOT NULL,
 	admin			BOOLEAN DEFAULT FALSE,
 	theme			ENUM('light', 'dark')	NOT NULL,
-	week_start		ENUM('su', 'mo')		NOT NULL,
-	time_zone		INT,
 	avatar			TEXT,
 	email			VARCHAR(64),
 	phone_number	INT,
@@ -130,7 +128,7 @@ CREATE TABLE IF NOT EXISTS subtask (
 		ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS calendar_user (
+CREATE TABLE IF NOT EXISTS calendar_person (
 	calendar_id		INT		NOT NULL,
 	person_id		INT		NOT NULL,
 	PRIMARY KEY (calendar_id, person_id),
@@ -144,7 +142,7 @@ CREATE TABLE IF NOT EXISTS calendar_user (
 		ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS label_user (
+CREATE TABLE IF NOT EXISTS label_person (
 	label_id		INT		NOT NULL,
 	person_id		INT		NOT NULL,
 	PRIMARY KEY (label_id, person_id),
