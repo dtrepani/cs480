@@ -15,6 +15,8 @@
 		};
 
 		function register(user) {
+			user.name = user.name.toLowerCase().trim();
+
 			return vm.crud.create(user)
 				.then(registrationComplete);
 

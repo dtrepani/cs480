@@ -5,8 +5,8 @@
 		.module('app')
 		.service('cacheService', cacheService);
 
-	cacheService.$inject = ['$q', 'crudService'];
-	function cacheService($q, crudService) {
+	cacheService.$inject = ['crudService'];
+	function cacheService(crudService) {
 		var vm = this; // jshint ignore: line
 		vm.calendars = [];
 		vm.events = [];
@@ -29,8 +29,10 @@
 
 		// TODO: Ideally one API call.
 		function cacheAll() {
-			$q.all([cacheCalendars(), cacheEvents(), cacheLabels(), cacheTasks()])
-				.then(function(responses) { getAll(); });
+			cacheCalendars();
+			cacheEvents();
+			cacheLabels();
+			cacheTasks();
 		}
 
 		function cacheCalendars() {

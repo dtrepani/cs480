@@ -13,14 +13,22 @@
 			openEventModal: openEventModal
 		};
 
+		/**
+		* Without cloning the event, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
 		function openEventModal(event, calendars) {
+			var clonedEvent = {};
+			angular.extend(clonedEvent, event);
+
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/events/modal/event.modal.html',
 				resolve: {
 					groups: function() { return calendars; },
-					item: event
+					item: clonedEvent
 				}
 			}).result
 				.then(function(response) {

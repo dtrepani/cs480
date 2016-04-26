@@ -35,7 +35,7 @@
 				parent: 'root',
 				views: {
 					'content@': {
-						templateUrl: 'modules/login/login.html',
+						templateUrl: 'pages/login/login.html',
 						controller: 'LoginController',
 						controllerAs: 'vm'
 					}
@@ -69,8 +69,6 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/dashboard/dashboard.html',
-						controller: 'DashboardController',
-						controllerAs: 'vm',
 						resolve: {
 							isAuthenticated: ['accessService', isAuthenticated]
 						}
@@ -95,12 +93,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/tasks/inbox.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['tasksService', getTasks],
-							groups: ['labelService', getLabels]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -111,12 +105,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/tasks/today.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['tasksService', getTasks],
-							groups: ['labelService', getLabels]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -127,12 +117,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/tasks/week.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['tasksService', getTasks],
-							groups: ['labelService', getLabels]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -143,12 +129,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/calendar/calendar.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['eventsService', getEvents],
-							groups: ['calendarService', getCalendars]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -158,22 +140,6 @@
 
 		function cacheAll(cacheService) {
 			return cacheService.cacheAll();
-		}
-
-		function getCalendars(calendarService) {
-			return calendarService.getCalendars();
-		}
-
-		function getEvents(eventsService) {
-			return eventsService.getEvents();
-		}
-
-		function getLabels(labelService) {
-			return labelService.getLabels();
-		}
-
-		function getTasks(tasksService) {
-			return tasksService.getTasks();
 		}
 
 		function getUser(headerService) {

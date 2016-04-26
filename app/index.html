@@ -23,12 +23,13 @@
 	<div class="wrapper">
 		<div id="sidebar-wrapper" ui-view="sidebar"></div>
 
-		<div id="content-wrapper">
+		<div id="main-wrapper">
 			<div id="overlay"></div>
-
 			<div ui-view="header"></div>
 
-			<main id="content" ui-view="content"></main>
+			<div id="content-wrapper">
+				<main id="content" ui-view="content"></main>
+			</div>
 		</div>
 	</div>
 </body>

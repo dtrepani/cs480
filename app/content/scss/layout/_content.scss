@@ -3,13 +3,13 @@
 	width: 100%;
 }
 
-#content-wrapper {
+#main-wrapper {
 	@include transition('width #{$animation-speed} ease #{$ease-speed}');
 	height: 100%;
 	width: 100%;
 }
 
-#content {
+#content-wrapper {
 	@include transition('all #{$animation-speed} ease #{$ease-speed}');
 	background-color: $color-bg-content;
 	display: table;
@@ -20,6 +20,13 @@
 	@include breakpoint(small) {
 		margin-left: $sidebar-collapsed-width;
 	}
+}
+
+#content {
+	display: table;
+	table-layout: fixed;
+	height: 100%;
+	width: 100%;
 }
 
 #overlay {

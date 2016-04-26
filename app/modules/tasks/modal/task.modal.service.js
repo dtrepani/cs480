@@ -13,14 +13,22 @@
 			openTaskModal: openTaskModal
 		};
 
+		/**
+		* Without cloning the task, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
 		function openTaskModal(task, labels) {
+			var clonedTask = {};
+			angular.extend(clonedTask, task);
+
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/tasks/modal/task.modal.html',
 				resolve: {
 					groups: function() { return labels; },
-					item: task
+					item: clonedTask
 				}
 			}).result
 				.then(function(response) {

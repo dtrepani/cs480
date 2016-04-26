@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('loginService', loginService);
 
-	loginService.$inject = ['$http', '$location', '$log'];
-	function loginService($http, $location, $log) {
+	loginService.$inject = ['$http', '$location', '$log', 'cacheService'];
+	function loginService($http, $location, $log, cacheService) {
 		var vm = this;  // jshint ignore:line
 
 		return {
@@ -14,6 +14,8 @@
 		};
 
 		function login(user) {
+			user.name = user.name.toLowerCase().trim();
+
 			return $http.post('api/user/loginManager.php', user)
 				.then(loginComplete)
 				.catch(loginFailed);
@@ -22,6 +24,7 @@
 				if (response.data.success === false) {
 					return response.data.title;
 				}
+				cacheService.cacheAll();
 				$location.path('/dashboard');
 			}
 

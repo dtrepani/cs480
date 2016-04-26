@@ -47,7 +47,7 @@
 				parent: 'root',
 				views: {
 					'content@': {
-						templateUrl: 'modules/login/login.html',
+						templateUrl: 'pages/login/login.html',
 						controller: 'LoginController',
 						controllerAs: 'vm'
 					}
@@ -81,8 +81,6 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/dashboard/dashboard.html',
-						controller: 'DashboardController',
-						controllerAs: 'vm',
 						resolve: {
 							isAuthenticated: ['accessService', isAuthenticated]
 						}
@@ -107,12 +105,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/tasks/inbox.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['tasksService', getTasks],
-							groups: ['labelService', getLabels]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -123,12 +117,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/tasks/today.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['tasksService', getTasks],
-							groups: ['labelService', getLabels]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -139,12 +129,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/tasks/week.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['tasksService', getTasks],
-							groups: ['labelService', getLabels]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -155,12 +141,8 @@
 				views: {
 					'content@': {
 						templateUrl: 'pages/calendar/calendar.html',
-						controller: 'ActivityController',
-						controllerAs: 'vm',
 						resolve: {
-							isAuthenticated: ['accessService', isAuthenticated],
-							items: ['eventsService', getEvents],
-							groups: ['calendarService', getCalendars]
+							isAuthenticated: ['accessService', isAuthenticated]
 						}
 					}
 				}
@@ -170,22 +152,6 @@
 
 		function cacheAll(cacheService) {
 			return cacheService.cacheAll();
-		}
-
-		function getCalendars(calendarService) {
-			return calendarService.getCalendars();
-		}
-
-		function getEvents(eventsService) {
-			return eventsService.getEvents();
-		}
-
-		function getLabels(labelService) {
-			return labelService.getLabels();
-		}
-
-		function getTasks(tasksService) {
-			return tasksService.getTasks();
 		}
 
 		function getUser(headerService) {
@@ -311,22 +277,10 @@
 
 	angular
 		.module('app')
-		.controller('ActivityController', ActivityController);
-
-	ActivityController.$inject = ['isAuthenticated'];
-	function ActivityController(isAuthenticated) {
-		var vm = this;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.service('cacheService', cacheService);
 
-	cacheService.$inject = ['$q', 'crudService'];
-	function cacheService($q, crudService) {
+	cacheService.$inject = ['crudService'];
+	function cacheService(crudService) {
 		var vm = this; // jshint ignore: line
 		vm.calendars = [];
 		vm.events = [];
@@ -349,8 +303,10 @@
 
 		// TODO: Ideally one API call.
 		function cacheAll() {
-			$q.all([cacheCalendars(), cacheEvents(), cacheLabels(), cacheTasks()])
-				.then(function(responses) { getAll(); });
+			cacheCalendars();
+			cacheEvents();
+			cacheLabels();
+			cacheTasks();
 		}
 
 		function cacheCalendars() {
@@ -808,70 +764,6 @@
 
 	angular
 		.module('app')
-		.controller('LoginController', LoginController);
-
-	LoginController.$inject = ['loginService'];
-	function LoginController(loginService) {
-		var vm = this;
-		vm.loading = false;
-		vm.error = '';
-
-		vm.login = login;
-
-		/**
-		* LoginService will redirect if there is no error. Thus, there's only a
-		* need to return a promise if there's an error.
-		*/
-		function login() {
-			vm.loading = true;
-			loginService.login(vm.user)
-				.then(function(response) {
-					vm.loading = false;
-					vm.error = response;
-				});
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('loginService', loginService);
-
-	loginService.$inject = ['$http', '$location', '$log'];
-	function loginService($http, $location, $log) {
-		var vm = this;  // jshint ignore:line
-
-		return {
-			login: login
-		};
-
-		function login(user) {
-			return $http.post('api/user/loginManager.php', user)
-				.then(loginComplete)
-				.catch(loginFailed);
-
-			function loginComplete(response) {
-				if (response.data.success === false) {
-					return response.data.title;
-				}
-				$location.path('/dashboard');
-			}
-
-			function loginFailed(error) {
-				$log.error(error);
-				return 'Something went wrong. Please try again.';
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('ModalController', ModalController);
 
 	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
@@ -1170,13 +1062,68 @@
 
 	angular
 		.module('app')
-		.controller('DashboardController', DashboardController);
+		.controller('LoginController', LoginController);
 
-	DashboardController.$inject = ['isAuthenticated'];
-	function DashboardController(isAuthenticated) {
+	LoginController.$inject = ['loginService'];
+	function LoginController(loginService) {
 		var vm = this;
+		vm.loading = false;
+		vm.error = '';
+
+		vm.login = login;
+
+		/**
+		* LoginService will redirect if there is no error. Thus, there's only a
+		* need to return a promise if there's an error.
+		*/
+		function login() {
+			vm.loading = true;
+			loginService.login(vm.user)
+				.then(function(response) {
+					vm.loading = false;
+					vm.error = response;
+				});
+		}
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('loginService', loginService);
+
+	loginService.$inject = ['$http', '$location', '$log', 'cacheService'];
+	function loginService($http, $location, $log, cacheService) {
+		var vm = this;  // jshint ignore:line
+
+		return {
+			login: login
+		};
+
+		function login(user) {
+			user.name = user.name.toLowerCase().trim();
+
+			return $http.post('api/user/loginManager.php', user)
+				.then(loginComplete)
+				.catch(loginFailed);
+
+			function loginComplete(response) {
+				if (response.data.success === false) {
+					return response.data.title;
+				}
+				cacheService.cacheAll();
+				$location.path('/dashboard');
+			}
+
+			function loginFailed(error) {
+				$log.error(error);
+				return 'Something went wrong. Please try again.';
+			}
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -1218,6 +1165,8 @@
 		};
 
 		function register(user) {
+			user.name = user.name.toLowerCase().trim();
+
 			return vm.crud.create(user)
 				.then(registrationComplete);
 
@@ -1349,14 +1298,22 @@
 			openEventModal: openEventModal
 		};
 
+		/**
+		* Without cloning the event, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
 		function openEventModal(event, calendars) {
+			var clonedEvent = {};
+			angular.extend(clonedEvent, event);
+
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/events/modal/event.modal.html',
 				resolve: {
 					groups: function() { return calendars; },
-					item: event
+					item: clonedEvent
 				}
 			}).result
 				.then(function(response) {
@@ -1564,14 +1521,22 @@
 			openSubtaskModal: openSubtaskModal
 		};
 
+		/**
+		* Without cloning the subtask, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
 		function openSubtaskModal(subtask, task) {
+			var clonedSubtask = {};
+			angular.extend(clonedSubtask, subtask);
+
 			$uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/tasks/modal/subtask.modal.html',
 				resolve: {
 					groups: task,
-					item: subtask
+					item: clonedSubtask
 				}
 			}).result
 				.then(function(res) {
@@ -1600,14 +1565,22 @@
 			openTaskModal: openTaskModal
 		};
 
+		/**
+		* Without cloning the task, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
 		function openTaskModal(task, labels) {
+			var clonedTask = {};
+			angular.extend(clonedTask, task);
+
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
 				templateUrl: 'modules/tasks/modal/task.modal.html',
 				resolve: {
 					groups: function() { return labels; },
-					item: task
+					item: clonedTask
 				}
 			}).result
 				.then(function(response) {

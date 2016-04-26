@@ -13,7 +13,7 @@
 			<li id="nav-my-calendars" class="sub-nav">
 				<div><i class="fa fa-calendar-o fa-fw"></i> <span>My Calendars</span> </div>
 				<ul id="sub-nav-calendars" class="sub-nav-list">
-					<li ng-repeat="calendar in sc.calendars">
+					<li ng-repeat="calendar in sc.calendars()">
 						<a href="#">
 							<div class="square-icon-primary"></div> <span>{{ calendar.name }}</span>
 						</a>
@@ -35,7 +35,7 @@
 			<li id="nav-my-labels" class="sub-nav">
 				<div><i class="fa fa-tag fa-fw"></i> <span>My Labels</span> </div>
 				<ul id="sub-nav-labels" class="sub-nav-list">
-					<li ng-repeat="label in sc.labels">
+					<li ng-repeat="label in sc.labels()">
 						<a ui-sref="labels.label({ labelId: label.label_id })" ui-sref-active="active">
 							<div class="square-icon-primary"></div> <span>{{ label.name }}</span>
 						</a>
