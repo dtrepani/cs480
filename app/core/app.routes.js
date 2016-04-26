@@ -14,10 +14,7 @@
 				templateUrl: 'index.html',
 				abstract: true,
 				resolve: {
-					tasks: ['tasksService', getTasks],
-					events: ['eventsService', getEvents],
-					labels: ['labelService', getLabels],
-					calendars: ['calendarService', getCalendars],
+					cache: ['cacheService', cacheAll],
 					user: ['headerService', getUser]
 				},
 				views: {
@@ -158,6 +155,10 @@
 			});
 
 		$urlRouterProvider.otherwise('/dashboard');
+
+		function cacheAll(cacheService) {
+			return cacheService.cacheAll();
+		}
 
 		function getCalendars(calendarService) {
 			return calendarService.getCalendars();

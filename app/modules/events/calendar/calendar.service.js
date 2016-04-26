@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('calendarService', calendarService);
 
-	calendarService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function calendarService($http, $log, crudService, sessionService) {
+	calendarService.$inject = ['crudService', 'cacheService'];
+	function calendarService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.calendar = new crudService('calendar');
 
@@ -26,16 +26,7 @@
 		}
 
 		function getCalendars() {
-			return sessionService.getVar('id')
-				.then(getCalendarWithUserID);
-
-			function getCalendarWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.calendar.getWhere('person_id=' + res.data, '').then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getCalendars();
 		}
 
 		function updateCalendar(id, calendar) {
@@ -43,11 +34,12 @@
 		}
 
 		function promiseComplete(response) {
-			var res = response.data;
-			if (res.success) {
-				return res.data;
+			var result = response.data;
+			if (result.success) {
+				cacheService.cacheCalendars();
+				return result.data;
 			}
-			return res.title;
+			return result.title;
 		}
 	}
 })();

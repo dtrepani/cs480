@@ -18,7 +18,7 @@
 		var crud = init;
 		crud.prototype = {
 			get: get,
-			getWhere: getWhere,
+			getByUser: getByUser,
 			create: create,
 			update: update,
 			remove: remove,
@@ -64,16 +64,11 @@
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
-
 		/**
-		* @param 	{string}	where 	Where clause.
-		* @param	{string}	userID	For activities (tasks, events), the corresponding
-		*								user for the activity. Pass empty string
-		*								otherwise.
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
-		function getWhere(where, userID) {
-			return $http.get(this.base + '?usewhere=true&where=' + escape(where) + '&id=' + userID) // jshint ignore:line
+		function getByUser() {
+			return $http.get(this.base + '?byuser=true') // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -114,13 +109,10 @@
 
 		/**
 		* @param 	{string}	where 	Where clause.
-		* @param	{string}	userID	For activities (tasks, events), the corresponding
-		*								user for the activity. Pass empty string
-		*								otherwise.
 		* @return	{string[]}			Promise with 'data' >= 0 on success.
 		*/
-		function removeWhere(where, userID) {
-			return $http.delete(this.base + '?where=true&id=' + userID, where) // jshint ignore:line
+		function removeWhere(where) {
+			return $http.delete(this.base + '?usewhere=true&where=' + escape(where)) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}

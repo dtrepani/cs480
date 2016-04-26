@@ -38,7 +38,7 @@
 					: vm.selectDay(day)">
 					<span class="day-number">{{ day.number }}</span>
 					<ul class="events">
-						<li ng-repeat="event in vm.events | orderBy:'dt_start' | sameDayAs:day.fullDate"
+						<li ng-repeat="event in vm.events() | orderBy:'dt_start' | sameDayAs:day.fullDate"
 							ng-click="vm.showEventModal(event); $event.stopPropagation();">
 							{{ event.summary }}
 						</li>

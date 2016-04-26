@@ -41,7 +41,7 @@ class CRUDTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result['email'], $this->bindings['email']);
 
         $result = $this->stub->getBy('name', 'ERROR');
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
     }
 
     /**
@@ -59,7 +59,7 @@ class CRUDTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result['email'], $this->bindings['email']);
 
         $result = $this->stub->get(-1);
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
     }
 
     /**

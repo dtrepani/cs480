@@ -20,16 +20,17 @@ $manager = new CrudManager(
     new Task(),
     $request,
     isset($_GET['id']) ? $_GET['id'] : null,
-    isset($_GET['usewhere']) ? $_GET['usewhere'] : null,
-    isset($_GET['where']) ? $_GET['where'] : null
+    isset($_GET['byuser']) ? $_GET['byuser'] : null
 );
 
 $response = $manager->getResponse();
 
-foreach ($response['data'] as &$task) {
-    if (!empty($task['subtasks'])) {
-        $task['subtasks'] = unserialize(base64_decode($task['subtasks']));
-    }
+if (is_array($response['data'])) {
+	foreach ($response['data'] as &$task) {
+	    if (!empty($task['subtasks'])) {
+	        $task['subtasks'] = unserialize(base64_decode($task['subtasks']));
+	    }
+	}
 }
 
 echo json_encode($response);

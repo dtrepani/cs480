@@ -21,13 +21,13 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
         $this->cal = new Calendar();
 
         $this->userBindings = array('name'=>'b', 'password'=>'b');
-        $this->bindings1 = array('description'=>'a1', 'summary'=>'c1', 'note'=>'d1', 'freq'=>'hourly', 'repeat_interval'=>1);
-        $this->bindings2 = array('description'=>'a2', 'summary'=>'c2', 'note'=>'d2', 'freq'=>'daily', 'repeat_interval'=>5);
-        $this->bindings3 = array('description'=>'a3', 'summary'=>'c3', 'note'=>'d3', 'freq'=>'weekly', 'repeat_interval'=>5);
+        $this->bindings1 = array('location'=>'a1', 'summary'=>'c1', 'note'=>'d1', 'freq'=>'hourly', 'repeat_interval'=>1);
+        $this->bindings2 = array('location'=>'a2', 'summary'=>'c2', 'note'=>'d2', 'freq'=>'daily', 'repeat_interval'=>5);
+        $this->bindings3 = array('location'=>'a3', 'summary'=>'c3', 'note'=>'d3', 'freq'=>'weekly', 'repeat_interval'=>5);
 
         $this->userID = $this->user->getBy('name', $this->userBindings['name']);
         // Will only succeed after testCreate creates new user.
-        if ($this->userID['success']) {
+        if ($this->userID['success'] && !empty($this->userID['data'])) {
             $this->userID = $this->userID['data'][0]['id'];
             $this->calID = $this->cal->getBy('person_id', $this->userID)['data'][0]['id'];
             $this->bindings1['calendar_id'] = $this->calID;
@@ -70,12 +70,12 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
             'summary',
             $this->bindings1['summary']
         )['data'][0];
-        $this->assertEquals($result['description'], $this->bindings1['description']);
+        $this->assertEquals($result['location'], $this->bindings1['location']);
         $this->assertEquals($result['summary'], $this->bindings1['summary']);
         $this->assertEquals($result['freq'], $this->bindings1['freq']);
 
         $result = $this->stub->getBy($this->userID, 'summary', 'ERROR');
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
     }
 
     /**
@@ -92,12 +92,12 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
         $result = $this->stub->get($data['event_id'])['data'][0];
 
         $this->assertEquals($result['event_id'], $data['event_id']);
-        $this->assertEquals($result['description'], $this->bindings1['description']);
+        $this->assertEquals($result['location'], $this->bindings1['location']);
         $this->assertEquals($result['summary'], $this->bindings1['summary']);
         $this->assertEquals($result['freq'], $this->bindings1['freq']);
 
         $result = $this->stub->get(-1);
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
     }
 
     /**
@@ -107,7 +107,7 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
     public function testUpdate()
     {
         $updateBindings = array(
-            'description'=>'updated description',
+            'location'=>'updated location',
             'note'=>'updated note',
             'freq'=>'daily'
         );
@@ -116,7 +116,7 @@ class ActivityCRUDTest extends \PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual(1, $result['data']);
 
         $result = $this->stub->getBy($this->userID, 'summary', $this->bindings1['summary'])['data'][0];
-        $this->assertEquals($result['description'], $updateBindings['description']);
+        $this->assertEquals($result['location'], $updateBindings['location']);
         $this->assertEquals($result['note'], $updateBindings['note']);
         $this->assertEquals($result['freq'], $updateBindings['freq']);
     }

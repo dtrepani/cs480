@@ -10,11 +10,7 @@
 			templateUrl: 'modules/events/events.html',
 			controller: 'EventsController',
 			controllerAs: 'vm',
-			bindToController: true,
-			scope: {
-				events: '=',
-				calendars: '='
-			}
+			bindToController: true
 		};
 	}
 })();

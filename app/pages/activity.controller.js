@@ -5,10 +5,8 @@
 		.module('app')
 		.controller('ActivityController', ActivityController);
 
-	ActivityController.$inject = ['isAuthenticated', 'items', 'groups'];
-	function ActivityController(isAuthenticated, items, groups) {
+	ActivityController.$inject = ['isAuthenticated'];
+	function ActivityController(isAuthenticated) {
 		var vm = this;
-		vm.items = items;
-		vm.groups = groups;
 	}
 })();

@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('tasksService', tasksService);
 
-	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function tasksService($http, $log, crudService, sessionService) {
+	tasksService.$inject = ['crudService', 'cacheService'];
+	function tasksService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.task = new crudService('task');
 
@@ -35,16 +35,7 @@
 		}
 
 		function getTasks() {
-			return sessionService.getVar('id')
-				.then(getTaskWithUserID);
-
-			function getTaskWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.task.getWhere('', res.data).then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getTasks();
 		}
 
 		function toggleCompleted(task) {
@@ -59,6 +50,7 @@
 		function promiseComplete(response) {
 			var res = response.data;
 			if (res.success) {
+				cacheService.cacheTasks();
 				return res.data;
 			}
 			return res.title;

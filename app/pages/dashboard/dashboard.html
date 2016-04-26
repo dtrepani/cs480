@@ -1,8 +1,4 @@
 <h1>Inbox</h1>
-<div ng-if="vm.tasks && vm.labels">
-	<sp-tasks tasks="vm.tasks" labels="vm.labels" order="'-created'"></sp-tasks>
-</div>
+<sp-tasks order="'-created'"></sp-tasks>
 <br/><br/>
-<div ng-if="vm.events && vm.calendars">
-	<sp-events events="vm.events" calendars="vm.calendars"></sp-events>
-</div>
+<sp-events></sp-events>

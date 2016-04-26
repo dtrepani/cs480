@@ -27,7 +27,7 @@
 					return eventsService.createOrUpdateEvent(response)
 						.then(eventsService.getEvents);
 				}, function(response) {
-					if (typeof response !== 'string') {
+					if (Number(response)) {
 						return eventsService.deleteEvent(response)
 							.then(eventsService.getEvents);
 					}

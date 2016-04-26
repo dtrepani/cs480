@@ -5,9 +5,12 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['moment', 'calendarWidgetService', 'eventsService', 'eventModalService'];
-	function EventsController(moment, calendarWidgetService, eventsService, eventModalService) {
+	EventsController.$inject = ['moment', 'calendarWidgetService', 'calendarService', 'eventsService', 'eventModalService'];
+	function EventsController(moment, calendarWidgetService, calendarService, eventsService, eventModalService) {
 		var vm = this;
+		vm.events = function() { return eventsService.getEvents(); };
+		vm.calendar = function() { return calendarService.getCalendars(); };
+
 		vm.today = null;
 		vm.selectedDay = null;
 		vm.month = null;
@@ -40,7 +43,7 @@
 		}
 
 		function showEventModal(event) {
-			eventModalService.openEventModal(event, vm.calendars).then(updateEvents);
+			eventModalService.openEventModal(event, vm.calendars);
 		}
 
 		function lastMonth() {
@@ -49,12 +52,6 @@
 
 		function nextMonth() {
 			vm.month = calendarWidgetService.nextMonth(vm.month);
-		}
-
-		function updateEvents(response) {
-			if (response) {
-				vm.events = response;
-			}
 		}
 	}
 })();

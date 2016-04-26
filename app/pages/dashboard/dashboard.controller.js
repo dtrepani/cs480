@@ -5,12 +5,8 @@
 		.module('app')
 		.controller('DashboardController', DashboardController);
 
-	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
-	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
+	DashboardController.$inject = ['isAuthenticated'];
+	function DashboardController(isAuthenticated) {
 		var vm = this;
-		vm.tasks = tasks;
-		vm.events = events;
-		vm.labels = labels;
-		vm.calendars = calendars;
 	}
 })();

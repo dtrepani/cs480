@@ -27,7 +27,7 @@
 					return tasksService.createOrUpdateTask(response)
 						.then(tasksService.getTasks);
 				}, function(response) {
-					if (typeof response !== 'string') {
+					if (Number(response)) {
 						return tasksService.deleteTask(response)
 							.then(tasksService.getTasks);
 					}

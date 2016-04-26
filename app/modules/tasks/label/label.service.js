@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('labelService', labelService);
 
-	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function labelService($http, $log, crudService, sessionService) {
+	labelService.$inject = ['crudService', 'cacheService'];
+	function labelService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.label = new crudService('label');
 
@@ -26,16 +26,7 @@
 		}
 
 		function getLabels() {
-			return sessionService.getVar('id')
-				.then(getLabelWithUserID);
-
-			function getLabelWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.label.getWhere('person_id=' + res.data, '').then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getLabels();
 		}
 
 		function updateLabel(id, label) {
@@ -45,6 +36,7 @@
 		function promiseComplete(response) {
 			var res = response.data;
 			if (res.success) {
+				cacheService.cacheLabels();
 				return res.data;
 			}
 			return res.title;

@@ -31,7 +31,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $result = $this->user->create($this->bindings);
         $this->assertTrue($result['success']);
         $result = $this->user->create($this->bindings);
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
 
         $user = $this->user->getBy('name', $this->bindings['name'])['data'][0];
 
@@ -53,8 +53,8 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->user->delete($user['id']);
 
         $result = $this->calendar->getBy('person_id', $user['id']);
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
         $result = $this->label->getBy('person_id', $user['id']);
-        $this->assertFalse($result['success']);
+        $this->assertTrue(empty($result['data']));
     }
 }

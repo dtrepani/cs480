@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('eventsService', eventsService);
 
-	eventsService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function eventsService($http, $log, crudService, sessionService) {
+	eventsService.$inject = ['crudService', 'cacheService'];
+	function eventsService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.event = new crudService('event');
 
@@ -34,16 +34,7 @@
 		}
 
 		function getEvents() {
-			return sessionService.getVar('id')
-				.then(getEventWithUserID);
-
-			function getEventWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.event.getWhere('', res.data).then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getEvents();
 		}
 
 		function updateEvent(id, event) {
@@ -53,6 +44,7 @@
 		function promiseComplete(response) {
 			var res = response.data;
 			if (res.success) {
+				cacheService.cacheEvents();
 				return res.data;
 			}
 			return res.title;

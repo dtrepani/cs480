@@ -26,10 +26,7 @@
 				templateUrl: 'index.html',
 				abstract: true,
 				resolve: {
-					tasks: ['tasksService', getTasks],
-					events: ['eventsService', getEvents],
-					labels: ['labelService', getLabels],
-					calendars: ['calendarService', getCalendars],
+					cache: ['cacheService', cacheAll],
 					user: ['headerService', getUser]
 				},
 				views: {
@@ -170,6 +167,10 @@
 			});
 
 		$urlRouterProvider.otherwise('/dashboard');
+
+		function cacheAll(cacheService) {
+			return cacheService.cacheAll();
+		}
 
 		function getCalendars(calendarService) {
 			return calendarService.getCalendars();
@@ -312,13 +313,102 @@
 		.module('app')
 		.controller('ActivityController', ActivityController);
 
-	ActivityController.$inject = ['isAuthenticated', 'items', 'groups'];
-	function ActivityController(isAuthenticated, items, groups) {
+	ActivityController.$inject = ['isAuthenticated'];
+	function ActivityController(isAuthenticated) {
 		var vm = this;
-		vm.items = items;
-		vm.groups = groups;
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.service('cacheService', cacheService);
+
+	cacheService.$inject = ['$q', 'crudService'];
+	function cacheService($q, crudService) {
+		var vm = this; // jshint ignore: line
+		vm.calendars = [];
+		vm.events = [];
+		vm.labels = [];
+		vm.tasks = [];
+
+		return {
+			cacheAll: cacheAll,
+			cacheCalendars: cacheCalendars,
+			cacheEvents: cacheEvents,
+			cacheLabels: cacheLabels,
+			cacheTasks: cacheTasks,
+
+			getAll: getAll,
+			getCalendars: getCalendars,
+			getEvents: getEvents,
+			getLabels: getLabels,
+			getTasks: getTasks
+		};
+
+		// TODO: Ideally one API call.
+		function cacheAll() {
+			$q.all([cacheCalendars(), cacheEvents(), cacheLabels(), cacheTasks()])
+				.then(function(responses) { getAll(); });
+		}
+
+		function cacheCalendars() {
+			vm.calendar = new crudService('calendar');
+			vm.calendar.getByUser()
+				.then(function(response) { vm.calendars = getResult(response); });
+		}
+
+		function cacheEvents() {
+			vm.event = new crudService('event');
+			vm.event.getByUser()
+				.then(function(response) { vm.events = getResult(response); });
+		}
+
+		function cacheLabels() {
+			vm.label = new crudService('label');
+			vm.label.getByUser()
+				.then(function(response) { vm.labels = getResult(response); });
+		}
+
+		function cacheTasks() {
+			vm.task = new crudService('task');
+			vm.task.getByUser()
+				.then(function(response) { vm.tasks = getResult(response); });
+		}
+
+		function getResult(response) {
+			var result = response.data;
+			return result.success ? result.data : result.title;
+		}
+
+		function getAll() {
+			return {
+				calendars: getCalendars(),
+				events: getEvents(),
+				labels: getLabels(),
+				tasks: getTasks()
+			};
+		}
+
+		function getCalendars() {
+			return vm.calendars;
+		}
+
+		function getEvents() {
+			return vm.events;
+		}
+
+		function getLabels() {
+			return vm.labels;
+		}
+
+		function getTasks() {
+			return vm.tasks;
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -339,7 +429,7 @@
 		var crud = init;
 		crud.prototype = {
 			get: get,
-			getWhere: getWhere,
+			getByUser: getByUser,
 			create: create,
 			update: update,
 			remove: remove,
@@ -385,16 +475,11 @@
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
-
 		/**
-		* @param 	{string}	where 	Where clause.
-		* @param	{string}	userID	For activities (tasks, events), the corresponding
-		*								user for the activity. Pass empty string
-		*								otherwise.
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
-		function getWhere(where, userID) {
-			return $http.get(this.base + '?usewhere=true&where=' + escape(where) + '&id=' + userID) // jshint ignore:line
+		function getByUser() {
+			return $http.get(this.base + '?byuser=true') // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -435,13 +520,10 @@
 
 		/**
 		* @param 	{string}	where 	Where clause.
-		* @param	{string}	userID	For activities (tasks, events), the corresponding
-		*								user for the activity. Pass empty string
-		*								otherwise.
 		* @return	{string[]}			Promise with 'data' >= 0 on success.
 		*/
-		function removeWhere(where, userID) {
-			return $http.delete(this.base + '?where=true&id=' + userID, where) // jshint ignore:line
+		function removeWhere(where) {
+			return $http.delete(this.base + '?usewhere=true&where=' + escape(where)) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -539,9 +621,12 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['moment', 'calendarWidgetService', 'eventsService', 'eventModalService'];
-	function EventsController(moment, calendarWidgetService, eventsService, eventModalService) {
+	EventsController.$inject = ['moment', 'calendarWidgetService', 'calendarService', 'eventsService', 'eventModalService'];
+	function EventsController(moment, calendarWidgetService, calendarService, eventsService, eventModalService) {
 		var vm = this;
+		vm.events = function() { return eventsService.getEvents(); };
+		vm.calendar = function() { return calendarService.getCalendars(); };
+
 		vm.today = null;
 		vm.selectedDay = null;
 		vm.month = null;
@@ -574,7 +659,7 @@
 		}
 
 		function showEventModal(event) {
-			eventModalService.openEventModal(event, vm.calendars).then(updateEvents);
+			eventModalService.openEventModal(event, vm.calendars);
 		}
 
 		function lastMonth() {
@@ -583,12 +668,6 @@
 
 		function nextMonth() {
 			vm.month = calendarWidgetService.nextMonth(vm.month);
-		}
-
-		function updateEvents(response) {
-			if (response) {
-				vm.events = response;
-			}
 		}
 	}
 })();
@@ -604,11 +683,7 @@
 			templateUrl: 'modules/events/events.html',
 			controller: 'EventsController',
 			controllerAs: 'vm',
-			bindToController: true,
-			scope: {
-				events: '=',
-				calendars: '='
-			}
+			bindToController: true
 		};
 	}
 })();
@@ -619,8 +694,8 @@
 		.module('app')
 		.factory('eventsService', eventsService);
 
-	eventsService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function eventsService($http, $log, crudService, sessionService) {
+	eventsService.$inject = ['crudService', 'cacheService'];
+	function eventsService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.event = new crudService('event');
 
@@ -648,16 +723,7 @@
 		}
 
 		function getEvents() {
-			return sessionService.getVar('id')
-				.then(getEventWithUserID);
-
-			function getEventWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.event.getWhere('', res.data).then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getEvents();
 		}
 
 		function updateEvent(id, event) {
@@ -667,6 +733,7 @@
 		function promiseComplete(response) {
 			var res = response.data;
 			if (res.success) {
+				cacheService.cacheEvents();
 				return res.data;
 			}
 			return res.title;
@@ -909,24 +976,20 @@
 		.module('app')
 		.controller('TasksController', TasksController);
 
-	TasksController.$inject = ['tasksService', 'taskModalService'];
-	function TasksController(tasksService, taskModalService) {
+	TasksController.$inject = ['tasksService', 'labelService', 'taskModalService'];
+	function TasksController(tasksService, labelService, taskModalService) {
 		var vm = this;
+		vm.tasks = function() { return tasksService.getTasks(); };
+		vm.labels = function() { return labelService.getLabels(); };
 		vm.showTaskModal = showTaskModal;
 		vm.toggleCompleted = toggleCompleted;
 
 		function showTaskModal(task) {
-			taskModalService.openTaskModal(task, vm.labels).then(updateTasks);
+			taskModalService.openTaskModal(task, vm.labels());
 		}
 
 		function toggleCompleted(task) {
-			tasksService.toggleCompleted(task).then(updateTasks);
-		}
-
-		function updateTasks(response) {
-			if (response) {
-				vm.tasks = response;
-			}
+			tasksService.toggleCompleted(task);
 		}
 	}
 })();
@@ -937,16 +1000,13 @@
 		.module('app')
 		.directive('spTasks', tasksDirective);
 
-	tasksDirective.$inject = ['$filter'];
-	function tasksDirective($filter) {
+	function tasksDirective() {
 		return {
 			templateUrl: 'modules/tasks/tasks.html',
 			controller: 'TasksController',
 			controllerAs: 'vm',
 			bindToController: true,
 			scope: {
-				tasks: '=',
-				labels: '=',
 				order: '=',
 				days: '=withinDays',
 				inLabels: '=inGroups'
@@ -961,8 +1021,8 @@
 		.module('app')
 		.factory('tasksService', tasksService);
 
-	tasksService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function tasksService($http, $log, crudService, sessionService) {
+	tasksService.$inject = ['crudService', 'cacheService'];
+	function tasksService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.task = new crudService('task');
 
@@ -991,16 +1051,7 @@
 		}
 
 		function getTasks() {
-			return sessionService.getVar('id')
-				.then(getTaskWithUserID);
-
-			function getTaskWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.task.getWhere('', res.data).then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getTasks();
 		}
 
 		function toggleCompleted(task) {
@@ -1015,6 +1066,7 @@
 		function promiseComplete(response) {
 			var res = response.data;
 			if (res.success) {
+				cacheService.cacheTasks();
 				return res.data;
 			}
 			return res.title;
@@ -1120,13 +1172,9 @@
 		.module('app')
 		.controller('DashboardController', DashboardController);
 
-	DashboardController.$inject = ['isAuthenticated', 'tasks', 'events', 'labels', 'calendars'];
-	function DashboardController(isAuthenticated, tasks, events, labels, calendars) {
+	DashboardController.$inject = ['isAuthenticated'];
+	function DashboardController(isAuthenticated) {
 		var vm = this;
-		vm.tasks = tasks;
-		vm.events = events;
-		vm.labels = labels;
-		vm.calendars = calendars;
 	}
 })();
 (function() {
@@ -1247,8 +1295,8 @@
 		.module('app')
 		.factory('calendarService', calendarService);
 
-	calendarService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function calendarService($http, $log, crudService, sessionService) {
+	calendarService.$inject = ['crudService', 'cacheService'];
+	function calendarService(crudService, cacheService) {
 		var vm = this;  // jshint ignore:line
 		vm.calendar = new crudService('calendar');
 
@@ -1268,16 +1316,7 @@
 		}
 
 		function getCalendars() {
-			return sessionService.getVar('id')
-				.then(getCalendarWithUserID);
-
-			function getCalendarWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.calendar.getWhere('person_id=' + res.data, '').then(promiseComplete);
-				}
-				return res.title;
-			}
+			return cacheService.getCalendars();
 		}
 
 		function updateCalendar(id, calendar) {
@@ -1285,11 +1324,12 @@
 		}
 
 		function promiseComplete(response) {
-			var res = response.data;
-			if (res.success) {
-				return res.data;
+			var result = response.data;
+			if (result.success) {
+				cacheService.cacheCalendars();
+				return result.data;
 			}
-			return res.title;
+			return result.title;
 		}
 	}
 })();
@@ -1323,7 +1363,7 @@
 					return eventsService.createOrUpdateEvent(response)
 						.then(eventsService.getEvents);
 				}, function(response) {
-					if (typeof response !== 'string') {
+					if (Number(response)) {
 						return eventsService.deleteEvent(response)
 							.then(eventsService.getEvents);
 					}
@@ -1470,6 +1510,52 @@
 
 	angular
 		.module('app')
+		.factory('labelService', labelService);
+
+	labelService.$inject = ['crudService', 'cacheService'];
+	function labelService(crudService, cacheService) {
+		var vm = this;  // jshint ignore:line
+		vm.label = new crudService('label');
+
+		return {
+			createLabel: createLabel,
+			deleteLabel: deleteLabel,
+			getLabels: getLabels,
+			updateLabel: updateLabel
+		};
+
+		function createLabel(label) {
+			return vm.label.create(label).then(promiseComplete);
+		}
+
+		function deleteLabel(id) {
+			return vm.label.remove(id).then(promiseComplete);
+		}
+
+		function getLabels() {
+			return cacheService.getLabels();
+		}
+
+		function updateLabel(id, label) {
+			return vm.label.update(id, label).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				cacheService.cacheLabels();
+				return res.data;
+			}
+			return res.title;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.factory('subtaskModalService', subtaskModalService);
 
 	subtaskModalService.$inject = ['$uibModal', 'labelService', 'subtasksService'];
@@ -1528,65 +1614,11 @@
 					return tasksService.createOrUpdateTask(response)
 						.then(tasksService.getTasks);
 				}, function(response) {
-					if (typeof response !== 'string') {
+					if (Number(response)) {
 						return tasksService.deleteTask(response)
 							.then(tasksService.getTasks);
 					}
 				});
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('labelService', labelService);
-
-	labelService.$inject = ['$http', '$log', 'crudService', 'sessionService'];
-	function labelService($http, $log, crudService, sessionService) {
-		var vm = this;  // jshint ignore:line
-		vm.label = new crudService('label');
-
-		return {
-			createLabel: createLabel,
-			deleteLabel: deleteLabel,
-			getLabels: getLabels,
-			updateLabel: updateLabel
-		};
-
-		function createLabel(label) {
-			return vm.label.create(label).then(promiseComplete);
-		}
-
-		function deleteLabel(id) {
-			return vm.label.remove(id).then(promiseComplete);
-		}
-
-		function getLabels() {
-			return sessionService.getVar('id')
-				.then(getLabelWithUserID);
-
-			function getLabelWithUserID(response) {
-				var res = response.data;
-				if (res.success) {
-					return vm.label.getWhere('person_id=' + res.data, '').then(promiseComplete);
-				}
-				return res.title;
-			}
-		}
-
-		function updateLabel(id, label) {
-			return vm.label.update(id, label).then(promiseComplete);
-		}
-
-		function promiseComplete(response) {
-			var res = response.data;
-			if (res.success) {
-				return res.data;
-			}
-			return res.title;
 		}
 	}
 })();
@@ -1726,11 +1758,11 @@
 		.module('app')
 		.controller('SidebarController', SidebarController);
 
-	SidebarController.$inject = ['labels', 'calendars'];
-	function SidebarController(labels, calendars) {
+	SidebarController.$inject = ['labelService', 'calendarService'];
+	function SidebarController(labelService, calendarService) {
 		var vm = this;
 		vm.collapsed = true;
-		vm.labels = labels;
-		vm.calendars = calendars;
+		vm.labels = function() { return labelService.getLabels(); };
+		vm.calendars = function() { return calendarService.getCalendars(); };
 	}
 })();

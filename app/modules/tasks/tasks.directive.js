@@ -12,8 +12,6 @@
 			controllerAs: 'vm',
 			bindToController: true,
 			scope: {
-				tasks: '=',
-				labels: '=',
 				order: '=',
 				days: '=withinDays',
 				inLabels: '=inGroups'
