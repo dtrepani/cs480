@@ -27,7 +27,7 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					user: ['headerService', getUser]
+					userInfo: ['headerService', getUser]
 				},
 				views: {
 					'header': {
@@ -1139,8 +1139,8 @@
 		.module('app')
 		.factory('loginService', loginService);
 
-	loginService.$inject = ['$http', '$location', '$log', 'cacheService'];
-	function loginService($http, $location, $log, cacheService) {
+	loginService.$inject = ['$rootScope', '$http', '$location', '$log', 'cacheService'];
+	function loginService($rootScope, $http, $location, $log, cacheService) {
 		var vm = this;  // jshint ignore:line
 
 		return {
@@ -1158,7 +1158,9 @@
 				if (response.data.success === false) {
 					return response.data.title;
 				}
+
 				cacheService.cacheAll();
+				$rootScope.$broadcast('updateUser');
 				$location.path('/dashboard');
 			}
 
@@ -1748,9 +1750,25 @@
 		.module('app')
 		.controller('HeaderController', HeaderController);
 
-	HeaderController.$inject = ['user'];
-	function HeaderController(user) {
-		this.user = user;
+	HeaderController.$inject = ['$rootScope', 'userInfo', 'headerService'];
+	function HeaderController($rootScope, userInfo, headerService) {
+		var vm = this;
+		vm.user = userInfo.user;
+		console.log(vm.user);
+		vm.url = userInfo.url;
+
+		activate();
+
+		function activate() {
+			$rootScope.$on('updateUser', updateUser);
+		}
+
+		function updateUser() {
+			headerService.getUser().then(function(response) {
+				vm.user = response.user;
+				vm.url = response.url;
+			});
+		}
 	}
 })();
 (function() {
@@ -1767,16 +1785,17 @@
 		};
 
 		function getUser() {
-			return sessionService.getVar('name')
+			return sessionService.getVar('all')
 				.then(getNameComplete);
 
 			function getNameComplete(response) {
-				var res = response.data;
+				var result = response.data;
 
-				if (res.success === false) {
-					return {name: false, url: '#/login'};
+				if (result.success === false) {
+					return {user: {name: false}, url: '#/login'};
 				}
-				return {name: res.data, url: '#/dashboard'};
+
+				return {user: result.data, url: '#/dashboard'};
 			}
 		}
 	}

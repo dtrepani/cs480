@@ -1,3 +1,12 @@
 <div id="header-main" class="header">
-	<a ng-href="{{ hc.user.url }}" id="username">{{ hc.user.name }}</a>
+	<div id="header-wrapper">
+		<a ng-href="{{ hc.url }}" id="username">{{ hc.user.name }}</a>
+
+		<!-- TODO: more elegant way to do this -->
+		<div id="avatar-wrapper">
+			<div id="avatar">
+				<img ng-src="{{ hc.user.avatar }}" />
+			</div>
+		</div>
+	</div>
 </div>

@@ -23,7 +23,8 @@ class Session extends CRUD
     }
 
     /**
-    * @param string         $name   Name of session variable to get.
+    * @param string         $name   Name of session variable to get. 'all' will get
+    *                               all variables for the session.
     *
     * @return mixed[]               Promise results with session variable or error
     *                               message if it doesn't exist. See Database->query().
@@ -31,6 +32,10 @@ class Session extends CRUD
     public function getVar($name)
     {
         $this->sessionStart();
+
+        if ($name === 'all') {
+            return $this->getAllVariables();
+        }
 
         if (!isset($_SESSION[$name])) {
             return array(
@@ -43,6 +48,26 @@ class Session extends CRUD
         return array(
             'success'=>true,
             'data'=>$_SESSION[$name]
+        );
+    }
+
+    /**
+    * @return mixed[]               Promise results with session variables or error
+    *                               message if no session active. See Database->query().
+    */
+    private function getAllVariables()
+    {
+        if (empty($_SESSION)) {
+            return array(
+                'success'=>false,
+                'title'=>'Error getting variable.',
+                'message'=>"No session active."
+            );
+        }
+
+        return array(
+            'success'=>true,
+            'data'=>$_SESSION
         );
     }
 

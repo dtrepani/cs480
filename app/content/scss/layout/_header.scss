@@ -20,13 +20,44 @@
 	}
 }
 
-.header a {
-	color: $color-bg-content;
+#header-wrapper {
+	display: table-row;
+}
+
+.header a, #avatar-wrapper {
 	display: table-cell;
 	vertical-align: middle;
+	text-align: right;
+}
+
+.header a {
+	color: $color-bg-content;
+	padding-right: 10px;
 
 	&:hover, &:focus {
 		color: $color-dim;
 		text-decoration: none;
+	}
+}
+
+#avatar-wrapper {
+	width: 35px;
+}
+
+#avatar {
+	@include property(border, 2px solid $color-bg-content);
+	@include property(border-radius, 20px);
+	background: $color-bg-content;
+	position: relative;
+	overflow: hidden;
+	width: 35px;
+	height: 35px;
+	cursor: pointer;
+
+	img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 45px;
 	}
 }

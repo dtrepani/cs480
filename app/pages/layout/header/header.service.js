@@ -12,16 +12,17 @@
 		};
 
 		function getUser() {
-			return sessionService.getVar('name')
+			return sessionService.getVar('all')
 				.then(getNameComplete);
 
 			function getNameComplete(response) {
-				var res = response.data;
+				var result = response.data;
 
-				if (res.success === false) {
-					return {name: false, url: '#/login'};
+				if (result.success === false) {
+					return {user: {name: false}, url: '#/login'};
 				}
-				return {name: res.data, url: '#/dashboard'};
+
+				return {user: result.data, url: '#/dashboard'};
 			}
 		}
 	}

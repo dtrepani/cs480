@@ -137,13 +137,46 @@ i {
     top: 50%;
     margin-left: 15px; }
 
+#header-wrapper {
+  display: table-row; }
+
+.header a, #avatar-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: right; }
+
 .header a {
   color: #fff;
-  display: table-cell;
-  vertical-align: middle; }
+  padding-right: 10px; }
   .header a:hover, .header a:focus {
     color: #ddd;
     text-decoration: none; }
+
+#avatar-wrapper {
+  width: 35px; }
+
+#avatar {
+  -webkit-border: 2px solid #fff;
+  -moz-border: 2px solid #fff;
+  -ms-border: 2px solid #fff;
+  -o-border: 2px solid #fff;
+  border: 2px solid #fff;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+  border-radius: 20px;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  width: 35px;
+  height: 35px;
+  cursor: pointer; }
+  #avatar img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 45px; }
 
 #sidebar {
   -webkit-transition: all 0.3s ease 0.1s;

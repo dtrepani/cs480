@@ -15,7 +15,7 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					user: ['headerService', getUser]
+					userInfo: ['headerService', getUser]
 				},
 				views: {
 					'header': {
