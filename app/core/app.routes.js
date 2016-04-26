@@ -83,7 +83,9 @@
 				url: '/:labelId',
 				views: {
 					'content@': {
-						template: "In progress"
+						templateUrl: "pages/tasks/label.html",
+						controller: 'LabelPageController',
+						controllerAs: 'vm'
 					}
 				}
 			})

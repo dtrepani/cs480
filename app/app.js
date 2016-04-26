@@ -95,7 +95,9 @@
 				url: '/:labelId',
 				views: {
 					'content@': {
-						template: "In progress"
+						templateUrl: "pages/tasks/label.html",
+						controller: 'LabelPageController',
+						controllerAs: 'vm'
 					}
 				}
 			})
@@ -279,8 +281,8 @@
 		.module('app')
 		.service('cacheService', cacheService);
 
-	cacheService.$inject = ['crudService'];
-	function cacheService(crudService) {
+	cacheService.$inject = ['$rootScope', 'crudService'];
+	function cacheService($rootScope, crudService) {
 		var vm = this; // jshint ignore: line
 		vm.calendars = [];
 		vm.events = [];
@@ -312,25 +314,37 @@
 		function cacheCalendars() {
 			vm.calendar = new crudService('calendar');
 			vm.calendar.getByUser()
-				.then(function(response) { vm.calendars = getResult(response); });
+				.then(function(response) {
+					vm.calendars = getResult(response);
+					$rootScope.$broadcast('updateCalendars');
+				});
 		}
 
 		function cacheEvents() {
 			vm.event = new crudService('event');
 			vm.event.getByUser()
-				.then(function(response) { vm.events = getResult(response); });
+				.then(function(response) {
+					vm.events = getResult(response);
+					$rootScope.$broadcast('updateEvents');
+				});
 		}
 
 		function cacheLabels() {
 			vm.label = new crudService('label');
 			vm.label.getByUser()
-				.then(function(response) { vm.labels = getResult(response); });
+				.then(function(response) {
+					vm.labels = getResult(response);
+					$rootScope.$broadcast('updateLabels');
+				});
 		}
 
 		function cacheTasks() {
 			vm.task = new crudService('task');
 			vm.task.getByUser()
-				.then(function(response) { vm.tasks = getResult(response); });
+				.then(function(response) {
+					vm.tasks = getResult(response);
+					$rootScope.$broadcast('updateTasks');
+				});
 		}
 
 		function getResult(response) {
@@ -577,11 +591,11 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['moment', 'calendarWidgetService', 'calendarService', 'eventsService', 'eventModalService'];
-	function EventsController(moment, calendarWidgetService, calendarService, eventsService, eventModalService) {
+	EventsController.$inject = ['$rootScope', 'moment', 'calendarWidgetService', 'calendarService', 'eventsService', 'eventModalService'];
+	function EventsController($rootScope, moment, calendarWidgetService, calendarService, eventsService, eventModalService) {
 		var vm = this;
-		vm.events = function() { return eventsService.getEvents(); };
-		vm.calendar = function() { return calendarService.getCalendars(); };
+		vm.events = [];
+		vm.calendar = [];
 
 		vm.today = null;
 		vm.selectedDay = null;
@@ -597,6 +611,12 @@
 		activate();
 
 		function activate() {
+			updateCalendars();
+			updateEvents();
+
+			$rootScope.$on('updateCalendars', updateCalendars);
+			$rootScope.$on('updateEvents', updateEvents);
+
 			vm.today = calendarWidgetService.getToday();
 			vm.selectedDay = vm.today;
 			vm.month = calendarWidgetService.getMonth(vm.today);
@@ -624,6 +644,14 @@
 
 		function nextMonth() {
 			vm.month = calendarWidgetService.nextMonth(vm.month);
+		}
+
+		function updateCalendars() {
+			vm.calendars = calendarService.getCalendars();
+		}
+
+		function updateEvents() {
+			vm.events = eventsService.getEvents();
 		}
 	}
 })();
@@ -868,20 +896,38 @@
 		.module('app')
 		.controller('TasksController', TasksController);
 
-	TasksController.$inject = ['tasksService', 'labelService', 'taskModalService'];
-	function TasksController(tasksService, labelService, taskModalService) {
+	TasksController.$inject = ['$rootScope', 'tasksService', 'labelService', 'taskModalService'];
+	function TasksController($rootScope, tasksService, labelService, taskModalService) {
 		var vm = this;
-		vm.tasks = function() { return tasksService.getTasks(); };
-		vm.labels = function() { return labelService.getLabels(); };
+		vm.labels = [];
+		vm.tasks = [];
 		vm.showTaskModal = showTaskModal;
 		vm.toggleCompleted = toggleCompleted;
 
+		activate();
+
+		function activate() {
+			updateLabels();
+			updateTasks();
+
+			$rootScope.$on('updateLabels', updateLabels);
+			$rootScope.$on('updateTasks', updateTasks);
+		}
+
 		function showTaskModal(task) {
-			taskModalService.openTaskModal(task, vm.labels());
+			taskModalService.openTaskModal(task, vm.labels);
 		}
 
 		function toggleCompleted(task) {
 			tasksService.toggleCompleted(task);
+		}
+
+		function updateLabels() {
+			vm.labels = labelService.getLabels();
+		}
+
+		function updateTasks() {
+			vm.tasks = tasksService.getTasks();
 		}
 	}
 })();
@@ -1178,6 +1224,18 @@
 				$location.url('/login');
 			}
 		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('LabelPageController', LabelPageController);
+
+	LabelPageController.$inject = ['$stateParams'];
+	function LabelPageController($stateParams) {
+		this.labelId = $stateParams.labelId;
 	}
 })();
 (function() {
@@ -1731,11 +1789,29 @@
 		.module('app')
 		.controller('SidebarController', SidebarController);
 
-	SidebarController.$inject = ['labelService', 'calendarService'];
-	function SidebarController(labelService, calendarService) {
+	SidebarController.$inject = ['$rootScope', 'labelService', 'calendarService'];
+	function SidebarController($rootScope, labelService, calendarService) {
 		var vm = this;
 		vm.collapsed = true;
-		vm.labels = function() { return labelService.getLabels(); };
-		vm.calendars = function() { return calendarService.getCalendars(); };
+		vm.labels = [];
+		vm.calendars = [];
+
+		activate();
+
+		function activate() {
+			updateCalendars();
+			updateLabels();
+
+			$rootScope.$on('updateCalendars', updateCalendars);
+			$rootScope.$on('updateLabels', updateLabels);
+		}
+
+		function updateCalendars() {
+			vm.calendars = calendarService.getCalendars();
+		}
+
+		function updateLabels() {
+			vm.labels = labelService.getLabels();
+		}
 	}
 })();

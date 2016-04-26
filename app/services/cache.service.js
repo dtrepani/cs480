@@ -5,8 +5,8 @@
 		.module('app')
 		.service('cacheService', cacheService);
 
-	cacheService.$inject = ['crudService'];
-	function cacheService(crudService) {
+	cacheService.$inject = ['$rootScope', 'crudService'];
+	function cacheService($rootScope, crudService) {
 		var vm = this; // jshint ignore: line
 		vm.calendars = [];
 		vm.events = [];
@@ -38,25 +38,37 @@
 		function cacheCalendars() {
 			vm.calendar = new crudService('calendar');
 			vm.calendar.getByUser()
-				.then(function(response) { vm.calendars = getResult(response); });
+				.then(function(response) {
+					vm.calendars = getResult(response);
+					$rootScope.$broadcast('updateCalendars');
+				});
 		}
 
 		function cacheEvents() {
 			vm.event = new crudService('event');
 			vm.event.getByUser()
-				.then(function(response) { vm.events = getResult(response); });
+				.then(function(response) {
+					vm.events = getResult(response);
+					$rootScope.$broadcast('updateEvents');
+				});
 		}
 
 		function cacheLabels() {
 			vm.label = new crudService('label');
 			vm.label.getByUser()
-				.then(function(response) { vm.labels = getResult(response); });
+				.then(function(response) {
+					vm.labels = getResult(response);
+					$rootScope.$broadcast('updateLabels');
+				});
 		}
 
 		function cacheTasks() {
 			vm.task = new crudService('task');
 			vm.task.getByUser()
-				.then(function(response) { vm.tasks = getResult(response); });
+				.then(function(response) {
+					vm.tasks = getResult(response);
+					$rootScope.$broadcast('updateTasks');
+				});
 		}
 
 		function getResult(response) {

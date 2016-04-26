@@ -5,20 +5,38 @@
 		.module('app')
 		.controller('TasksController', TasksController);
 
-	TasksController.$inject = ['tasksService', 'labelService', 'taskModalService'];
-	function TasksController(tasksService, labelService, taskModalService) {
+	TasksController.$inject = ['$rootScope', 'tasksService', 'labelService', 'taskModalService'];
+	function TasksController($rootScope, tasksService, labelService, taskModalService) {
 		var vm = this;
-		vm.tasks = function() { return tasksService.getTasks(); };
-		vm.labels = function() { return labelService.getLabels(); };
+		vm.labels = [];
+		vm.tasks = [];
 		vm.showTaskModal = showTaskModal;
 		vm.toggleCompleted = toggleCompleted;
 
+		activate();
+
+		function activate() {
+			updateLabels();
+			updateTasks();
+
+			$rootScope.$on('updateLabels', updateLabels);
+			$rootScope.$on('updateTasks', updateTasks);
+		}
+
 		function showTaskModal(task) {
-			taskModalService.openTaskModal(task, vm.labels());
+			taskModalService.openTaskModal(task, vm.labels);
 		}
 
 		function toggleCompleted(task) {
 			tasksService.toggleCompleted(task);
+		}
+
+		function updateLabels() {
+			vm.labels = labelService.getLabels();
+		}
+
+		function updateTasks() {
+			vm.tasks = tasksService.getTasks();
 		}
 	}
 })();

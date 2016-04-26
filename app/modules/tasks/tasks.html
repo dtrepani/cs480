@@ -4,7 +4,7 @@
 		<span class="task-summary">Add a task</span>
 	</li>
 
-	<li ng-repeat="task in vm.tasks() | orderBy:vm.order | withinDays:vm.days | inGroups:vm.inLabels" ng-class="{completed: task.completed == true}">
+	<li ng-repeat="task in vm.tasks | orderBy:vm.order | withinDays:vm.days | inGroups:vm.inLabels" ng-class="{completed: task.completed == true}">
 		<i class="fa fa-check check-icon" ng-click="vm.toggleCompleted(task)"></i>
 		<span class="task-summary" ng-click="vm.showTaskModal(task)">{{ task.summary }}</span>
 	</li>
