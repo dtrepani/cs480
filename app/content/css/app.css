@@ -81,7 +81,7 @@ html, body {
 html {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-size: 12px; }
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 800px) {
     html {
       font-size: 16px; } }
 
@@ -147,11 +147,8 @@ i {
   vertical-align: middle; }
 
 .username {
-  -webkit-padding-right: 5px;
-  -moz-padding-right: 5px;
-  -ms-padding-right: 5px;
-  -o-padding-right: 5px;
   padding-right: 5px;
+  padding-right: 0.3125rem;
   color: #fff; }
   .username:hover, .username:focus {
     color: #ddd;
@@ -220,12 +217,16 @@ i {
   background-color: #F7F7F7;
   position: fixed;
   height: 100%;
-  width: 250px;
-  min-width: 250px;
+  width: 150px;
+  min-width: 150px;
   overflow: hidden;
   z-index: 1020; }
   #sidebar:hover {
     overflow-y: auto; }
+  @media screen and (min-width: 800px) {
+    #sidebar {
+      width: 220px;
+      min-width: 220px; } }
 
 #sidebar-placeholder {
   -webkit-transition: all 0.3s ease 0.1s;
@@ -234,15 +235,19 @@ i {
   -o-transition: all 0.3s ease 0.1s;
   transition: all 0.3s ease 0.1s;
   background-color: #fff;
-  width: 250px;
-  min-width: 250px;
+  width: 150px;
+  min-width: 150px;
   height: 100%;
   float: left; }
+  @media screen and (min-width: 800px) {
+    #sidebar-placeholder {
+      width: 220px;
+      min-width: 220px; } }
 
 .collapsed {
   min-width: 44px !important;
   width: 44px !important; }
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 800px) {
     .collapsed {
       min-width: 54px !important;
       width: 54px !important; } }
@@ -272,7 +277,8 @@ i {
     text-decoration: none; }
 
 ul[id*="nav-"] {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   vertical-align: middle;
   white-space: nowrap; }
 
@@ -289,16 +295,33 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
     vertical-align: middle;
     margin-right: 9px; }
 
+.sub-nav > div {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none; }
+
 .sub-nav-list {
+  -webkit-transition: all 0.3s ease 0.1s;
+  -moz-transition: all 0.3s ease 0.1s;
+  -ms-transition: all 0.3s ease 0.1s;
+  -o-transition: all 0.3s ease 0.1s;
+  transition: all 0.3s ease 0.1s;
   font-size: 14px;
-  font-size: 0.875rem; }
+  font-size: 0.875rem;
+  max-height: 500px;
+  opacity: 1; }
+  .sub-nav-list.collapsed {
+    max-height: 0;
+    opacity: 0; }
 
 .sub-nav-list li a {
   padding: 2.5px 10px;
   padding-left: 64px;
   padding-left: 4rem;
   margin: 2px 0; }
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 800px) {
     .sub-nav-list li a {
       padding-left: 54px;
       padding-left: 3.375rem; } }
@@ -345,7 +368,7 @@ li[id*="nav-"] {
   height: 100%;
   margin-left: 44px;
   padding: 55px 10px 10px; }
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 800px) {
     #content-wrapper {
       margin-left: 54px; } }
 
@@ -387,19 +410,13 @@ li[id*="nav-"] {
   float: left; }
 
 .calendar-nav {
-  -webkit-padding-right: 10px;
-  -moz-padding-right: 10px;
-  -ms-padding-right: 10px;
-  -o-padding-right: 10px;
   padding-right: 10px;
+  padding-right: 0.625rem;
   display: table-cell;
   vertical-align: middle; }
   .calendar-nav > .btn {
-    -webkit-padding: 3px 9px;
-    -moz-padding: 3px 9px;
-    -ms-padding: 3px 9px;
-    -o-padding: 3px 9px;
-    padding: 3px 9px; }
+    padding: 3px 9px;
+    padding: 0.1875rem 0.5625rem; }
 
 .month-name {
   display: table-cell;
@@ -435,7 +452,7 @@ li[id*="nav-"] {
   width: 100%;
   height: 10.5px;
   padding: 0 1px; }
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 800px) {
     .all-day-events {
       height: 12.5px; } }
   @media screen and (min-width: 1200px) {
@@ -464,7 +481,7 @@ li[id*="nav-"] {
   overflow-y: hidden; }
   .month .day:hover {
     overflow-y: auto; }
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 800px) {
     .month .day {
       height: 75px; } }
   @media screen and (min-width: 1200px) {
@@ -483,7 +500,7 @@ li[id*="nav-"] {
     width: 100%;
     background-color: #3272BB;
     margin-bottom: 2px; }
-    @media screen and (min-width: 768px) {
+    @media screen and (min-width: 800px) {
       .month .events li {
         padding: 3px; } }
 

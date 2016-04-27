@@ -41,7 +41,8 @@ $ease-speed: 0.1s;
 
 // SIDEBAR
 // ----------------------------
-$sidebar-expanded-width:		250px;
+$sidebar-expanded-width-small:	150px;
+$sidebar-expanded-width:		220px;
 $sidebar-collapsed-width-small:	$font-medium + ($body-padding * 2);
 $sidebar-collapsed-width:		$font-medium + ($body-padding * 3);
 
@@ -83,7 +84,7 @@ $event-height-large:	9px;
 // ----------------------------
 $breakpoints: (
 	xsmall:	570px,
-	small:	768px,
+	small:	800px,
 	medium:	960px,
 	large:	1200px
 );

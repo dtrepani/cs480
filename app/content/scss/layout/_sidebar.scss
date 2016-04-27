@@ -3,23 +3,33 @@
 	background-color: $color-bg-sidebar;
 	position: fixed;
 	height: 100%;
-	width: $sidebar-expanded-width;
-	min-width: $sidebar-expanded-width;
+	width: $sidebar-expanded-width-small;
+	min-width: $sidebar-expanded-width-small;
 	overflow: hidden;
 	z-index: $z-index-sidebar;
 
 	&:hover {
 		overflow-y: auto;
 	}
+
+	@include breakpoint(small) {
+		width: $sidebar-expanded-width;
+		min-width: $sidebar-expanded-width;
+	}
 }
 
 #sidebar-placeholder {
 	@include transition('all #{$animation-speed} ease #{$ease-speed}');
 	background-color: $color-bg-content;
-	width: $sidebar-expanded-width;
-	min-width: $sidebar-expanded-width;
+	width: $sidebar-expanded-width-small;
+	min-width: $sidebar-expanded-width-small;
 	height: 100%;
 	float: left;
+
+	@include breakpoint(small) {
+		width: $sidebar-expanded-width;
+		min-width: $sidebar-expanded-width;
+	}
 }
 
 .collapsed {
@@ -58,7 +68,7 @@
 }
 
 ul[id*="nav-"] {
-	margin-bottom: 30px;
+	@include rem(margin-bottom, 20px);
 	vertical-align: middle;
 	white-space: nowrap;
 }
@@ -80,8 +90,20 @@ li[id*="nav-"] a, li[id*="nav-"] > div {
 	}
 }
 
+.sub-nav > div {
+	@include property(user-select, none);
+}
+
 .sub-nav-list {
+	@include transition('all #{$animation-speed} ease #{$ease-speed}');
 	@include font-size(14px);
+	max-height: 500px;
+	opacity: 1;
+
+	&.collapsed {
+		max-height: 0;
+		opacity: 0;
+	}
 }
 
 .sub-nav-list li {

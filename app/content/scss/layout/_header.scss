@@ -32,7 +32,7 @@
 }
 
 .username {
-	@include property(padding-right, 5px);
+	@include rem(padding-right, 5px);
 	color: $color-bg-content;
 
 	&:hover, &:focus {

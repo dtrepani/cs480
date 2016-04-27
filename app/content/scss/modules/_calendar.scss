@@ -15,12 +15,12 @@
 }
 
 .calendar-nav {
-	@include property('padding-right', 10px);
+	@include rem('padding-right', 10px);
 	display: table-cell;
 	vertical-align: middle;
 
 	> .btn {
-		@include property('padding', 3px 9px);
+		@include rem('padding', 3px 9px);
 	}
 }
 

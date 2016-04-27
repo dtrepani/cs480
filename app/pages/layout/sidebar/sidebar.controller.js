@@ -5,12 +5,15 @@
 		.module('app')
 		.controller('SidebarController', SidebarController);
 
-	SidebarController.$inject = ['$rootScope', 'labelService', 'calendarService'];
-	function SidebarController($rootScope, labelService, calendarService) {
+	SidebarController.$inject = ['$rootScope', 'labelService', 'calendarService', 'sidebarService'];
+	function SidebarController($rootScope, labelService, calendarService, sidebarService) {
 		var vm = this;
-		vm.collapsed = true;
+		vm.collapsed = {};
 		vm.labels = [];
 		vm.calendars = [];
+		vm.toggleSidebar = toggleSidebar;
+		vm.toggleCalendars = toggleCalendars;
+		vm.toggleLabels = toggleLabels;
 
 		activate();
 
@@ -18,8 +21,22 @@
 			updateCalendars();
 			updateLabels();
 
+			vm.collapsed = sidebarService.getCollapsed();
+
 			$rootScope.$on('updateCalendars', updateCalendars);
 			$rootScope.$on('updateLabels', updateLabels);
+		}
+
+		function toggleSidebar() {
+			vm.collapsed = sidebarService.toggleSidebar();
+		}
+
+		function toggleCalendars() {
+			vm.collapsed = sidebarService.toggleCalendars();
+		}
+
+		function toggleLabels() {
+			vm.collapsed = sidebarService.toggleLabels();
 		}
 
 		function updateCalendars() {
