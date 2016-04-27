@@ -1,5 +1,6 @@
 .calendar {
 	width: 100%;
+	display: table;
 }
 
 .calendar, .calendar-header {
@@ -8,11 +9,24 @@
 
 .calendar-header {
 	margin-bottom: 10px;
+	display: table-row;
+	vertical-align: middle;
+	float: left;
 }
 
 .calendar-nav {
-	@include property('margin-right', 10px);
-	float: left;
+	@include property('padding-right', 10px);
+	display: table-cell;
+	vertical-align: middle;
+
+	> .btn {
+		@include property('padding', 3px 9px);
+	}
+}
+
+.month-name {
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .calendar-views {
@@ -37,16 +51,13 @@
 // ----------------------------
 .calendar-month {
 	@include font-size(14px);
+	clear: both;
 }
 
 .calendar-month > ul li {
 	width: $month-day-width;
  	float: left;
 	margin: -1px 0 0 -1px;
-}
-
-.month-name {
-	float: left;
 }
 
 .month-day-names li {

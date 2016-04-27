@@ -5,10 +5,8 @@
 		.module('app')
 		.factory('loginService', loginService);
 
-	loginService.$inject = ['$rootScope', '$http', '$location', '$log', 'cacheService'];
-	function loginService($rootScope, $http, $location, $log, cacheService) {
-		var vm = this;  // jshint ignore:line
-
+	loginService.$inject = ['$rootScope', '$http', '$state', '$log', 'cacheService'];
+	function loginService($rootScope, $http, $state, $log, cacheService) {
 		return {
 			login: login
 		};
@@ -27,7 +25,7 @@
 
 				cacheService.cacheAll();
 				$rootScope.$broadcast('updateUser');
-				$location.path('/dashboard');
+				$state.go('dashboard');
 			}
 
 			function loginFailed(error) {

@@ -19,10 +19,10 @@
 				var result = response.data;
 
 				if (result.success === false) {
-					return {user: {name: false}, url: '#/login'};
+					return { name: '', avatar: 'content/img/user.png' };
 				}
 
-				return {user: result.data, url: '#/dashboard'};
+				return result.data;
 			}
 		}
 	}

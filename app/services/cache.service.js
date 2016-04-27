@@ -19,6 +19,7 @@
 			cacheEvents: cacheEvents,
 			cacheLabels: cacheLabels,
 			cacheTasks: cacheTasks,
+			clearCache: clearCache,
 
 			getAll: getAll,
 			getCalendars: getCalendars,
@@ -40,7 +41,7 @@
 			vm.calendar.getByUser()
 				.then(function(response) {
 					vm.calendars = getResult(response);
-					$rootScope.$broadcast('updateCalendars');
+					updateCalendars();
 				});
 		}
 
@@ -49,7 +50,7 @@
 			vm.event.getByUser()
 				.then(function(response) {
 					vm.events = getResult(response);
-					$rootScope.$broadcast('updateEvents');
+					updateEvents();
 				});
 		}
 
@@ -58,7 +59,7 @@
 			vm.label.getByUser()
 				.then(function(response) {
 					vm.labels = getResult(response);
-					$rootScope.$broadcast('updateLabels');
+					updateLabels();
 				});
 		}
 
@@ -67,8 +68,20 @@
 			vm.task.getByUser()
 				.then(function(response) {
 					vm.tasks = getResult(response);
-					$rootScope.$broadcast('updateTasks');
+					updateTasks();
 				});
+		}
+
+		function clearCache() {
+			vm.calendars = [];
+			vm.events = [];
+			vm.labels = [];
+			vm.tasks = [];
+
+			updateCalendars();
+			updateEvents();
+			updateLabels();
+			updateTasks();
 		}
 
 		function getResult(response) {
@@ -99,6 +112,22 @@
 
 		function getTasks() {
 			return vm.tasks;
+		}
+
+		function updateCalendars() {
+			$rootScope.$broadcast('updateCalendars');
+		}
+
+		function updateEvents() {
+			$rootScope.$broadcast('updateEvents');
+		}
+
+		function updateLabels() {
+			$rootScope.$broadcast('updateLabels');
+		}
+
+		function updateTasks() {
+			$rootScope.$broadcast('updateTasks');
 		}
 	}
 })();

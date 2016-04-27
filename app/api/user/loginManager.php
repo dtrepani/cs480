@@ -1,5 +1,5 @@
 <?php
-namespace SP\App\Api\Managers;
+namespace SP\App\Api\User;
 
 require_once __DIR__.'/../session/Session.php';
 require_once __DIR__.'/../user/Authentication.php';

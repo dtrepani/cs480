@@ -1,6 +1,6 @@
 <div class="calendar">
 	<div class="calendar-header">
-		<div class="btn-group calendar-nav">
+		<div class="btn-group btn-group-xs calendar-nav">
 			<i class="btn btn-primary btn-sm fa fa-angle-left" ng-click="vm.lastMonth()"></i>
 			<i class="btn btn-primary btn-sm fa fa-angle-right" ng-click="vm.nextMonth()"></i>
 		</div>
@@ -32,14 +32,14 @@
 					'other-month': !day.isTargetMonth,
 					selected: vm.isSameDayAsSelected(day.fullDate) }"
 				ng-click="vm.isSameDayAsSelected(day.fullDate)
-					? vm.showEventModal({
+					? vm.showEventModal($event, {
 						dt_start: day.fullDate.format('YYYY-MM-DD HH:mm:ss'),
 						dt_end: vm.getEndOfDay(day.fullDate).format('YYYY-MM-DD HH:mm:ss') })
 					: vm.selectDay(day)">
 					<span class="day-number">{{ day.number }}</span>
 					<ul class="events">
 						<li ng-repeat="event in vm.events | orderBy:'dt_start' | sameDayAs:day.fullDate"
-							ng-click="vm.showEventModal(event); $event.stopPropagation();">
+							ng-click="vm.showEventModal($event, event)">
 							{{ event.summary }}
 						</li>
 					</ul>

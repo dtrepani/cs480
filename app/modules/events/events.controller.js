@@ -48,7 +48,8 @@
 			vm.selectedDay = day.fullDate;
 		}
 
-		function showEventModal(event) {
+		function showEventModal(clickEvent, event) {
+			clickEvent.stopPropagation();
 			eventModalService.openEventModal(event, vm.calendars);
 		}
 

@@ -124,7 +124,6 @@ i {
 
 #header-main {
   width: 100%;
-  text-align: right;
   display: table;
   vertical-align: middle; }
   #header-main i {
@@ -138,22 +137,29 @@ i {
     margin-left: 15px; }
 
 #header-wrapper {
-  display: table-row; }
+  cursor: pointer;
+  display: table;
+  float: right;
+  line-height: 45px; }
 
-.header a, #avatar-wrapper {
+.username, #avatar-wrapper {
   display: table-cell;
-  vertical-align: middle;
-  text-align: right; }
+  vertical-align: middle; }
 
-.header a {
-  color: #fff;
-  padding-right: 10px; }
-  .header a:hover, .header a:focus {
+.username {
+  -webkit-padding-right: 5px;
+  -moz-padding-right: 5px;
+  -ms-padding-right: 5px;
+  -o-padding-right: 5px;
+  padding-right: 5px;
+  color: #fff; }
+  .username:hover, .username:focus {
     color: #ddd;
     text-decoration: none; }
 
 #avatar-wrapper {
-  width: 35px; }
+  width: 36px;
+  cursor: pointer; }
 
 #avatar {
   -webkit-border: 2px solid #fff;
@@ -166,17 +172,44 @@ i {
   -ms-border-radius: 20px;
   -o-border-radius: 20px;
   border-radius: 20px;
-  background: #fff;
+  background: #F7F7F7;
   position: relative;
   overflow: hidden;
-  width: 35px;
-  height: 35px;
-  cursor: pointer; }
+  width: 36px;
+  height: 36px; }
+  #avatar:hover, #avatar:focus {
+    border-color: #ddd; }
   #avatar img {
     position: absolute;
     top: 0;
     left: 0;
-    width: 45px; }
+    max-width: 32px;
+    min-width: 32px;
+    min-height: 32px; }
+
+.header .dropdown-menu {
+  -webkit-border-radius: 0 0 2px 2px;
+  -moz-border-radius: 0 0 2px 2px;
+  -ms-border-radius: 0 0 2px 2px;
+  -o-border-radius: 0 0 2px 2px;
+  border-radius: 0 0 2px 2px;
+  -webkit-border: none;
+  -moz-border: none;
+  -ms-border: none;
+  -o-border: none;
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -ms-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+  background: #3272BB;
+  color: #fff;
+  margin-top: 0; }
+  .header .dropdown-menu > li > a {
+    color: #fff; }
+    .header .dropdown-menu > li > a:hover {
+      background: #235083; }
 
 #sidebar {
   -webkit-transition: all 0.3s ease 0.1s;
@@ -190,7 +223,7 @@ i {
   width: 250px;
   min-width: 250px;
   overflow: hidden;
-  z-index: 1030; }
+  z-index: 1020; }
   #sidebar:hover {
     overflow-y: auto; }
 
@@ -200,6 +233,7 @@ i {
   -ms-transition: all 0.3s ease 0.1s;
   -o-transition: all 0.3s ease 0.1s;
   transition: all 0.3s ease 0.1s;
+  background-color: #fff;
   width: 250px;
   min-width: 250px;
   height: 100%;
@@ -321,37 +355,55 @@ li[id*="nav-"] {
   height: 100%;
   width: 100%; }
 
-#overlay {
+#loading {
   -webkit-transition: all 0.3s ease-in 0.2s;
   -moz-transition: all 0.3s ease-in 0.2s;
   -ms-transition: all 0.3s ease-in 0.2s;
   -o-transition: all 0.3s ease-in 0.2s;
   transition: all 0.3s ease-in 0.2s;
-  background-color: #000;
+  font-size: 128px;
+  font-size: 8rem;
+  background-color: #fff;
   position: fixed;
   width: 100%;
   height: 100%;
-  z-index: 1020;
-  opacity: 0;
-  visibility: hidden; }
-
-.is-visible {
-  opacity: 0.7 !important;
-  visibility: visible !important; }
+  z-index: 1030;
+  display: table;
+  text-align: center; }
+  #loading i {
+    cursor: auto;
+    color: #3272BB;
+    display: table-cell;
+    vertical-align: middle; }
 
 .calendar {
-  width: 100%; }
+  width: 100%;
+  display: table; }
 
 .calendar-header {
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  display: table-row;
+  vertical-align: middle;
+  float: left; }
 
 .calendar-nav {
-  -webkit-margin-right: 10px;
-  -moz-margin-right: 10px;
-  -ms-margin-right: 10px;
-  -o-margin-right: 10px;
-  margin-right: 10px;
-  float: left; }
+  -webkit-padding-right: 10px;
+  -moz-padding-right: 10px;
+  -ms-padding-right: 10px;
+  -o-padding-right: 10px;
+  padding-right: 10px;
+  display: table-cell;
+  vertical-align: middle; }
+  .calendar-nav > .btn {
+    -webkit-padding: 3px 9px;
+    -moz-padding: 3px 9px;
+    -ms-padding: 3px 9px;
+    -o-padding: 3px 9px;
+    padding: 3px 9px; }
+
+.month-name {
+  display: table-cell;
+  vertical-align: middle; }
 
 .calendar-views {
   font-size: 12px;
@@ -368,15 +420,13 @@ li[id*="nav-"] {
 
 .calendar-month {
   font-size: 14px;
-  font-size: 0.875rem; }
+  font-size: 0.875rem;
+  clear: both; }
 
 .calendar-month > ul li {
   width: 14.28571%;
   float: left;
   margin: -1px 0 0 -1px; }
-
-.month-name {
-  float: left; }
 
 .month-day-names li {
   padding-bottom: 2px; }

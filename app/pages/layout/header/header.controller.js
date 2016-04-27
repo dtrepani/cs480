@@ -5,12 +5,10 @@
 		.module('app')
 		.controller('HeaderController', HeaderController);
 
-	HeaderController.$inject = ['$rootScope', 'userInfo', 'headerService'];
-	function HeaderController($rootScope, userInfo, headerService) {
+	HeaderController.$inject = ['$rootScope', 'user', 'headerService'];
+	function HeaderController($rootScope, user, headerService) {
 		var vm = this;
-		vm.user = userInfo.user;
-		console.log(vm.user);
-		vm.url = userInfo.url;
+		vm.user = user;
 
 		activate();
 
@@ -20,8 +18,7 @@
 
 		function updateUser() {
 			headerService.getUser().then(function(response) {
-				vm.user = response.user;
-				vm.url = response.url;
+				vm.user = response;
 			});
 		}
 	}

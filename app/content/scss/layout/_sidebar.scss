@@ -15,6 +15,7 @@
 
 #sidebar-placeholder {
 	@include transition('all #{$animation-speed} ease #{$ease-speed}');
+	background-color: $color-bg-content;
 	width: $sidebar-expanded-width;
 	min-width: $sidebar-expanded-width;
 	height: 100%;

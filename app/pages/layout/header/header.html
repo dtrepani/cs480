@@ -1,12 +1,17 @@
-<div id="header-main" class="header">
-	<div id="header-wrapper">
-		<a ng-href="{{ hc.url }}" id="username">{{ hc.user.name }}</a>
+<div id="header-main" class="header" uib-dropdown>
+	<div id="header-wrapper" uib-dropdown-toggle>
+		<a ui-sref="login" class="username" ng-click="$event.stopPropagation()" ng-hide="hc.user.name">Login</a>
+		<span class="username" ng-show="hc.user.name">{{ hc.user.name }}</span>
 
-		<!-- TODO: more elegant way to do this -->
 		<div id="avatar-wrapper">
 			<div id="avatar">
 				<img ng-src="{{ hc.user.avatar }}" />
 			</div>
 		</div>
 	</div>
+
+	<ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+		<li role="menuitem" ng-hide="hc.user.name"><a ui-sref="login">Login</a></li>
+		<li role="menuitem" ng-show="hc.user.name"><a ui-sref="logout">Logout</a></li>
+	</ul>
 </div>

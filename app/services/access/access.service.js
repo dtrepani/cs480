@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('accessService', accessService);
 
-	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
-	function accessService($location, $q, sessionService, statusService) {
+	accessService.$inject = ['$q', 'sessionService', 'statusService'];
+	function accessService($q, sessionService, statusService) {
 		var deferred = $q.defer();
 
 		return {

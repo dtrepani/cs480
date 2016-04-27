@@ -10,21 +10,19 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/flatly/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="content/css/app.min.css" />
 
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-ui-router/release/angular-ui-router.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-animate/angular-animate.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 	<script type="text/javascript" src="../node_modules/moment/moment.js"></script>
 	<script type="text/javascript" src="../node_modules/angular-moment/angular-moment.js"></script>
-	<script type="text/javascript" src="app.min.js"></script>
+	<script type="text/javascript" src="app.js"></script>
 </head>
-<body ng-controller="AppController">
+<body>
 	<div class="wrapper">
 		<div id="sidebar-wrapper" ui-view="sidebar"></div>
 
 		<div id="main-wrapper">
-			<div id="overlay"></div>
 			<div ui-view="header"></div>
 
 			<div id="content-wrapper">

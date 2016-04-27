@@ -10,7 +10,6 @@
 
 #header-main {
 	width: 100%;
-	text-align: right;
 	display: table;
 	vertical-align: middle;
 
@@ -21,18 +20,20 @@
 }
 
 #header-wrapper {
-	display: table-row;
+	cursor: pointer;
+	display: table;
+	float: right;
+	line-height: $header-height;
 }
 
-.header a, #avatar-wrapper {
+.username, #avatar-wrapper {
 	display: table-cell;
 	vertical-align: middle;
-	text-align: right;
 }
 
-.header a {
+.username {
+	@include property(padding-right, 5px);
 	color: $color-bg-content;
-	padding-right: 10px;
 
 	&:hover, &:focus {
 		color: $color-dim;
@@ -41,23 +42,46 @@
 }
 
 #avatar-wrapper {
-	width: 35px;
+	width: $avatar-size + 4px;
+	cursor: pointer;
 }
 
 #avatar {
 	@include property(border, 2px solid $color-bg-content);
 	@include property(border-radius, 20px);
-	background: $color-bg-content;
+	background: $color-bg-sidebar;
 	position: relative;
 	overflow: hidden;
-	width: 35px;
-	height: 35px;
-	cursor: pointer;
+	width: $avatar-size + 4px;
+	height: $avatar-size + 4px;
+
+	&:hover, &:focus {
+		border-color: $color-dim;
+	}
 
 	img {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 45px;
+		max-width: $avatar-size;
+		min-width: $avatar-size;
+		min-height: $avatar-size;
+	}
+}
+
+.header .dropdown-menu {
+	@include property(border-radius, 0 0 2px 2px);
+	@include property(border, none);
+	@include property(box-shadow, none);
+	background: $color-primary;
+	color: $color-bg-content;
+	margin-top: 0;
+
+	& > li > a {
+		color: $color-bg-content;
+
+		&:hover {
+			background: $color-primary-darker;
+		}
 	}
 }

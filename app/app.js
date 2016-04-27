@@ -3,18 +3,6 @@
 
 	angular
 		.module('app', ['ui.router', 'ui.bootstrap', 'angularMoment'])
-		.controller('AppController', AppController);
-
-	AppController.$inject = ['$rootScope', 'appService'];
-	function AppController($rootScope, appService) {
-		$rootScope.$on('$stateChangeError', appService.stateChangeError);
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.config(appConfig);
 
 	appConfig.$inject = ['$stateProvider', '$urlRouterProvider'];
@@ -27,7 +15,7 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					userInfo: ['headerService', getUser]
+					user: ['headerService', getUser]
 				},
 				views: {
 					'header': {
@@ -58,7 +46,6 @@
 				parent: 'root',
 				views: {
 					'content@': {
-						templateUrl: 'modules/logout/logout.html',
 						controller: 'LogoutController',
 						controllerAs: 'vm'
 					}
@@ -170,19 +157,34 @@
 
 	angular
 		.module('app')
+		.run(runBlock);
+
+	runBlock.$inject = ['appService'];
+	function runBlock(appService) {
+		appService.init();
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.factory('appService', appService);
 
-	appService.$inject = ['$location', 'statusService'];
-	function appService($location, statusService) {
+	appService.$inject = ['$rootScope', '$state', 'statusService'];
+	function appService($rootScope, $state, statusService) {
 		return {
-			stateChangeError: stateChangeError
+			init: init
 		};
 
-		function stateChangeError(event, unfoundState, fromState, fromParams) {
-			if (fromParams === statusService.UNAUTHORIZED) {
-				$location.path('/login');
-			} else if (fromParams === statusService.FORBIDDEN) {
-				$location.path('/forbidden');
+		function init() {
+			$rootScope.$on('$stateChangeError', stateChangeError);
+		}
+
+		function stateChangeError(event, toState, toParams, fromState, fromParams, error) {
+			if (error === statusService.UNAUTHORIZED) {
+				event.preventDefault();
+				$state.go('login');
 			}
 		}
 	}
@@ -295,6 +297,7 @@
 			cacheEvents: cacheEvents,
 			cacheLabels: cacheLabels,
 			cacheTasks: cacheTasks,
+			clearCache: clearCache,
 
 			getAll: getAll,
 			getCalendars: getCalendars,
@@ -316,7 +319,7 @@
 			vm.calendar.getByUser()
 				.then(function(response) {
 					vm.calendars = getResult(response);
-					$rootScope.$broadcast('updateCalendars');
+					updateCalendars();
 				});
 		}
 
@@ -325,7 +328,7 @@
 			vm.event.getByUser()
 				.then(function(response) {
 					vm.events = getResult(response);
-					$rootScope.$broadcast('updateEvents');
+					updateEvents();
 				});
 		}
 
@@ -334,7 +337,7 @@
 			vm.label.getByUser()
 				.then(function(response) {
 					vm.labels = getResult(response);
-					$rootScope.$broadcast('updateLabels');
+					updateLabels();
 				});
 		}
 
@@ -343,8 +346,20 @@
 			vm.task.getByUser()
 				.then(function(response) {
 					vm.tasks = getResult(response);
-					$rootScope.$broadcast('updateTasks');
+					updateTasks();
 				});
+		}
+
+		function clearCache() {
+			vm.calendars = [];
+			vm.events = [];
+			vm.labels = [];
+			vm.tasks = [];
+
+			updateCalendars();
+			updateEvents();
+			updateLabels();
+			updateTasks();
 		}
 
 		function getResult(response) {
@@ -375,6 +390,22 @@
 
 		function getTasks() {
 			return vm.tasks;
+		}
+
+		function updateCalendars() {
+			$rootScope.$broadcast('updateCalendars');
+		}
+
+		function updateEvents() {
+			$rootScope.$broadcast('updateEvents');
+		}
+
+		function updateLabels() {
+			$rootScope.$broadcast('updateLabels');
+		}
+
+		function updateTasks() {
+			$rootScope.$broadcast('updateTasks');
 		}
 	}
 })();
@@ -634,7 +665,8 @@
 			vm.selectedDay = day.fullDate;
 		}
 
-		function showEventModal(event) {
+		function showEventModal(clickEvent, event) {
+			clickEvent.stopPropagation();
 			eventModalService.openEventModal(event, vm.calendars);
 		}
 
@@ -787,6 +819,53 @@
 		}
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('LogoutController', LogoutController);
+
+	LogoutController.$inject = ['logoutService'];
+	function LogoutController(logoutService) {
+		activate();
+
+		function activate() {
+			logoutService.logout();
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('logoutService', logoutService);
+
+	logoutService.$inject = ['$rootScope', '$http', '$state', '$log', 'cacheService'];
+	function logoutService($rootScope, $http, $state, $log, cacheService) {
+		return {
+			logout: logout
+		};
+
+		function logout() {
+			return $http.post('api/user/logoutManager.php')
+				.then(logoutComplete)
+				.catch(logoutFailed);
+
+			function logoutComplete(response) {
+				cacheService.clearCache();
+				$rootScope.$broadcast('updateUser');
+				$state.go('login');
+			}
+
+			function logoutFailed(error) {
+				$log.error(error);
+			}
+		}
+	}
+})();
+
 (function() {
 	'use strict';
 
@@ -1139,10 +1218,8 @@
 		.module('app')
 		.factory('loginService', loginService);
 
-	loginService.$inject = ['$rootScope', '$http', '$location', '$log', 'cacheService'];
-	function loginService($rootScope, $http, $location, $log, cacheService) {
-		var vm = this;  // jshint ignore:line
-
+	loginService.$inject = ['$rootScope', '$http', '$state', '$log', 'cacheService'];
+	function loginService($rootScope, $http, $state, $log, cacheService) {
 		return {
 			login: login
 		};
@@ -1161,7 +1238,7 @@
 
 				cacheService.cacheAll();
 				$rootScope.$broadcast('updateUser');
-				$location.path('/dashboard');
+				$state.go('dashboard');
 			}
 
 			function loginFailed(error) {
@@ -1247,8 +1324,8 @@
 		.module('app')
 		.factory('accessService', accessService);
 
-	accessService.$inject = ['$location', '$q', 'sessionService', 'statusService'];
-	function accessService($location, $q, sessionService, statusService) {
+	accessService.$inject = ['$q', 'sessionService', 'statusService'];
+	function accessService($q, sessionService, statusService) {
 		var deferred = $q.defer();
 
 		return {
@@ -1750,12 +1827,10 @@
 		.module('app')
 		.controller('HeaderController', HeaderController);
 
-	HeaderController.$inject = ['$rootScope', 'userInfo', 'headerService'];
-	function HeaderController($rootScope, userInfo, headerService) {
+	HeaderController.$inject = ['$rootScope', 'user', 'headerService'];
+	function HeaderController($rootScope, user, headerService) {
 		var vm = this;
-		vm.user = userInfo.user;
-		console.log(vm.user);
-		vm.url = userInfo.url;
+		vm.user = user;
 
 		activate();
 
@@ -1765,8 +1840,7 @@
 
 		function updateUser() {
 			headerService.getUser().then(function(response) {
-				vm.user = response.user;
-				vm.url = response.url;
+				vm.user = response;
 			});
 		}
 	}
@@ -1792,10 +1866,10 @@
 				var result = response.data;
 
 				if (result.success === false) {
-					return {user: {name: false}, url: '#/login'};
+					return { name: '', avatar: 'content/img/user.png' };
 				}
 
-				return {user: result.data, url: '#/dashboard'};
+				return result.data;
 			}
 		}
 	}

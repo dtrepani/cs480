@@ -5,17 +5,20 @@
 		.module('app')
 		.factory('appService', appService);
 
-	appService.$inject = ['$location', 'statusService'];
-	function appService($location, statusService) {
+	appService.$inject = ['$rootScope', '$state', 'statusService'];
+	function appService($rootScope, $state, statusService) {
 		return {
-			stateChangeError: stateChangeError
+			init: init
 		};
 
-		function stateChangeError(event, unfoundState, fromState, fromParams) {
-			if (fromParams === statusService.UNAUTHORIZED) {
-				$location.path('/login');
-			} else if (fromParams === statusService.FORBIDDEN) {
-				$location.path('/forbidden');
+		function init() {
+			$rootScope.$on('$stateChangeError', stateChangeError);
+		}
+
+		function stateChangeError(event, toState, toParams, fromState, fromParams, error) {
+			if (error === statusService.UNAUTHORIZED) {
+				event.preventDefault();
+				$state.go('login');
 			}
 		}
 	}

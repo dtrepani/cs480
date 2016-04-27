@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('app')
+		.module('app', ['ui.router', 'ui.bootstrap', 'angularMoment'])
 		.config(appConfig);
 
 	appConfig.$inject = ['$stateProvider', '$urlRouterProvider'];
@@ -15,7 +15,7 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					userInfo: ['headerService', getUser]
+					user: ['headerService', getUser]
 				},
 				views: {
 					'header': {
@@ -46,7 +46,6 @@
 				parent: 'root',
 				views: {
 					'content@': {
-						templateUrl: 'modules/logout/logout.html',
 						controller: 'LogoutController',
 						controllerAs: 'vm'
 					}

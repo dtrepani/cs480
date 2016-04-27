@@ -33,8 +33,8 @@ $header-height:	45px;
 $body-padding:	10px;
 
 $z-index-header:	1010;
-$z-index-overlay:	1020;
-$z-index-sidebar:	1030;
+$z-index-sidebar:	1020;
+$z-index-overlay:	1030;
 
 $animation-speed: 0.3s;
 $ease-speed: 0.1s;
@@ -47,6 +47,7 @@ $sidebar-collapsed-width:		$font-medium + ($body-padding * 3);
 
 // ICONS
 // ----------------------------
+$avatar-size:  32px;
 $icon-width:	30px;
 $icon-height:	$icon-width;
 
