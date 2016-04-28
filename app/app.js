@@ -208,6 +208,9 @@
 			if (error === statusService.UNAUTHORIZED) {
 				event.preventDefault();
 				$state.go('login');
+			} else if (toState.name === 'admin' && error === statusService.FORBIDDEN) {
+				// event.preventDefault();
+				// $state.go('dashboard');
 			}
 		}
 	}
@@ -648,6 +651,115 @@
 (function() {
 	'use strict';
 
+	/**
+	* To be used in conjunction with autofocus attribute to auto-focus
+	* modal inputs.
+	*/
+
+	angular
+		.module('app')
+		.directive('spAutoFocus', autoFocusDirective);
+
+	function autoFocusDirective() {
+		return {
+			restrict: 'A',
+			link: link
+		};
+
+		function link(scope, element, attrs, ngModel) {
+			element[0].focus();
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	/**
+	* Compare an input field to another field, determined by the dev.
+	*/
+
+	angular
+		.module('app')
+		.directive('spCompareTo', compareToDirective);
+
+	function compareToDirective() {
+		return {
+			require: 'ngModel',
+			scope: {
+				otherModel: '=spCompareTo'
+			},
+			link: link
+		};
+
+		function link(scope, element, attrs, ngModel) {
+			var unbindWatch = scope.$watch('otherModel', validateOnChange);
+			ngModel.$validators.spCompareTo = compareValues;
+			element.on('$destroy', cleanUp);
+
+			function cleanUp() {
+				unbindWatch();
+			}
+
+			function compareValues(viewValue) {
+				return (viewValue === scope.otherModel.$viewValue);
+			}
+
+			function validateOnChange(newValue, oldValue) {
+				ngModel.$validate();
+			}
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('LogoutController', LogoutController);
+
+	LogoutController.$inject = ['logoutService'];
+	function LogoutController(logoutService) {
+		activate();
+
+		function activate() {
+			logoutService.logout();
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('logoutService', logoutService);
+
+	logoutService.$inject = ['$rootScope', '$http', '$state', '$log', 'cacheService'];
+	function logoutService($rootScope, $http, $state, $log, cacheService) {
+		return {
+			logout: logout
+		};
+
+		function logout() {
+			return $http.post('api/user/logoutManager.php')
+				.then(logoutComplete)
+				.catch(logoutFailed);
+
+			function logoutComplete(response) {
+				cacheService.clearCache();
+				$rootScope.$broadcast('updateUser');
+				$state.go('login');
+			}
+
+			function logoutFailed(error) {
+				$log.error(error);
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
 	angular
 		.module('app')
 		.controller('EventsController', EventsController);
@@ -777,115 +889,6 @@
 				return res.data;
 			}
 			return res.title;
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	/**
-	* To be used in conjunction with autofocus attribute to auto-focus
-	* modal inputs.
-	*/
-
-	angular
-		.module('app')
-		.directive('spAutoFocus', autoFocusDirective);
-
-	function autoFocusDirective() {
-		return {
-			restrict: 'A',
-			link: link
-		};
-
-		function link(scope, element, attrs, ngModel) {
-			element[0].focus();
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	/**
-	* Compare an input field to another field, determined by the dev.
-	*/
-
-	angular
-		.module('app')
-		.directive('spCompareTo', compareToDirective);
-
-	function compareToDirective() {
-		return {
-			require: 'ngModel',
-			scope: {
-				otherModel: '=spCompareTo'
-			},
-			link: link
-		};
-
-		function link(scope, element, attrs, ngModel) {
-			var unbindWatch = scope.$watch('otherModel', validateOnChange);
-			ngModel.$validators.spCompareTo = compareValues;
-			element.on('$destroy', cleanUp);
-
-			function cleanUp() {
-				unbindWatch();
-			}
-
-			function compareValues(viewValue) {
-				return (viewValue === scope.otherModel.$viewValue);
-			}
-
-			function validateOnChange(newValue, oldValue) {
-				ngModel.$validate();
-			}
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('LogoutController', LogoutController);
-
-	LogoutController.$inject = ['logoutService'];
-	function LogoutController(logoutService) {
-		activate();
-
-		function activate() {
-			logoutService.logout();
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('logoutService', logoutService);
-
-	logoutService.$inject = ['$rootScope', '$http', '$state', '$log', 'cacheService'];
-	function logoutService($rootScope, $http, $state, $log, cacheService) {
-		return {
-			logout: logout
-		};
-
-		function logout() {
-			return $http.post('api/user/logoutManager.php')
-				.then(logoutComplete)
-				.catch(logoutFailed);
-
-			function logoutComplete(response) {
-				cacheService.clearCache();
-				$rootScope.$broadcast('updateUser');
-				$state.go('login');
-			}
-
-			function logoutFailed(error) {
-				$log.error(error);
-			}
 		}
 	}
 })();
@@ -1292,80 +1295,12 @@
 
 	angular
 		.module('app')
-		.factory('accessService', accessService);
-
-	accessService.$inject = ['$q', 'sessionService', 'statusService'];
-	function accessService($q, sessionService, statusService) {
-		var deferred = $q.defer();
-
-		return {
-			isAuthenticated: isAuthenticated,
-			isAdmin: isAdmin
-		};
-
-		function isAuthenticated() {
-			return sessionService.getVar('name')
-				.then(isAuthenticatedComplete);
-
-			function isAuthenticatedComplete(response) {
-				if (response.data.success !== false) {
-					deferred.resolve(statusService.OK);
-				} else {
-					deferred.reject(statusService.UNAUTHORIZED);
-				}
-
-				return deferred.promise;
-			}
-		}
-
-		function isAdmin() {
-			return sessionService.getVar('admin')
-				.then(isAdminComplete);
-
-			function isAdminComplete(response) {
-				var result = response.data;
-				if (result.success !== false && result.data == 1) {
-					deferred.resolve(statusService.OK);
-				} else {
-					deferred.reject(statusService.FORBIDDEN);
-				}
-
-				return deferred.promise;
-			}
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	/**
-	* Status codes used when accessing various pages in the app.
-	*/
-
-	angular
-		.module('app')
-		.service('statusService', statusService);
-
-	function statusService() {
-		return {
-			OK: 200,
-			UNAUTHORIZED: 401,
-			FORBIDDEN: 403
-		};
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('AdminController', AdminController);
 
-	AdminController.$inject = ['users', 'userService', 'userModalService'];
-	function AdminController(users, userService, userModalService) {
+	AdminController.$inject = ['isAdmin', 'users', 'userService', 'userModalService'];
+	function AdminController(isAdmin, users, userService, userModalService) {
 		var vm = this;
+		vm.isAdmin = isAdmin;
 		vm.users = users;
 		vm.showUserModal = showUserModal;
 
@@ -1519,6 +1454,75 @@
 		this.labelId = $stateParams.labelId;
 	}
 })();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('accessService', accessService);
+
+	accessService.$inject = ['$q', 'sessionService', 'statusService'];
+	function accessService($q, sessionService, statusService) {
+		var deferred = $q.defer();
+
+		return {
+			isAuthenticated: isAuthenticated,
+			isAdmin: isAdmin
+		};
+
+		function isAuthenticated() {
+			return sessionService.getVar('name')
+				.then(isAuthenticatedComplete);
+
+			function isAuthenticatedComplete(response) {
+				if (response.data.success !== false) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.UNAUTHORIZED);
+				}
+
+				return deferred.promise;
+			}
+		}
+
+		function isAdmin() {
+			return sessionService.getVar('admin')
+				.then(isAdminComplete);
+
+			function isAdminComplete(response) {
+				var result = response.data;
+				if (result.success === false || result.data === '0') {
+					deferred.reject(statusService.FORBIDDEN);
+				} else {
+					deferred.resolve(statusService.OK);
+				}
+
+				return deferred.promise;
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Status codes used when accessing various pages in the app.
+	*/
+
+	angular
+		.module('app')
+		.service('statusService', statusService);
+
+	function statusService() {
+		return {
+			OK: 200,
+			UNAUTHORIZED: 401,
+			FORBIDDEN: 403
+		};
+	}
+})();
+
 (function() {
 	'use strict';
 

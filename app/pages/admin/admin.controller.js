@@ -5,9 +5,10 @@
 		.module('app')
 		.controller('AdminController', AdminController);
 
-	AdminController.$inject = ['users', 'userService', 'userModalService'];
-	function AdminController(users, userService, userModalService) {
+	AdminController.$inject = ['isAdmin', 'users', 'userService', 'userModalService'];
+	function AdminController(isAdmin, users, userService, userModalService) {
 		var vm = this;
+		vm.isAdmin = isAdmin;
 		vm.users = users;
 		vm.showUserModal = showUserModal;
 

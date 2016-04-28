@@ -35,10 +35,10 @@
 
 			function isAdminComplete(response) {
 				var result = response.data;
-				if (result.success !== false && result.data == 1) {
-					deferred.resolve(statusService.OK);
-				} else {
+				if (result.success === false || result.data === '0') {
 					deferred.reject(statusService.FORBIDDEN);
+				} else {
+					deferred.resolve(statusService.OK);
 				}
 
 				return deferred.promise;

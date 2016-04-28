@@ -19,6 +19,9 @@
 			if (error === statusService.UNAUTHORIZED) {
 				event.preventDefault();
 				$state.go('login');
+			} else if (toState.name === 'admin' && error === statusService.FORBIDDEN) {
+				// event.preventDefault();
+				// $state.go('dashboard');
 			}
 		}
 	}

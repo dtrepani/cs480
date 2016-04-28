@@ -1,6 +1,6 @@
 <h1>Admin</h1>
 <!-- TODO: rename task-* to be universal -->
-<ul class="task-list">
+<ul class="task-list" ng-if="vm.isAdmin">
 	<li class="add-task" ng-click="vm.showUserModal({})">
 		<i class="fa fa-plus"></i>
 		<span class="task-summary">Add a user</span>
