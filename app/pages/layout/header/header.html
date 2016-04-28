@@ -10,8 +10,9 @@
 		</div>
 	</div>
 
-	<ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
-		<li role="menuitem" ng-hide="hc.user.name"><a ui-sref="login">Login</a></li>
-		<li role="menuitem" ng-show="hc.user.name"><a ui-sref="logout">Logout</a></li>
+	<ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu>
+		<li ng-show="hc.user.admin == 1"><a ui-sref="admin">Admin</li>
+		<li ng-hide="hc.user.name"><a ui-sref="login">Login</a></li>
+		<li ng-show="hc.user.name"><a ui-sref="logout">Logout</a></li>
 	</ul>
 </div>

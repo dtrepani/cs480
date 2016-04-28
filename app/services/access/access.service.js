@@ -30,7 +30,19 @@
 		}
 
 		function isAdmin() {
+			return sessionService.getVar('admin')
+				.then(isAdminComplete);
 
+			function isAdminComplete(response) {
+				var result = response.data;
+				if (result.success !== false && result.data == 1) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.FORBIDDEN);
+				}
+
+				return deferred.promise;
+			}
 		}
 	}
 })();

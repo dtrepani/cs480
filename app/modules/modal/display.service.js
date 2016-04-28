@@ -38,18 +38,20 @@
 		}
 
 		function formatForStorage(activity) {
+			var displayFormat = getDisplayFormat();
 			if (activity.hasOwnProperty('dt_start')) {
-				activity.dt_start = toStorageFormat(moment(activity.dt_start));
-				activity.dt_end = toStorageFormat(moment(activity.dt_end));
+				activity.dt_start = toStorageFormat(moment(activity.dt_start, displayFormat));
+				activity.dt_end = toStorageFormat(moment(activity.dt_end, displayFormat));
 			} else {
 				if (activity.hasOwnProperty('due') && activity.due) {
-					activity.due = toStorageFormat(moment(activity.due));
+					activity.due = toStorageFormat(moment(activity.due, displayFormat));
 				}
 
 				if (activity.hasOwnProperty('reminder') && activity.reminder) {
-					activity.reminder = toStorageFormat(moment(activity.reminder));
+					activity.reminder = toStorageFormat(moment(activity.reminder, displayFormat));
 				}
 			}
+			return activity;
 		}
 
 		function getDisplayFormat() {

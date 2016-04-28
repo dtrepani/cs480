@@ -24,7 +24,9 @@ $manager = new CrudManager(
     new Task(),
     $request,
     isset($_GET['id']) ? $_GET['id'] : null,
-    isset($_GET['byuser']) ? $_GET['byuser'] : null
+    isset($_GET['byUser']) ? $_GET['byUser'] : null,
+    isset($_GET['where']) ? $_GET['where'] : null,
+    isset($_GET['bindings']) ? $_GET['bindings'] : null
 );
 
 $response = $manager->getResponse();

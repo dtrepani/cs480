@@ -19,6 +19,7 @@
 		crud.prototype = {
 			get: get,
 			getByUser: getByUser,
+			getWhere: getWhere,
 			create: create,
 			update: update,
 			remove: remove,
@@ -60,7 +61,7 @@
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function get(id) {
-			return $http.get(this.base + '?id=' + id) // jshint ignore:line
+			return $http.get(this.base, {params: { id: id }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -68,7 +69,13 @@
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function getByUser() {
-			return $http.get(this.base + '?byuser=true') // jshint ignore:line
+			return $http.get(this.base, {params: {byUser: true}}) // jshint ignore:line
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		function getWhere(where, bindings) {
+			return $http.get(this.base, {params: { where: where, bindings: JSON.stringify(bindings) }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -92,7 +99,7 @@
 		*/
 		function update(id, data) {
 			data = this.removeUnecessaryKeys(data);  // jshint ignore:line
-			return $http.put(this.base + '?id=' + id, data) // jshint ignore:line
+			return $http.put(this.base, data, {params: { id: id }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -102,7 +109,7 @@
 		* @return	{string[]}			Promise with 'data' === 1 on success.
 		*/
 		function remove(id) {
-			return $http.delete(this.base + '?id=' + id) // jshint ignore:line
+			return $http.delete(this.base, {params: { id: id }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}

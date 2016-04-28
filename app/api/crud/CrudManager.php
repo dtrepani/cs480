@@ -11,6 +11,8 @@ class CrudManager
     private $data;
     private $id;
     private $byUser;
+    private $where;
+    private $bindings;
 
     /**
     * @param    string      $aReqMethod     Request method.
@@ -26,13 +28,17 @@ class CrudManager
         $anItemType,
         $aData = array(),
         $anId = null,
-        $aByUser = null
+        $aByUser = null,
+        $aWhere = null,
+        $aBindings = null
     ) {
         $this->reqMethod = $aReqMethod;
         $this->itemType = $anItemType;
         $this->data = $aData;
         $this->id = $anId;
         $this->byUser = $aByUser;
+        $this->where = $aWhere;
+        $this->bindings = json_decode($aBindings, true);
     }
 
     /**
@@ -67,6 +73,8 @@ class CrudManager
                 return $this->itemType->getWhere($this->getUserID());
             }
             return $this->itemType->getWhere('person_id = :person_id', '', '', array('person_id'=>$this->getUserID()));
+        } else if (is_array($this->bindings)) {
+            return $this->itemType->getWhere($this->where, '', '', $this->bindings);
         }
         return $this->itemType->get($this->id);
     }

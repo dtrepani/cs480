@@ -62,6 +62,21 @@
 					}
 				}
 			})
+			.state('admin', {
+				url: '/admin',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/admin/admin.html',
+						controller: 'AdminController',
+						controllerAs: 'vm',
+						resolve: {
+							isAdmin: ['accessService', isAdmin],
+							users: ['userService', getUsers]
+						}
+					}
+				}
+			})
 			.state('dashboard', {
 				url: '/dashboard',
 				parent: 'root',
@@ -147,8 +162,16 @@
 			return headerService.getUser();
 		}
 
+		function getUsers(userService) {
+			return userService.getUsers();
+		}
+
 		function isAuthenticated(accessService) {
 			return accessService.isAuthenticated();
+		}
+
+		function isAdmin(accessService) {
+			return accessService.isAdmin();
 		}
 	}
 })();

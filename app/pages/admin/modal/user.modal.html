@@ -1,0 +1,43 @@
+<form name="userForm" class="form-horizontal" novalidate>
+	<div class="modal-body">
+		<div class="form-group">
+			<input class="form-control input-lg" ng-model="vm.item.name" placeholder="Username" sp-auto-focus autofocus required minlength="4" maxlength="32" ng-pattern="/^[a-zA-Z]*$/" />
+		</div>
+
+		<div class="form-group" ng-show="vm.item.id == null">
+			<div class="col-sm-12">
+				<input type="password" class="form-control input" placeholder="Password" ng-model="vm.item.password" minlength="6" maxlength="64" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-3">
+				<input type="checkbox" ng-model="vm.item.admin" ng-true-value="1" ng-false-value="0" ng-checked="vm.item.admin == 1"/>
+				<label for="admin-icon">Admin</label>
+			</div>
+			<div class="col-sm-9">
+				<input type="email" class="form-control input" placeholder="Email" ng-model="vm.item.email" required />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-12">
+				<span class="btn btn-default btn-file">
+					Browse...
+					<input type="file" name="file" sp-file-change="vm.item.avatar" accept="image/x-png, image/jpeg"/>
+				</span>
+			</div>
+		</div>
+		<div class="form-group" ng-if="vm.item.avatar !== ''">
+			<div class="col-sm-12 file-image">
+				<img ng-src="{{ vm.item.avatar }}" />
+			</div>
+		</div>
+
+		<div class="modal-footer-custom">
+			<button class="btn btn-danger" type="button" ng-click="vm.remove(vm.item.id)" ng-hide="vm.item.id == null">Delete</button>
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-primary" type="button" ng-click="vm.confirm(vm.item)" ng-disabled="userForm.$invalid">Confirm</button>
+		</div>
+	</div>
+</form>

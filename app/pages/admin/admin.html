@@ -1,0 +1,14 @@
+<h1>Admin</h1>
+<!-- TODO: rename task-* to be universal -->
+<ul class="task-list">
+	<li class="add-task" ng-click="vm.showUserModal({})">
+		<i class="fa fa-plus"></i>
+		<span class="task-summary">Add a user</span>
+	</li>
+
+	<li ng-repeat="user in vm.users">
+		<i class="fa fa-star" ng-show="user.admin == 1"></i>
+		<i class="fa fa-star-o" ng-hide="user.admin == 1"></i>
+		<span class="task-summary" ng-click="vm.showUserModal(user)">{{ user.name }}</span>
+	</li>
+</ul>

@@ -62,6 +62,21 @@
 					}
 				}
 			})
+			.state('admin', {
+				url: '/admin',
+				parent: 'root',
+				views: {
+					'content@': {
+						templateUrl: 'pages/admin/admin.html',
+						controller: 'AdminController',
+						controllerAs: 'vm',
+						resolve: {
+							isAdmin: ['accessService', isAdmin],
+							users: ['userService', getUsers]
+						}
+					}
+				}
+			})
 			.state('dashboard', {
 				url: '/dashboard',
 				parent: 'root',
@@ -147,8 +162,16 @@
 			return headerService.getUser();
 		}
 
+		function getUsers(userService) {
+			return userService.getUsers();
+		}
+
 		function isAuthenticated(accessService) {
 			return accessService.isAuthenticated();
+		}
+
+		function isAdmin(accessService) {
+			return accessService.isAdmin();
 		}
 	}
 })();
@@ -431,6 +454,7 @@
 		crud.prototype = {
 			get: get,
 			getByUser: getByUser,
+			getWhere: getWhere,
 			create: create,
 			update: update,
 			remove: remove,
@@ -472,7 +496,7 @@
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function get(id) {
-			return $http.get(this.base + '?id=' + id) // jshint ignore:line
+			return $http.get(this.base, {params: { id: id }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -480,7 +504,13 @@
 		* @return	{string[]}			Promise with 'data' == query results on success.
 		*/
 		function getByUser() {
-			return $http.get(this.base + '?byuser=true') // jshint ignore:line
+			return $http.get(this.base, {params: {byUser: true}}) // jshint ignore:line
+				.then(promiseComplete)
+				.catch(promiseFailed);
+		}
+
+		function getWhere(where, bindings) {
+			return $http.get(this.base, {params: { where: where, bindings: JSON.stringify(bindings) }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -504,7 +534,7 @@
 		*/
 		function update(id, data) {
 			data = this.removeUnecessaryKeys(data);  // jshint ignore:line
-			return $http.put(this.base + '?id=' + id, data) // jshint ignore:line
+			return $http.put(this.base, data, {params: { id: id }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -514,7 +544,7 @@
 		* @return	{string[]}			Promise with 'data' === 1 on success.
 		*/
 		function remove(id) {
-			return $http.delete(this.base + '?id=' + id) // jshint ignore:line
+			return $http.delete(this.base, {params: { id: id }}) // jshint ignore:line
 				.then(promiseComplete)
 				.catch(promiseFailed);
 		}
@@ -863,6 +893,122 @@
 (function() {
 	'use strict';
 
+	/**
+	* The formats of the task and event modals.
+	* Display format is used for a user-friendly date.
+	* Storage format is used to store into the database.
+	*/
+
+	angular
+		.module('app')
+		.factory('formatService', formatService);
+
+	formatService.$inject = ['moment'];
+	function formatService(moment) {
+		return {
+			formatForDisplay: formatForDisplay,
+			formatForStorage: formatForStorage,
+			getDisplayFormat: getDisplayFormat,
+			toDisplayFormat: toDisplayFormat,
+			toStorageFormat: toStorageFormat
+		};
+
+		function formatForDisplay(activity) {
+			if (activity.hasOwnProperty('dt_start')) {
+				activity.all_day = parseInt(activity.all_day);
+				activity.dt_start = toDisplayFormat(moment(activity.dt_start));
+				activity.dt_end = toDisplayFormat(moment(activity.dt_end));
+			} else {
+				if (activity.hasOwnProperty('due') && activity.due) {
+					activity.due = toDisplayFormat(moment(activity.due));
+				}
+
+				if (activity.hasOwnProperty('reminder') && activity.reminder) {
+					activity.reminder = toDisplayFormat(moment(activity.reminder));
+				}
+			}
+		}
+
+		function formatForStorage(activity) {
+			var displayFormat = getDisplayFormat();
+			if (activity.hasOwnProperty('dt_start')) {
+				activity.dt_start = toStorageFormat(moment(activity.dt_start, displayFormat));
+				activity.dt_end = toStorageFormat(moment(activity.dt_end, displayFormat));
+			} else {
+				if (activity.hasOwnProperty('due') && activity.due) {
+					activity.due = toStorageFormat(moment(activity.due, displayFormat));
+				}
+
+				if (activity.hasOwnProperty('reminder') && activity.reminder) {
+					activity.reminder = toStorageFormat(moment(activity.reminder, displayFormat));
+				}
+			}
+			return activity;
+		}
+
+		function getDisplayFormat() {
+			return 'hh:mm a MM-DD-YYYY';
+		}
+
+		/**
+		* @param {moment Object} activity
+		*/
+		function toDisplayFormat(activity) {
+			return activity.format(getDisplayFormat());
+		}
+
+		/**
+		* @param {moment Object} activity
+		*/
+		function toStorageFormat(activity) {
+			return activity.format('YYYY-MM-DD HH:mm:ss');
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('ModalController', ModalController);
+
+	ModalController.$inject = ['$uibModalInstance', 'groups', 'item', 'eventModalService'];
+	function ModalController($uibModalInstance, groups, item, eventModalService) {
+		var vm = this;
+		vm.groups = groups;
+		vm.item = item;
+
+		vm.cancel = cancel;
+		vm.close = close;
+		vm.confirm = confirm;
+		vm.remove = remove;
+		vm.toggleAllDay = toggleAllDay;
+
+		function cancel() {
+			$uibModalInstance.dismiss('cancel');
+		}
+
+		function close() {
+			$uibModalInstance.close();
+		}
+
+		function confirm(data) {
+			$uibModalInstance.close(data);
+		}
+
+		function remove(data) {
+			$uibModalInstance.dismiss(data);
+		}
+
+		function toggleAllDay(event) {
+			eventModalService.toggleAllDay(event);
+		}
+	}
+})();
+(function() {
+	'use strict';
+
 	angular
 		.module('app')
 		.controller('RecurrenceController', RecurrenceController);
@@ -927,120 +1073,6 @@
 	}
 })();
 
-(function() {
-	'use strict';
-
-	/**
-	* The formats of the task and event modals.
-	* Display format is used for a user-friendly date.
-	* Storage format is used to store into the database.
-	*/
-
-	angular
-		.module('app')
-		.factory('formatService', formatService);
-
-	formatService.$inject = ['moment'];
-	function formatService(moment) {
-		return {
-			formatForDisplay: formatForDisplay,
-			formatForStorage: formatForStorage,
-			getDisplayFormat: getDisplayFormat,
-			toDisplayFormat: toDisplayFormat,
-			toStorageFormat: toStorageFormat
-		};
-
-		function formatForDisplay(activity) {
-			if (activity.hasOwnProperty('dt_start')) {
-				activity.all_day = parseInt(activity.all_day);
-				activity.dt_start = toDisplayFormat(moment(activity.dt_start));
-				activity.dt_end = toDisplayFormat(moment(activity.dt_end));
-			} else {
-				if (activity.hasOwnProperty('due') && activity.due) {
-					activity.due = toDisplayFormat(moment(activity.due));
-				}
-
-				if (activity.hasOwnProperty('reminder') && activity.reminder) {
-					activity.reminder = toDisplayFormat(moment(activity.reminder));
-				}
-			}
-		}
-
-		function formatForStorage(activity) {
-			if (activity.hasOwnProperty('dt_start')) {
-				activity.dt_start = toStorageFormat(moment(activity.dt_start));
-				activity.dt_end = toStorageFormat(moment(activity.dt_end));
-			} else {
-				if (activity.hasOwnProperty('due') && activity.due) {
-					activity.due = toStorageFormat(moment(activity.due));
-				}
-
-				if (activity.hasOwnProperty('reminder') && activity.reminder) {
-					activity.reminder = toStorageFormat(moment(activity.reminder));
-				}
-			}
-		}
-
-		function getDisplayFormat() {
-			return 'hh:mm a MM-DD-YYYY';
-		}
-
-		/**
-		* @param {moment Object} activity
-		*/
-		function toDisplayFormat(activity) {
-			return activity.format(getDisplayFormat());
-		}
-
-		/**
-		* @param {moment Object} activity
-		*/
-		function toStorageFormat(activity) {
-			return activity.format('YYYY-MM-DD HH:mm:ss');
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.controller('ModalController', ModalController);
-
-	ModalController.$inject = ['$uibModalInstance', 'groups', 'item', 'eventModalService'];
-	function ModalController($uibModalInstance, groups, item, eventModalService) {
-		var vm = this;
-		vm.groups = groups;
-		vm.item = item;
-
-		vm.cancel = cancel;
-		vm.close = close;
-		vm.confirm = confirm;
-		vm.remove = remove;
-		vm.toggleAllDay = toggleAllDay;
-
-		function cancel() {
-			$uibModalInstance.dismiss('cancel');
-		}
-
-		function close() {
-			$uibModalInstance.close();
-		}
-
-		function confirm(data) {
-			$uibModalInstance.close(data);
-		}
-
-		function remove(data) {
-			$uibModalInstance.dismiss(data);
-		}
-
-		function toggleAllDay(event) {
-			eventModalService.toggleAllDay(event);
-		}
-	}
-})();
 (function() {
 	'use strict';
 
@@ -1260,6 +1292,103 @@
 
 	angular
 		.module('app')
+		.factory('accessService', accessService);
+
+	accessService.$inject = ['$q', 'sessionService', 'statusService'];
+	function accessService($q, sessionService, statusService) {
+		var deferred = $q.defer();
+
+		return {
+			isAuthenticated: isAuthenticated,
+			isAdmin: isAdmin
+		};
+
+		function isAuthenticated() {
+			return sessionService.getVar('name')
+				.then(isAuthenticatedComplete);
+
+			function isAuthenticatedComplete(response) {
+				if (response.data.success !== false) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.UNAUTHORIZED);
+				}
+
+				return deferred.promise;
+			}
+		}
+
+		function isAdmin() {
+			return sessionService.getVar('admin')
+				.then(isAdminComplete);
+
+			function isAdminComplete(response) {
+				var result = response.data;
+				if (result.success !== false && result.data == 1) {
+					deferred.resolve(statusService.OK);
+				} else {
+					deferred.reject(statusService.FORBIDDEN);
+				}
+
+				return deferred.promise;
+			}
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	/**
+	* Status codes used when accessing various pages in the app.
+	*/
+
+	angular
+		.module('app')
+		.service('statusService', statusService);
+
+	function statusService() {
+		return {
+			OK: 200,
+			UNAUTHORIZED: 401,
+			FORBIDDEN: 403
+		};
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('AdminController', AdminController);
+
+	AdminController.$inject = ['users', 'userService', 'userModalService'];
+	function AdminController(users, userService, userModalService) {
+		var vm = this;
+		vm.users = users;
+		vm.showUserModal = showUserModal;
+
+		activate();
+
+		function activate() {
+		}
+
+		function getUsers() {
+			userService.getUsers().then(function(response) { vm.users = response; });
+		}
+
+		function showUserModal(user) {
+			userModalService.openUserModal(user)
+				.then(function(response) { if (response) vm.users = response; });
+		}
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
 		.controller('LoginController', LoginController);
 
 	LoginController.$inject = ['loginService'];
@@ -1390,63 +1519,6 @@
 		this.labelId = $stateParams.labelId;
 	}
 })();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.factory('accessService', accessService);
-
-	accessService.$inject = ['$q', 'sessionService', 'statusService'];
-	function accessService($q, sessionService, statusService) {
-		var deferred = $q.defer();
-
-		return {
-			isAuthenticated: isAuthenticated,
-			isAdmin: isAdmin
-		};
-
-		function isAuthenticated() {
-			return sessionService.getVar('name')
-				.then(isAuthenticatedComplete);
-
-			function isAuthenticatedComplete(response) {
-				if (response.data.success !== false) {
-					deferred.resolve(statusService.OK);
-				} else {
-					deferred.reject(statusService.UNAUTHORIZED);
-				}
-
-				return deferred.promise;
-			}
-		}
-
-		function isAdmin() {
-
-		}
-	}
-})();
-
-(function() {
-	'use strict';
-
-	/**
-	* Status codes used when accessing various pages in the app.
-	*/
-
-	angular
-		.module('app')
-		.service('statusService', statusService);
-
-	function statusService() {
-		return {
-			OK: 200,
-			UNAUTHORIZED: 401,
-			FORBIDDEN: 403
-		};
-	}
-})();
-
 (function() {
 	'use strict';
 
@@ -1922,6 +1994,103 @@
 
 		function toggleCompleted(subtask) {
 			subtask.completed = !subtask.completed;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('userModalService', userModalService);
+
+	userModalService.$inject = ['$uibModal', 'userService'];
+	function userModalService($uibModal, userService) {
+		return {
+			openUserModal: openUserModal
+		};
+
+		/**
+		* Without cloning the user, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
+		function openUserModal(user) {
+			var clonedUser = {};
+			angular.extend(clonedUser, user);
+
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'pages/admin/modal/user.modal.html',
+				resolve: {
+					groups: {},
+					item: clonedUser
+				}
+			}).result
+				.then(function(response) {
+					return userService.createOrUpdateUser(response)
+						.then(userService.getUsers);
+				}, function(response) {
+					if (Number(response)) {
+						return userService.deleteUser(response)
+							.then(userService.getUsers);
+					}
+				});
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.factory('userService', userService);
+
+	userService.$inject = ['crudService'];
+	function userService(crudService) {
+		var vm = this;  // jshint ignore:line
+		vm.user = new crudService('user');
+
+		return {
+			createUser: createUser,
+			createOrUpdateUser: createOrUpdateUser,
+			deleteUser: deleteUser,
+			getUsers: getUsers,
+			updateUser: updateUser
+		};
+
+		function createUser(user) {
+			return vm.user.create(user).then(promiseComplete);
+		}
+
+		function createOrUpdateUser(user) {
+			if (!user.id) {
+				return createUser(user);
+			}
+			return updateUser(user.id, user);
+		}
+
+		function deleteUser(id) {
+			return vm.user.remove(id).then(promiseComplete);
+		}
+
+		function getUsers() {
+			return vm.user.getWhere('', {}).then(promiseComplete);
+		}
+
+		function updateUser(id, user) {
+			return vm.user.update(id, user).then(promiseComplete);
+		}
+
+		function promiseComplete(response) {
+			var res = response.data;
+			if (res.success) {
+				return res.data;
+			}
+			return res.title;
 		}
 	}
 })();

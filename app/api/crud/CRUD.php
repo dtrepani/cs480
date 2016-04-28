@@ -132,6 +132,10 @@ abstract class CRUD
         $asc = '',
         $bindings = array()
     ) {
+        if (!empty($where)) {
+            $where = 'WHERE ' . $where;
+        }
+
         if (!empty($order)) {
             $order = 'ORDER BY ' . $order;
             $asc = ($asc === true) ? 'ASC' : ($asc === false) ? 'DESC' : '';
@@ -140,7 +144,7 @@ abstract class CRUD
         return $this->db->query(
             "SELECT *
             FROM $this->table
-            WHERE $where $order $asc",
+            $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)
         );
     }
