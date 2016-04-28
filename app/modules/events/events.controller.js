@@ -5,8 +5,8 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['$rootScope', 'moment', 'calendarWidgetService', 'calendarService', 'eventsService', 'eventModalService'];
-	function EventsController($rootScope, moment, calendarWidgetService, calendarService, eventsService, eventModalService) {
+	EventsController.$inject = ['$rootScope', 'calendarWidgetService', 'calendarService', 'eventsService'];
+	function EventsController($rootScope, calendarWidgetService, calendarService, eventsService) {
 		var vm = this;
 		vm.events = [];
 		vm.calendar = [];
@@ -15,9 +15,8 @@
 		vm.selectedDay = null;
 		vm.month = null;
 
+		vm.dayClicked = dayClicked;
 		vm.isSameDayAsSelected = isSameDayAsSelected;
-		vm.getEndOfDay = getEndOfDay;
-		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
 		vm.lastMonth = lastMonth;
 		vm.nextMonth = nextMonth;
@@ -36,21 +35,16 @@
 			vm.month = calendarWidgetService.getMonth(vm.today);
 		}
 
-		function getEndOfDay(day) {
-			return calendarWidgetService.getEndOfDay(day);
+		function dayClicked(clickEvent, day) {
+			vm.selectedDay = calendarWidgetService.dayClicked(clickEvent, day, vm.selectedDay, vm.calendars);
 		}
 
 		function isSameDayAsSelected(day) {
 			return calendarWidgetService.isSameDay(day, vm.selectedDay);
 		}
 
-		function selectDay(day) {
-			vm.selectedDay = day.fullDate;
-		}
-
 		function showEventModal(clickEvent, event) {
-			clickEvent.stopPropagation();
-			eventModalService.openEventModal(event, vm.calendars);
+			calendarWidgetService.showEventModal(clickEvent, event, vm.calendars);
 		}
 
 		function lastMonth() {

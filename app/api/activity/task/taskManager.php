@@ -1,6 +1,10 @@
 <?php
 namespace SP\App\Api\Activity\Task;
 
+/**
+* TODO: move logic to own file.
+*/
+
 require_once 'Task.php';
 require_once __DIR__.'/../../crud/CrudManager.php';
 
@@ -26,11 +30,11 @@ $manager = new CrudManager(
 $response = $manager->getResponse();
 
 if (is_array($response['data'])) {
-	foreach ($response['data'] as &$task) {
-	    if (!empty($task['subtasks'])) {
-	        $task['subtasks'] = unserialize(base64_decode($task['subtasks']));
-	    }
-	}
+    foreach ($response['data'] as &$task) {
+        if (!empty($task['subtasks'])) {
+            $task['subtasks'] = unserialize(base64_decode($task['subtasks']));
+        }
+    }
 }
 
 echo json_encode($response);

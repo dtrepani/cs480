@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS cal_event (
 	dt_start			DATETIME,
 	dt_end				DATETIME,
 	location			VARCHAR(256),
+	all_day 			BOOLEAN DEFAULT true,
 	PRIMARY KEY (id),
 	FOREIGN KEY (calendar_id)
 		REFERENCES calendar(id)

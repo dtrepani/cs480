@@ -5,22 +5,34 @@
 		.module('app')
 		.factory('calendarWidgetService', calendarWidgetService);
 
-	calendarWidgetService.$inject = ['moment'];
-	function calendarWidgetService(moment) {
+	calendarWidgetService.$inject = ['moment', 'eventModalService'];
+	function calendarWidgetService(moment, eventModalService) {
 		return {
-			getEndOfDay: getEndOfDay,
+			dayClicked: dayClicked,
 			getMonth: getMonth,
 			getToday: getToday,
 			getWeek: getWeek,
 			isSameDay: isSameDay,
 			lastMonth: lastMonth,
-			nextMonth: nextMonth
+			nextMonth: nextMonth,
+			showEventModal: showEventModal
 		};
 
-		function getEndOfDay(day) {
-			return day.clone().add(1, 'day').subtract(1, 'ms');
+		function dayClicked(clickEvent, day, selectedDay, calendars) {
+			if (isSameDay(day.fullDate, selectedDay)) {
+				showEventModal(
+					clickEvent,
+					{
+						dt_start: day.fullDate,
+						dt_end: day.fullDate.clone().endOf('day'),
+						all_day: 1,
+					},
+					calendars
+				);
+				return selectedDay;
+			}
+			return day.fullDate;
 		}
-
 		/**
 		* @param {Moment Object} aDay Day to build month around.
 		* @return {Moment Object[][]}
@@ -89,6 +101,11 @@
 		*/
 		function nextMonth(srcMonth) {
 			return getMonth(srcMonth[3][0].fullDate.clone().add(1, 'months'));
+		}
+
+		function showEventModal(clickEvent, event, calendars) {
+			clickEvent.stopPropagation();
+			eventModalService.openEventModal(event, calendars);
 		}
 	}
 })();

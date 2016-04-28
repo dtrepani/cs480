@@ -622,8 +622,8 @@
 		.module('app')
 		.controller('EventsController', EventsController);
 
-	EventsController.$inject = ['$rootScope', 'moment', 'calendarWidgetService', 'calendarService', 'eventsService', 'eventModalService'];
-	function EventsController($rootScope, moment, calendarWidgetService, calendarService, eventsService, eventModalService) {
+	EventsController.$inject = ['$rootScope', 'calendarWidgetService', 'calendarService', 'eventsService'];
+	function EventsController($rootScope, calendarWidgetService, calendarService, eventsService) {
 		var vm = this;
 		vm.events = [];
 		vm.calendar = [];
@@ -632,9 +632,8 @@
 		vm.selectedDay = null;
 		vm.month = null;
 
+		vm.dayClicked = dayClicked;
 		vm.isSameDayAsSelected = isSameDayAsSelected;
-		vm.getEndOfDay = getEndOfDay;
-		vm.selectDay = selectDay;
 		vm.showEventModal = showEventModal;
 		vm.lastMonth = lastMonth;
 		vm.nextMonth = nextMonth;
@@ -653,21 +652,16 @@
 			vm.month = calendarWidgetService.getMonth(vm.today);
 		}
 
-		function getEndOfDay(day) {
-			return calendarWidgetService.getEndOfDay(day);
+		function dayClicked(clickEvent, day) {
+			vm.selectedDay = calendarWidgetService.dayClicked(clickEvent, day, vm.selectedDay, vm.calendars);
 		}
 
 		function isSameDayAsSelected(day) {
 			return calendarWidgetService.isSameDay(day, vm.selectedDay);
 		}
 
-		function selectDay(day) {
-			vm.selectedDay = day.fullDate;
-		}
-
 		function showEventModal(clickEvent, event) {
-			clickEvent.stopPropagation();
-			eventModalService.openEventModal(event, vm.calendars);
+			calendarWidgetService.showEventModal(clickEvent, event, vm.calendars);
 		}
 
 		function lastMonth() {
@@ -871,41 +865,6 @@
 
 	angular
 		.module('app')
-		.controller('ModalController', ModalController);
-
-	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
-	function ModalController($uibModalInstance, groups, item) {
-		var vm = this;
-		vm.groups = groups;
-		vm.item = item;
-
-		vm.cancel = cancel;
-		vm.close = close;
-		vm.confirm = confirm;
-		vm.remove = remove;
-
-		function cancel() {
-			$uibModalInstance.dismiss('cancel');
-		}
-
-		function close() {
-			$uibModalInstance.close();
-		}
-
-		function confirm(data) {
-			$uibModalInstance.close(data);
-		}
-
-		function remove(data) {
-			$uibModalInstance.dismiss(data);
-		}
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.controller('RecurrenceController', RecurrenceController);
 
 	RecurrenceController.$inject = ['recurrenceModalService'];
@@ -968,6 +927,120 @@
 	}
 })();
 
+(function() {
+	'use strict';
+
+	/**
+	* The formats of the task and event modals.
+	* Display format is used for a user-friendly date.
+	* Storage format is used to store into the database.
+	*/
+
+	angular
+		.module('app')
+		.factory('formatService', formatService);
+
+	formatService.$inject = ['moment'];
+	function formatService(moment) {
+		return {
+			formatForDisplay: formatForDisplay,
+			formatForStorage: formatForStorage,
+			getDisplayFormat: getDisplayFormat,
+			toDisplayFormat: toDisplayFormat,
+			toStorageFormat: toStorageFormat
+		};
+
+		function formatForDisplay(activity) {
+			if (activity.hasOwnProperty('dt_start')) {
+				activity.all_day = parseInt(activity.all_day);
+				activity.dt_start = toDisplayFormat(moment(activity.dt_start));
+				activity.dt_end = toDisplayFormat(moment(activity.dt_end));
+			} else {
+				if (activity.hasOwnProperty('due') && activity.due) {
+					activity.due = toDisplayFormat(moment(activity.due));
+				}
+
+				if (activity.hasOwnProperty('reminder') && activity.reminder) {
+					activity.reminder = toDisplayFormat(moment(activity.reminder));
+				}
+			}
+		}
+
+		function formatForStorage(activity) {
+			if (activity.hasOwnProperty('dt_start')) {
+				activity.dt_start = toStorageFormat(moment(activity.dt_start));
+				activity.dt_end = toStorageFormat(moment(activity.dt_end));
+			} else {
+				if (activity.hasOwnProperty('due') && activity.due) {
+					activity.due = toStorageFormat(moment(activity.due));
+				}
+
+				if (activity.hasOwnProperty('reminder') && activity.reminder) {
+					activity.reminder = toStorageFormat(moment(activity.reminder));
+				}
+			}
+		}
+
+		function getDisplayFormat() {
+			return 'hh:mm a MM-DD-YYYY';
+		}
+
+		/**
+		* @param {moment Object} activity
+		*/
+		function toDisplayFormat(activity) {
+			return activity.format(getDisplayFormat());
+		}
+
+		/**
+		* @param {moment Object} activity
+		*/
+		function toStorageFormat(activity) {
+			return activity.format('YYYY-MM-DD HH:mm:ss');
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('ModalController', ModalController);
+
+	ModalController.$inject = ['$uibModalInstance', 'groups', 'item', 'eventModalService'];
+	function ModalController($uibModalInstance, groups, item, eventModalService) {
+		var vm = this;
+		vm.groups = groups;
+		vm.item = item;
+
+		vm.cancel = cancel;
+		vm.close = close;
+		vm.confirm = confirm;
+		vm.remove = remove;
+		vm.toggleAllDay = toggleAllDay;
+
+		function cancel() {
+			$uibModalInstance.dismiss('cancel');
+		}
+
+		function close() {
+			$uibModalInstance.close();
+		}
+
+		function confirm(data) {
+			$uibModalInstance.close(data);
+		}
+
+		function remove(data) {
+			$uibModalInstance.dismiss(data);
+		}
+
+		function toggleAllDay(event) {
+			eventModalService.toggleAllDay(event);
+		}
+	}
+})();
 (function() {
 	'use strict';
 
@@ -1427,12 +1500,11 @@
 		.module('app')
 		.factory('eventModalService', eventModalService);
 
-	eventModalService.$inject = ['$uibModal', 'calendarService', 'eventsService'];
-	function eventModalService($uibModal, calendarService, eventsService) {
-		var vm = this;  // jshint ignore:line
-
+	eventModalService.$inject = ['$uibModal', 'moment', 'eventsService', 'formatService'];
+	function eventModalService($uibModal, moment, eventsService, formatService) {
 		return {
-			openEventModal: openEventModal
+			openEventModal: openEventModal,
+			toggleAllDay: toggleAllDay
 		};
 
 		/**
@@ -1443,6 +1515,7 @@
 		function openEventModal(event, calendars) {
 			var clonedEvent = {};
 			angular.extend(clonedEvent, event);
+			formatService.formatForDisplay(clonedEvent);
 
 			return $uibModal.open({
 				controller: 'ModalController',
@@ -1454,6 +1527,7 @@
 				}
 			}).result
 				.then(function(response) {
+					formatService.formatForStorage(response);
 					return eventsService.createOrUpdateEvent(response)
 						.then(eventsService.getEvents);
 				}, function(response) {
@@ -1462,6 +1536,19 @@
 							.then(eventsService.getEvents);
 					}
 				});
+		}
+
+		function toggleAllDay(event) {
+			var display = formatService.getDisplayFormat();
+
+			if (event.all_day) {
+				event.dt_start = formatService.toDisplayFormat(moment(event.dt_start, display).startOf('day'));
+				event.dt_end = formatService.toDisplayFormat(moment(event.dt_start, display).endOf('day'));
+			} else {
+				var currentHour = moment().startOf('hour').hour();
+				event.dt_start = formatService.toDisplayFormat(moment(event.dt_start, display).hour(currentHour));
+				event.dt_end = formatService.toDisplayFormat(moment(event.dt_start, display).hour(currentHour).add(1, 'hours'));
+			}
 		}
 	}
 })();
@@ -1473,22 +1560,34 @@
 		.module('app')
 		.factory('calendarWidgetService', calendarWidgetService);
 
-	calendarWidgetService.$inject = ['moment'];
-	function calendarWidgetService(moment) {
+	calendarWidgetService.$inject = ['moment', 'eventModalService'];
+	function calendarWidgetService(moment, eventModalService) {
 		return {
-			getEndOfDay: getEndOfDay,
+			dayClicked: dayClicked,
 			getMonth: getMonth,
 			getToday: getToday,
 			getWeek: getWeek,
 			isSameDay: isSameDay,
 			lastMonth: lastMonth,
-			nextMonth: nextMonth
+			nextMonth: nextMonth,
+			showEventModal: showEventModal
 		};
 
-		function getEndOfDay(day) {
-			return day.clone().add(1, 'day').subtract(1, 'ms');
+		function dayClicked(clickEvent, day, selectedDay, calendars) {
+			if (isSameDay(day.fullDate, selectedDay)) {
+				showEventModal(
+					clickEvent,
+					{
+						dt_start: day.fullDate,
+						dt_end: day.fullDate.clone().endOf('day'),
+						all_day: 1,
+					},
+					calendars
+				);
+				return selectedDay;
+			}
+			return day.fullDate;
 		}
-
 		/**
 		* @param {Moment Object} aDay Day to build month around.
 		* @return {Moment Object[][]}
@@ -1557,6 +1656,11 @@
 		*/
 		function nextMonth(srcMonth) {
 			return getMonth(srcMonth[3][0].fullDate.clone().add(1, 'months'));
+		}
+
+		function showEventModal(clickEvent, event, calendars) {
+			clickEvent.stopPropagation();
+			eventModalService.openEventModal(event, calendars);
 		}
 	}
 })();
@@ -1694,8 +1798,8 @@
 		.module('app')
 		.factory('taskModalService', taskModalService);
 
-	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
-	function taskModalService($uibModal, labelService, tasksService) {
+	taskModalService.$inject = ['$uibModal', 'tasksService', 'formatService'];
+	function taskModalService($uibModal, tasksService, formatService) {
 		var vm = this; // jshint ignore: line
 
 		return {
@@ -1710,6 +1814,7 @@
 		function openTaskModal(task, labels) {
 			var clonedTask = {};
 			angular.extend(clonedTask, task);
+			formatService.formatForDisplay(clonedTask);
 
 			return $uibModal.open({
 				controller: 'ModalController',
@@ -1721,6 +1826,7 @@
 				}
 			}).result
 				.then(function(response) {
+					response = formatService.formatForStorage(response);
 					return tasksService.createOrUpdateTask(response)
 						.then(tasksService.getTasks);
 				}, function(response) {

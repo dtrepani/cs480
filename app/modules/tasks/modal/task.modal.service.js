@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('taskModalService', taskModalService);
 
-	taskModalService.$inject = ['$uibModal', 'labelService', 'tasksService'];
-	function taskModalService($uibModal, labelService, tasksService) {
+	taskModalService.$inject = ['$uibModal', 'tasksService', 'formatService'];
+	function taskModalService($uibModal, tasksService, formatService) {
 		var vm = this; // jshint ignore: line
 
 		return {
@@ -21,6 +21,7 @@
 		function openTaskModal(task, labels) {
 			var clonedTask = {};
 			angular.extend(clonedTask, task);
+			formatService.formatForDisplay(clonedTask);
 
 			return $uibModal.open({
 				controller: 'ModalController',
@@ -32,6 +33,7 @@
 				}
 			}).result
 				.then(function(response) {
+					response = formatService.formatForStorage(response);
 					return tasksService.createOrUpdateTask(response)
 						.then(tasksService.getTasks);
 				}, function(response) {

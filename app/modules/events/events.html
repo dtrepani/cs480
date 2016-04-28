@@ -31,11 +31,7 @@
 				ng-class="{ today: day.isToday,
 					'other-month': !day.isTargetMonth,
 					selected: vm.isSameDayAsSelected(day.fullDate) }"
-				ng-click="vm.isSameDayAsSelected(day.fullDate)
-					? vm.showEventModal($event, {
-						dt_start: day.fullDate.format('YYYY-MM-DD HH:mm:ss'),
-						dt_end: vm.getEndOfDay(day.fullDate).format('YYYY-MM-DD HH:mm:ss') })
-					: vm.selectDay(day)">
+				ng-click="vm.dayClicked($event, day)">
 					<span class="day-number">{{ day.number }}</span>
 					<ul class="events">
 						<li ng-repeat="event in vm.events | orderBy:'dt_start' | sameDayAs:day.fullDate"

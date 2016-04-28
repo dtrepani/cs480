@@ -5,8 +5,8 @@
 		.module('app')
 		.controller('ModalController', ModalController);
 
-	ModalController.$inject = ['$uibModalInstance', 'groups', 'item'];
-	function ModalController($uibModalInstance, groups, item) {
+	ModalController.$inject = ['$uibModalInstance', 'groups', 'item', 'eventModalService'];
+	function ModalController($uibModalInstance, groups, item, eventModalService) {
 		var vm = this;
 		vm.groups = groups;
 		vm.item = item;
@@ -15,6 +15,7 @@
 		vm.close = close;
 		vm.confirm = confirm;
 		vm.remove = remove;
+		vm.toggleAllDay = toggleAllDay;
 
 		function cancel() {
 			$uibModalInstance.dismiss('cancel');
@@ -30,6 +31,10 @@
 
 		function remove(data) {
 			$uibModalInstance.dismiss(data);
+		}
+
+		function toggleAllDay(event) {
+			eventModalService.toggleAllDay(event);
 		}
 	}
 })();

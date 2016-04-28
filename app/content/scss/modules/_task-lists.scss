@@ -62,19 +62,6 @@
 	}
 }
 
-.checkbox-repeat {
-	@include font-size(13px);
-	color: $color-dim-dark;
-
-	input[type=checkbox] {
-		margin-right: 5px;
-	}
-}
-
-.form-radio {
-	width: auto;
-}
-
 .priority {
 	display: inline-block;
 }

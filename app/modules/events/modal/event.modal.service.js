@@ -5,12 +5,11 @@
 		.module('app')
 		.factory('eventModalService', eventModalService);
 
-	eventModalService.$inject = ['$uibModal', 'calendarService', 'eventsService'];
-	function eventModalService($uibModal, calendarService, eventsService) {
-		var vm = this;  // jshint ignore:line
-
+	eventModalService.$inject = ['$uibModal', 'moment', 'eventsService', 'formatService'];
+	function eventModalService($uibModal, moment, eventsService, formatService) {
 		return {
-			openEventModal: openEventModal
+			openEventModal: openEventModal,
+			toggleAllDay: toggleAllDay
 		};
 
 		/**
@@ -21,6 +20,7 @@
 		function openEventModal(event, calendars) {
 			var clonedEvent = {};
 			angular.extend(clonedEvent, event);
+			formatService.formatForDisplay(clonedEvent);
 
 			return $uibModal.open({
 				controller: 'ModalController',
@@ -32,6 +32,7 @@
 				}
 			}).result
 				.then(function(response) {
+					formatService.formatForStorage(response);
 					return eventsService.createOrUpdateEvent(response)
 						.then(eventsService.getEvents);
 				}, function(response) {
@@ -40,6 +41,19 @@
 							.then(eventsService.getEvents);
 					}
 				});
+		}
+
+		function toggleAllDay(event) {
+			var display = formatService.getDisplayFormat();
+
+			if (event.all_day) {
+				event.dt_start = formatService.toDisplayFormat(moment(event.dt_start, display).startOf('day'));
+				event.dt_end = formatService.toDisplayFormat(moment(event.dt_start, display).endOf('day'));
+			} else {
+				var currentHour = moment().startOf('hour').hour();
+				event.dt_start = formatService.toDisplayFormat(moment(event.dt_start, display).hour(currentHour));
+				event.dt_end = formatService.toDisplayFormat(moment(event.dt_start, display).hour(currentHour).add(1, 'hours'));
+			}
 		}
 	}
 })();

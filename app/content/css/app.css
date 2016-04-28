@@ -430,7 +430,7 @@ li[id*="nav-"] {
     display: inline-block; }
 
 .today {
-  background: #F0F0F0; }
+  background: #FAFAFA; }
 
 .selected {
   background: #ebf1f8 !important; }
@@ -549,6 +549,16 @@ li[id*="nav-"] {
   width: auto;
   line-height: 1;
   padding: 0 5px; }
+
+.checkbox-small {
+  font-size: 13px;
+  font-size: 0.8125rem;
+  color: #aaa; }
+  .checkbox-small input[type=checkbox] {
+    margin-right: 5px; }
+
+.form-radio {
+  width: auto; }
 
 .check-icon {
   margin-right: 10px; }
@@ -706,16 +716,6 @@ li[id*="nav-"] {
   color: #888; }
   .add-task:hover {
     background: #F0F0F0 !important; }
-
-.checkbox-repeat {
-  font-size: 13px;
-  font-size: 0.8125rem;
-  color: #aaa; }
-  .checkbox-repeat input[type=checkbox] {
-    margin-right: 5px; }
-
-.form-radio {
-  width: auto; }
 
 .priority {
   display: inline-block; }
