@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2016 at 06:41 AM
+-- Generation Time: Apr 29, 2016 at 02:35 PM
 -- Server version: 10.1.9-MariaDB
 -- PHP Version: 7.0.1
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cs480`
+-- Database: `djt_sp`
 --
 
 -- --------------------------------------------------------
@@ -60,7 +60,32 @@ INSERT INTO `activity_info` (`id`, `summary`, `created`, `color`, `note`, `remin
 (246, 'wonk ;)', '2016-04-28 18:49:43', NULL, NULL, NULL, 'normal', '', 0),
 (247, 'totes the coolest', '2016-04-28 18:50:01', NULL, NULL, NULL, 'normal', '', 0),
 (248, 'message from the future', '2016-04-28 18:51:13', NULL, 'hoi!!! you done now!!! grats!!!', NULL, 'normal', '', 0),
-(277, 'another cool test', '2016-04-29 06:36:24', NULL, NULL, NULL, 'normal', '', 0);
+(277, 'another cool test', '2016-04-29 06:36:24', NULL, NULL, NULL, 'normal', '', 0),
+(279, 'demotwo''s task', '2016-04-29 13:50:54', NULL, 'with notes!', NULL, 'high', 'api/upload/files/146193071757234addd6efb.jpg', 0),
+(280, 'Demotwo''s task in another label', '2016-04-29 13:53:16', NULL, NULL, NULL, 'normal', '', 0),
+(281, 'demotwo''s other task', '2016-04-29 13:53:51', NULL, NULL, NULL, 'normal', '', 0),
+(282, 'Demotwo''s event', '2016-04-29 13:54:59', NULL, 'it''s all day!', NULL, 'normal', 'api/upload/files/146193105757234c314f5a9.png', 0),
+(284, 'Demotwo''s other event', '2016-04-29 13:57:05', NULL, NULL, NULL, 'normal', '', 0),
+(285, 'By demo, in demotwo''s "Yet Another Label"', '2016-04-29 14:00:52', NULL, ':)', NULL, 'normal', '', 0),
+(286, 'Due today', '2016-04-29 14:01:25', NULL, NULL, NULL, 'normal', '', 0),
+(287, 'Due yesterday', '2016-04-29 14:01:41', NULL, NULL, NULL, 'normal', '', 0),
+(288, 'Due within a week', '2016-04-29 14:02:02', NULL, NULL, NULL, 'normal', '', 0),
+(289, 'Due next month', '2016-04-29 14:02:29', NULL, 'oh BOY', NULL, 'normal', '', 0),
+(290, 'In "Work"', '2016-04-29 14:03:29', NULL, NULL, NULL, 'normal', '', 0),
+(291, 'Presentation!!', '2016-04-29 14:04:26', NULL, 'how EXCITING', NULL, 'normal', 'api/upload/files/146193152057234e007f5eb.png', 0),
+(292, 'In the past', '2016-04-29 14:05:36', NULL, NULL, NULL, 'normal', '', 0),
+(293, 'In the future', '2016-04-29 14:05:42', NULL, NULL, NULL, 'normal', '', 0),
+(294, 'In the super future', '2016-04-29 14:05:53', NULL, NULL, NULL, 'normal', '', 0),
+(295, 'In the super past', '2016-04-29 14:06:01', NULL, NULL, NULL, 'normal', '', 0),
+(296, 'In the super, duper past', '2016-04-29 14:06:08', NULL, NULL, NULL, 'normal', '', 0),
+(297, 'In the super, duper future', '2016-04-29 14:06:31', NULL, 'we have flying cards now', NULL, 'normal', '', 0),
+(298, 'In "Appointments"', '2016-04-29 14:12:21', NULL, NULL, NULL, 'normal', '', 0),
+(303, 'Test', '2016-04-29 14:19:28', NULL, NULL, NULL, 'normal', 'api/upload/files/14619323655723514dc72f0.png', 0),
+(304, 'demotwo''s task in "Yet Another Label"', '2016-04-29 14:24:03', NULL, NULL, NULL, 'normal', '', 0),
+(305, 'All day events are at the top', '2016-04-29 14:25:10', NULL, NULL, NULL, 'normal', '', 0),
+(306, 'Then it''s sorted by which starts next', '2016-04-29 14:25:47', NULL, NULL, NULL, 'normal', '', 0),
+(307, 'More events!', '2016-04-29 14:26:56', NULL, NULL, NULL, 'normal', '', 0),
+(308, 'demothree''s task', '2016-04-29 14:32:51', NULL, NULL, NULL, 'normal', '', 0);
 
 -- --------------------------------------------------------
 
@@ -80,11 +105,12 @@ CREATE TABLE `calendar` (
 --
 
 INSERT INTO `calendar` (`id`, `person_id`, `name`, `visible`) VALUES
-(5, 17, 'Calendar', 1),
-(6, 18, 'Calendar', 1),
-(18, 55, 'Calendar', 1),
-(19, 56, 'Calendar', 1),
-(32, 17, 'Test', 1);
+(35, 1, 'Calendar', 1),
+(36, 1, 'Appointments', 1),
+(37, 2, 'Calendar', 1),
+(38, 121, 'Calendar', 1),
+(39, 122, 'Calendar', 1),
+(40, 3, 'Calendar', 1);
 
 -- --------------------------------------------------------
 
@@ -103,7 +129,7 @@ CREATE TABLE `calendar_person` (
 --
 
 INSERT INTO `calendar_person` (`calendar_id`, `person_id`, `id`) VALUES
-(18, 17, 1);
+(37, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -126,16 +152,20 @@ CREATE TABLE `cal_event` (
 --
 
 INSERT INTO `cal_event` (`id`, `calendar_id`, `activity_info_id`, `dt_start`, `dt_end`, `location`, `all_day`) VALUES
-(63, 5, 208, '2016-04-16 04:00:00', '2016-04-16 06:59:59', '', 0),
-(64, 5, 209, '2016-04-08 04:00:00', '2016-04-08 06:59:59', 'AWW YE B)', 0),
-(67, 5, 212, '2016-04-08 03:00:00', '2016-04-09 03:59:59', NULL, 0),
-(68, 5, 213, '2016-04-08 00:00:00', '2016-04-08 23:59:59', NULL, 1),
-(69, 5, 214, '2016-04-15 00:20:00', '2016-04-15 13:59:59', NULL, 0),
-(70, 5, 216, '2016-05-05 00:00:00', '2016-05-05 23:59:59', NULL, 1),
-(88, 5, 244, '2016-03-27 00:00:00', '2016-03-27 23:59:00', NULL, 1),
-(89, 18, 247, '2016-04-29 00:00:00', '2016-04-29 23:59:00', NULL, 1),
-(90, 18, 248, '2016-04-30 00:00:00', '2016-04-30 23:59:00', 'the future', 1),
-(119, 5, 277, '2016-04-08 00:00:00', '2016-04-08 23:59:00', NULL, 1);
+(120, 37, 282, '2016-04-30 00:00:00', '2016-04-30 23:59:00', 'in a place!', 1),
+(122, 37, 284, '2016-04-30 07:00:00', '2016-04-30 08:30:00', NULL, 1),
+(123, 35, 291, '2016-04-29 13:00:00', '2016-04-29 14:00:00', NULL, 0),
+(124, 35, 292, '2016-03-28 00:00:00', '2016-03-28 23:59:00', NULL, 1),
+(125, 35, 293, '2016-05-07 00:00:00', '2016-05-07 23:59:00', NULL, 1),
+(126, 35, 294, '2016-05-24 00:00:00', '2016-05-24 23:59:00', NULL, 1),
+(127, 35, 295, '2016-03-09 00:00:00', '2016-03-09 23:59:00', NULL, 1),
+(128, 35, 296, '2016-02-28 00:00:00', '2016-02-28 23:59:00', NULL, 1),
+(129, 35, 297, '2016-06-10 00:00:00', '2016-06-10 23:59:00', NULL, 1),
+(130, 36, 298, '2016-04-30 00:00:00', '2016-04-30 23:59:00', NULL, 1),
+(133, 35, 303, '2016-04-06 08:00:00', '2016-04-06 09:00:00', NULL, 0),
+(134, 35, 305, '2016-04-23 00:00:00', '2016-04-23 23:59:00', NULL, 1),
+(135, 35, 306, '2016-04-23 01:00:00', '2016-04-23 09:00:00', NULL, 0),
+(136, 35, 307, '2016-04-30 00:00:00', '2016-04-30 23:59:00', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -154,11 +184,14 @@ CREATE TABLE `label` (
 --
 
 INSERT INTO `label` (`id`, `person_id`, `name`) VALUES
-(5, 17, 'Inbox'),
-(6, 17, 'Test'),
-(7, 18, 'Inbox'),
-(19, 55, 'Inbox'),
-(20, 56, 'Inbox');
+(35, 1, 'Inbox'),
+(36, 1, 'Work'),
+(37, 2, 'Inbox'),
+(38, 2, 'Other Label'),
+(39, 2, 'Yet Another Label'),
+(40, 121, 'Inbox'),
+(41, 122, 'Inbox'),
+(42, 3, 'Inbox');
 
 -- --------------------------------------------------------
 
@@ -177,7 +210,10 @@ CREATE TABLE `label_person` (
 --
 
 INSERT INTO `label_person` (`label_id`, `person_id`, `id`) VALUES
-(19, 17, 1);
+(37, 1, 2),
+(39, 1, 3),
+(42, 1, 4),
+(42, 2, 5);
 
 -- --------------------------------------------------------
 
@@ -203,10 +239,11 @@ CREATE TABLE `person` (
 --
 
 INSERT INTO `person` (`id`, `name`, `password`, `admin`, `theme`, `avatar`, `email`, `phone_number`, `notify_email`, `notify_text`) VALUES
-(17, 'test', '$2y$10$TR9IMfRo/K9MwHQumkDPgeHePwwdXbLVizm2siR9TFvQQ2IoJYmfi', 1, 'light', 'api/upload/files/1461696484571fb7e4a9033.jpg', 'test@test.com', NULL, NULL, NULL),
-(18, 'testtest', '$2y$10$8EohPuz92vcQU.quMqacWO.m.n21t9vevYKa5wKvXhSatdWtBmCGS', 0, 'light', NULL, 'test@test.com', NULL, NULL, NULL),
-(55, 'itme', '$2y$10$sBbpaMttnckfaM/yabc9JOJRIOCGQ7ARpc2lThxEx9r8RxXry.BZm', 0, 'light', 'api/upload/files/146186215957223f0f24e4e.jpg', 'it@me.com', NULL, NULL, NULL),
-(56, 'someuser', '$2y$10$5Rr4ErEMPv./h6oA.jTXr.ITBa6vB.EHLTVNlRWW9VYvH1GsWpmAa', 0, 'light', NULL, 't@t.com', NULL, NULL, NULL);
+(1, 'demo', '$2y$10$aBn2Mu.52ncW3XcYmpvr2uYHmXTYfp9Za4h4.OOJ9p8jNvbhpx8Zm', 1, 'light', 'api/upload/files/146193034357234967306b8.jpg', 'demo@demo.com', NULL, NULL, NULL),
+(2, 'demotwo', '$2y$10$RJjCs4OHOzTZDTiHLFV2geRPmsjXWvgvenqeW0F84J42H9oHYtJBW', 0, 'light', 'api/upload/files/146193057157234a4b225da.png', 'demo@two.com', NULL, NULL, NULL),
+(3, 'demothree', '$2y$10$YVjhnTzMh8qheRESEMwvcOAiLlkgL8h.47p26.K9FWA7CmoHtTcoG', 0, 'light', NULL, 'demo@three.com', NULL, NULL, NULL),
+(121, 'fellowadmin', '$2y$10$2JdsfI3IuwwxX6MZ01D97urrSzxTeTlidjDT/eV9iDBg48agWOBy2', 1, 'light', 'api/upload/files/14619329305723538226f7d.png', 'test@test.com', NULL, NULL, NULL),
+(122, 'nerd', '$2y$10$gFXXuEatditKCx7aRiVjzebKtds1UDDokbxQ0ToT06WPdpkJyMbna', 0, 'light', NULL, 'totes@nerd.com', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -252,7 +289,32 @@ INSERT INTO `recurrence` (`id`, `activity_info_id`, `freq`, `until`, `count`, `r
 (112, 246, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (113, 247, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (114, 248, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(143, 277, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(143, 277, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(145, 279, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(146, 280, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(147, 281, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(148, 282, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(150, 284, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(151, 285, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(152, 286, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(153, 287, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(154, 288, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(155, 289, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(156, 290, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(157, 291, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(158, 292, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(159, 293, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(160, 294, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(161, 295, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(162, 296, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(163, 297, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(164, 298, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(169, 303, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(170, 304, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(171, 305, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(172, 306, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(173, 307, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(174, 308, 'daily', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -271,7 +333,7 @@ CREATE TABLE `session` (
 --
 
 INSERT INTO `session` (`id`, `last_accessed`, `data`) VALUES
-('p8q8i9mks84iuv90vf00juevf3', '2016-04-29 06:40:11', 'id|s:2:"17";name|s:4:"test";admin|s:1:"1";theme|s:5:"light";avatar|s:44:"api/upload/files/1461696484571fb7e4a9033.jpg";email|s:13:"test@test.com";phone_number|N;notify_email|N;notify_text|N;');
+('p8q8i9mks84iuv90vf00juevf3', '2016-04-29 14:34:45', 'id|s:1:"1";name|s:4:"demo";admin|s:1:"1";theme|s:5:"light";avatar|s:44:"api/upload/files/146193034357234967306b8.jpg";email|s:13:"demo@demo.com";phone_number|N;notify_email|N;notify_text|N;');
 
 -- --------------------------------------------------------
 
@@ -293,14 +355,17 @@ CREATE TABLE `task` (
 --
 
 INSERT INTO `task` (`id`, `label_id`, `activity_info_id`, `due`, `completed`, `subtasks`) VALUES
-(101, 5, 133, '2016-05-02 05:20:00', 0, 'czowOiIiOw=='),
-(102, 6, 134, '2016-04-18 00:00:00', 0, 'YToyOntzOjk6ImN1cnJlbnRJZCI7aToyO3M6NDoibGlzdCI7YToxOntpOjA7YTozOntzOjc6InN1bW1hcnkiO3M6MTk6ImxvdmUgeW91IGdyYW5kcGEgPDMiO3M6MjoiaWQiO2k6MTtzOjk6ImNvbXBsZXRlZCI7YjowO319fQ=='),
-(109, 5, 198, NULL, 1, 'YToyOntzOjk6ImN1cnJlbnRJZCI7aToyO3M6NDoibGlzdCI7YToxOntpOjA7YTozOntzOjc6InN1bW1hcnkiO3M6MzoieWVzIjtzOjI6ImlkIjtpOjE7czo5OiJjb21wbGV0ZWQiO2I6MDt9fX0='),
-(113, 5, 202, NULL, 0, 'YToyOntzOjk6ImN1cnJlbnRJZCI7aTozO3M6NDoibGlzdCI7YToyOntpOjA7YTozOntzOjc6InN1bW1hcnkiO3M6NDoidGVzdCI7czoyOiJpZCI7aToxO3M6OToiY29tcGxldGVkIjtiOjA7fWk6MTthOjM6e3M6Nzoic3VtbWFyeSI7czo1OiJ0ZXN0MiI7czoyOiJpZCI7aToyO3M6OToiY29tcGxldGVkIjtiOjE7fX19'),
-(114, 5, 215, '2016-05-30 00:00:00', 0, NULL),
-(122, 6, 242, NULL, 0, NULL),
-(124, 19, 245, NULL, 1, NULL),
-(125, 19, 246, NULL, 0, NULL);
+(127, 37, 279, NULL, 0, 'YToyOntzOjk6ImN1cnJlbnRJZCI7aToyO3M6NDoibGlzdCI7YToxOntpOjA7YTozOntzOjc6InN1bW1hcnkiO3M6MTM6ImFuZCBzdWJ0YXNrcyEiO3M6MjoiaWQiO2k6MTtzOjk6ImNvbXBsZXRlZCI7YjowO319fQ=='),
+(128, 38, 280, NULL, 0, NULL),
+(129, 37, 281, '2016-04-30 15:00:00', 0, NULL),
+(130, 39, 285, NULL, 0, NULL),
+(131, 35, 286, '2016-04-29 15:00:00', 0, NULL),
+(132, 35, 287, '2016-04-28 15:00:00', 0, NULL),
+(133, 35, 288, '2016-05-03 13:00:00', 0, NULL),
+(134, 35, 289, '2016-05-20 11:00:00', 0, NULL),
+(135, 36, 290, NULL, 0, NULL),
+(136, 39, 304, NULL, 0, NULL),
+(137, 42, 308, '2016-05-03 15:00:00', 0, 'YToyOntzOjk6ImN1cnJlbnRJZCI7aToyO3M6NDoibGlzdCI7YToxOntpOjA7YTozOntzOjc6InN1bW1hcnkiO3M6MTk6ImRlbW90aHJlZSdzIHN1YnRhc2siO3M6MjoiaWQiO2k6MTtzOjk6ImNvbXBsZXRlZCI7YjowO319fQ==');
 
 --
 -- Indexes for dumped tables
@@ -386,47 +451,47 @@ ALTER TABLE `task`
 -- AUTO_INCREMENT for table `activity_info`
 --
 ALTER TABLE `activity_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=278;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=309;
 --
 -- AUTO_INCREMENT for table `calendar`
 --
 ALTER TABLE `calendar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT for table `calendar_person`
 --
 ALTER TABLE `calendar_person`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `cal_event`
 --
 ALTER TABLE `cal_event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 --
 -- AUTO_INCREMENT for table `label`
 --
 ALTER TABLE `label`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 --
 -- AUTO_INCREMENT for table `label_person`
 --
 ALTER TABLE `label_person`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `person`
 --
 ALTER TABLE `person`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
 --
 -- AUTO_INCREMENT for table `recurrence`
 --
 ALTER TABLE `recurrence`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
 --
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
 --
 -- Constraints for dumped tables
 --

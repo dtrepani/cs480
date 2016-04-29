@@ -5,8 +5,8 @@
 		.module('app')
 		.factory('registerService', registerService);
 
-	registerService.$inject = ['$location', '$log', 'crudService'];
-	function registerService($location, $log, crudService) {
+	registerService.$inject = ['$state', '$log', 'crudService'];
+	function registerService($state, $log, crudService) {
 		var vm = this;  // jshint ignore:line
 		vm.crud = new crudService('user');
 
@@ -21,11 +21,13 @@
 				.then(registrationComplete);
 
 			function registrationComplete(response) {
-				if (response.success === 'false') {
-					$log.error(response.title);
-					return response.title;
+				var result = response.data;
+				if (!result.success) {
+					$log.error(result.title);
+					return result.title;
+				} else {
+					$state.go('login');
 				}
-				$location.url('/login');
 			}
 		}
 	}

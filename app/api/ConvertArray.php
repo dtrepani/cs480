@@ -24,6 +24,8 @@ class ConvertArray
     }
 
     /**
+    * TODO: Find better way to do this.
+    *
     * Separate the bindings into their appropriate subgroups.
     * Bindings not in any of the subgroups are thrown out.
     * Only to be called by ActivityCRUD.
@@ -36,8 +38,8 @@ class ConvertArray
     {
         $bindings = array('activity'=>array(), 'info'=>array(), 'recurrence'=>array());
         $cols = array(
-            'activity'=>array('label_id', 'calendar_id', 'dt_start', 'dt_end', 'description', 'location', 'due', 'completed', 'picture'),
-            'info'=>array('summary', 'color', 'note', 'reminder', 'priority'),
+            'activity'=>array('label_id', 'calendar_id', 'dt_start', 'dt_end', 'all_day', 'location', 'due', 'completed', 'subtasks'),
+            'info'=>array('summary', 'color', 'note', 'reminder', 'priority', 'recurrence', 'attachment'),
             'recurrence'=>array('freq', 'until', 'count', 'repeat_interval'),
         );
 
