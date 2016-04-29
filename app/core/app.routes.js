@@ -173,7 +173,7 @@
 				}
 			});
 
-		$urlRouterProvider.otherwise('/dashboard');
+		$urlRouterProvider.otherwise('login');
 
 		function cacheAll(cacheService) {
 			return cacheService.cacheAll();
