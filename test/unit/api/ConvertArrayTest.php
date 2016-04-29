@@ -42,10 +42,10 @@ class ConvertArrayTest extends \PHPUnit_Framework_TestCase
 
     public function testToSubgroups()
     {
-        $bindings = array('description'=>'a', 'summary'=>'b', 'note'=>'c', 'freq'=>'hourly', 'repeat_interval'=>1);
+        $bindings = array('location'=>'a', 'summary'=>'b', 'note'=>'c', 'freq'=>'hourly', 'repeat_interval'=>1);
 
         $subgroups = ConvertArray::toSubgroups($bindings);
-        $this->assertArrayHasKey('description', $subgroups['activity']);
+        $this->assertArrayHasKey('location', $subgroups['activity']);
         $this->assertArrayHasKey('summary', $subgroups['info']);
         $this->assertArrayHasKey('note', $subgroups['info']);
         $this->assertArrayHasKey('freq', $subgroups['recurrence']);
