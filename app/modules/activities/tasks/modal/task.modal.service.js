@@ -26,7 +26,7 @@
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/task.modal.html',
+				templateUrl: 'modules/activities/tasks/modal/task.modal.html',
 				resolve: {
 					groups: function() { return labels; },
 					item: clonedTask

@@ -191,7 +191,8 @@ class Database
             return array(
                 'success'=>false,
                 'title'=>'DB: An error occurred while executing the query.',
-                'message'=>$e->getMessage()
+                'message'=>$e->getMessage(),
+                'details'=>$query
             );
         }
     }

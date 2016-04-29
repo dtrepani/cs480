@@ -25,7 +25,7 @@
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
-				templateUrl: 'modules/events/modal/event.modal.html',
+				templateUrl: 'modules/activities/events/modal/event.modal.html',
 				resolve: {
 					groups: function() { return calendars; },
 					item: clonedEvent

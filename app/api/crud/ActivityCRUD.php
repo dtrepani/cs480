@@ -246,11 +246,16 @@ abstract class ActivityCRUD
     * another user.
     * @return string
     */
-    private function getJoinedActivityWithParent()
+    public function getJoinedActivityWithParent()
     {
         return "{$this->parentTable}
                 JOIN ({$this->getJoinedActivity()})
                 ON {$this->parentTable}.id = {$this->table}.{$this->parentTable}_id";
+    }
+
+    public function getSelectWithParent()
+    {
+        return $this->selectWithParent;
     }
 
     /**

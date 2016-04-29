@@ -21,7 +21,7 @@
 			return $uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
-				templateUrl: 'modules/recurrence/modal/recurrence.modal.html',
+				templateUrl: 'modules/activities/recurrence/modal/recurrence.modal.html',
 				resolve: {
 					groups: function() { return recurrenceInfo; },
 					item: item

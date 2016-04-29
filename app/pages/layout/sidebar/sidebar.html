@@ -27,6 +27,14 @@
 							<div class="square-icon-primary"></div> <span>{{ calendar.name }}</span>
 						</a>
 					</li>
+
+					<!-- TODO: move to own section: -->
+
+					<li ng-repeat="sharedCalendar in sc.sharedCalendars">
+						<a ui-sref="labels.label({ labelId: sharedCalendar.label_id })" ui-sref-active="active">
+							<div class="square-icon-primary"></div> <span>{{ sharedCalendar.shared_name }}</span>
+						</a>
+					</li>
 				</ul>
 			</li>
 		</ul>
@@ -41,6 +49,7 @@
 			<li id="nav-7-days">
 				<a ui-sref="week" ui-sref-active="active"> <i class="fa fa-list fa-fw"></i> <span>Next 7 Days</span> </a>
 			</li>
+
 			<li id="nav-my-labels" class="sub-nav">
 				<div ng-click="sc.toggleLabels()">
 					<i class="fa fa-tag fa-fw"></i>
@@ -50,6 +59,14 @@
 					<li ng-repeat="label in sc.labels">
 						<a ui-sref="labels.label({ labelId: label.id })" ui-sref-active="active">
 							<div class="square-icon-primary"></div> <span>{{ label.name }}</span>
+						</a>
+					</li>
+
+					<!-- TODO: move to own section: -->
+
+					<li ng-repeat="sharedLabel in sc.sharedLabels">
+						<a ui-sref="labels.label({ labelId: sharedLabel.label_id })" ui-sref-active="active">
+							<div class="square-icon-primary"></div> <span>{{ sharedLabel.shared_name }}</span>
 						</a>
 					</li>
 				</ul>

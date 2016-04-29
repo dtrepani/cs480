@@ -6,9 +6,9 @@ namespace SP\App\Api\Activity\Task;
 */
 
 require_once 'Task.php';
-require_once __DIR__.'/../../crud/CrudManager.php';
+require_once __DIR__.'/../../crud/ActivityCrudManager.php';
 
-use SP\App\Api\CRUD\CrudManager;
+use SP\App\Api\CRUD\ActivityCrudManager;
 
 /**
 * @var mixed[] $request Array with task bindings to create task.
@@ -19,7 +19,7 @@ if (isset($request['subtasks'])) {
     $request['subtasks'] = base64_encode(serialize($request['subtasks']));
 }
 
-$manager = new CrudManager(
+$manager = new ActivityCrudManager(
     $_SERVER['REQUEST_METHOD'],
     new Task(),
     $request,

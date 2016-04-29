@@ -6,13 +6,13 @@ use SP\App\Api\Session\Session;
 
 class CrudManager
 {
-    private $reqMethod;
-    private $itemType;
-    private $data;
-    private $id;
-    private $byUser;
-    private $where;
-    private $bindings;
+    protected $reqMethod;
+    protected $itemType;
+    protected $data;
+    protected $id;
+    protected $byUser;
+    protected $where;
+    protected $bindings;
 
     /**
     * @param    string      $aReqMethod     Request method.
@@ -66,12 +66,9 @@ class CrudManager
     *
     * @return mixed[] Promise with query results. See Database->query().
     */
-    private function getGetResponse()
+    protected function getGetResponse()
     {
         if ($this->byUser) {
-            if ($this->itemType instanceof ActivityCRUD) {
-                return $this->itemType->getWhere($this->getUserID());
-            }
             return $this->itemType->getWhere('person_id = :person_id', '', '', array('person_id'=>$this->getUserID()));
         } else if (is_array($this->bindings)) {
             return $this->itemType->getWhere($this->where, '', '', $this->bindings);
@@ -82,12 +79,9 @@ class CrudManager
     /**
     * @see getGetResponse(), except for 'DELETE'
     */
-    private function getDeleteResponse()
+    protected function getDeleteResponse()
     {
         if ($this->byUser) {
-            if ($this->itemType instanceof ActivityCRUD) {
-                return $this->itemType->getWhere($this->getUserID());
-            }
             return $this->itemType->deleteWhere('person_id = :person_id', array('person_id'=>$this->getUserID()));
         }
         return $this->itemType->delete($this->id);
@@ -97,7 +91,7 @@ class CrudManager
     * Where clauses for activities require a user ID.
     * @return string User ID. -1 if no user logged in.
     */
-    private function getUserID()
+    protected function getUserID()
     {
         $session = new Session();
         $result = $session->getVar('id');

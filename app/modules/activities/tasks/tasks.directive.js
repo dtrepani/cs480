@@ -7,7 +7,7 @@
 
 	function tasksDirective() {
 		return {
-			templateUrl: 'modules/tasks/tasks.html',
+			templateUrl: 'modules/activities/tasks/tasks.html',
 			controller: 'TasksController',
 			controllerAs: 'vm',
 			bindToController: true,

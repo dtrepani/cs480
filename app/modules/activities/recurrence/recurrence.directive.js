@@ -7,7 +7,7 @@
 
 	function recurrenceDirective() {
 		return {
-			templateUrl: 'modules/recurrence/recurrence.html',
+			templateUrl: 'modules/activities/recurrence/recurrence.html',
 			controller: 'RecurrenceController',
 			controllerAs: 'rc',
 			bindToController: true,

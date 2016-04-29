@@ -15,7 +15,9 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					user: ['headerService', getUser]
+					user: ['headerService', getUser],
+					sharedCalendars: ['calendarUserService', getSharedCalendars],
+					sharedLabels: ['labelUserService', getSharedLabels]
 				},
 				views: {
 					'header': {
@@ -71,6 +73,7 @@
 						controller: 'AdminController',
 						controllerAs: 'vm',
 						resolve: {
+							isAuthenticated: ['accessService', isAuthenticated],
 							isAdmin: ['accessService', isAdmin],
 							users: ['userService', getUsers]
 						}
@@ -93,16 +96,19 @@
 				url: '/labels',
 				parent: 'root'
 			})
-			.state('labels.label', {
-				url: '/:labelId',
-				views: {
-					'content@': {
-						templateUrl: "pages/tasks/label.html",
-						controller: 'LabelPageController',
-						controllerAs: 'vm'
+				.state('labels.label', {
+					url: '/:labelId',
+					views: {
+						'content@': {
+							templateUrl: "pages/tasks/label.html",
+							controller: 'LabelPageController',
+							controllerAs: 'vm',
+							resolve: {
+								isAuthenticated: ['accessService', isAuthenticated]
+							}
+						}
 					}
-				}
-			})
+				})
 			.state('inbox', {
 				url: '/inbox',
 				parent: 'root',
@@ -156,6 +162,14 @@
 
 		function cacheAll(cacheService) {
 			return cacheService.cacheAll();
+		}
+
+		function getSharedCalendars(calendarUserService) {
+			return calendarUserService.getSharedCalendars();
+		}
+
+		function getSharedLabels(labelUserService) {
+			return labelUserService.getSharedLabels();
 		}
 
 		function getUser(headerService) {

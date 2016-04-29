@@ -49,6 +49,10 @@
 				case 'task':
 					this.base += 'activity/task/';
 					break;
+				case 'labelUser':
+				case 'calendarUser':
+					this.base += 'collab/';
+					break;
 				default:
 					this.base += type + '/';
 			}

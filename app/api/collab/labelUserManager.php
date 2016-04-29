@@ -1,19 +1,19 @@
 <?php
-namespace SP\App\Api\Activity\Calendar;
+namespace SP\App\Api\Collab;
 
-require_once 'CalEvent.php';
-require_once __DIR__.'/../../crud/ActivityCrudManager.php';
+require_once 'LabelUser.php';
+require_once __DIR__.'/../crud/CollabCrudManager.php';
 
-use SP\App\Api\CRUD\ActivityCrudManager;
+use SP\App\Api\CRUD\CollabCrudManager;
 
 /**
 * @var mixed[] $request Array with event bindings to create event.
 */
 $request = json_decode(file_get_contents('php://input'), true);
 
-$manager = new ActivityCrudManager(
+$manager = new CollabCrudManager(
     $_SERVER['REQUEST_METHOD'],
-    new CalEvent(),
+    new LabelUser(),
     $request,
     isset($_GET['id']) ? $_GET['id'] : null,
     isset($_GET['byUser']) ? $_GET['byUser'] : null,

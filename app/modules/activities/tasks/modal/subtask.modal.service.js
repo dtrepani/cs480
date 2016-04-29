@@ -23,7 +23,7 @@
 			$uibModal.open({
 				controller: 'ModalController',
 				controllerAs: 'vm',
-				templateUrl: 'modules/tasks/modal/subtask.modal.html',
+				templateUrl: 'modules/activities/tasks/modal/subtask.modal.html',
 				resolve: {
 					groups: task,
 					item: clonedSubtask

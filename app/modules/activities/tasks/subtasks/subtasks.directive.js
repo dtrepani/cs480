@@ -7,7 +7,7 @@
 
 	function subtasksDirective() {
 		return {
-			templateUrl: 'modules/tasks/subtasks/subtasks.html',
+			templateUrl: 'modules/activities/tasks/subtasks/subtasks.html',
 			controller: 'SubtasksController',
 			controllerAs: 'st',
 			bindToController: true,
