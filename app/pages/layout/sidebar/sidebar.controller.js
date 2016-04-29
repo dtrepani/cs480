@@ -5,14 +5,12 @@
 		.module('app')
 		.controller('SidebarController', SidebarController);
 
-	SidebarController.$inject = ['$rootScope', 'sharedCalendars', 'sharedLabels', 'labelService', 'calendarService', 'sidebarService'];
-	function SidebarController($rootScope, sharedCalendars, sharedLabels, labelService, calendarService, sidebarService) {
+	SidebarController.$inject = ['$rootScope', 'labelService', 'calendarService', 'sidebarService'];
+	function SidebarController($rootScope, labelService, calendarService, sidebarService) {
 		var vm = this;
 		vm.collapsed = {};
 		vm.labels = [];
 		vm.calendars = [];
-		vm.sharedCalendars = sharedCalendars;
-		vm.sharedLabels = sharedLabels;
 
 		vm.toggleSidebar = toggleSidebar;
 		vm.toggleCalendars = toggleCalendars;

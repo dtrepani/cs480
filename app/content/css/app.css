@@ -564,9 +564,10 @@ li[id*="nav-"] {
   margin-right: 10px; }
 
 .edit-icon {
-  text-align: center;
-  visibility: hidden; }
-  li:hover .edit-icon {
+  text-align: right;
+  visibility: hidden;
+  color: #aaa; }
+  a:hover .edit-icon {
     visibility: visible; }
 
 .square-icon-white {

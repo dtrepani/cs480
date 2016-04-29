@@ -15,9 +15,7 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					user: ['headerService', getUser],
-					sharedCalendars: ['calendarUserService', getSharedCalendars],
-					sharedLabels: ['labelUserService', getSharedLabels]
+					user: ['headerService', getUser]
 				},
 				views: {
 					'header': {
@@ -92,16 +90,33 @@
 					}
 				}
 			})
+			.state('calendars', {
+				url: '/calendars',
+				parent: 'root'
+			})
+				.state('calendars.calendar', {
+					url: '/:groupId',
+					views: {
+						'content@': {
+							templateUrl: "pages/calendar/calendar.html",
+							controller: 'GroupPageController',
+							controllerAs: 'vm',
+							resolve: {
+								isAuthenticated: ['accessService', isAuthenticated]
+							}
+						}
+					}
+				})
 			.state('labels', {
 				url: '/labels',
 				parent: 'root'
 			})
 				.state('labels.label', {
-					url: '/:labelId',
+					url: '/:groupId',
 					views: {
 						'content@': {
 							templateUrl: "pages/tasks/label.html",
-							controller: 'LabelPageController',
+							controller: 'GroupPageController',
 							controllerAs: 'vm',
 							resolve: {
 								isAuthenticated: ['accessService', isAuthenticated]

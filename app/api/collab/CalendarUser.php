@@ -10,9 +10,4 @@ class CalendarUser extends CollabCRUD
 {
     protected $table = 'calendar_person';
     protected $groupTable = 'calendar';
-
-    public function getSharedActivities($userID)
-    {
-        return parent::getSharedActivitiesFor(new CalEvent($this->db), $userID);
-    }
 }

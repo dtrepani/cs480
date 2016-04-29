@@ -130,6 +130,7 @@ CREATE TABLE IF NOT EXISTS subtask (
 );
 
 CREATE TABLE IF NOT EXISTS calendar_person (
+	id				INT		NOT NULL UNIQUE AUTO_INCREMENT,
 	calendar_id		INT		NOT NULL,
 	person_id		INT		NOT NULL,
 	PRIMARY KEY (calendar_id, person_id),
@@ -144,6 +145,7 @@ CREATE TABLE IF NOT EXISTS calendar_person (
 );
 
 CREATE TABLE IF NOT EXISTS label_person (
+	id				INT		NOT NULL UNIQUE AUTO_INCREMENT,
 	label_id		INT		NOT NULL,
 	person_id		INT		NOT NULL,
 	PRIMARY KEY (label_id, person_id),

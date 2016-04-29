@@ -217,11 +217,32 @@ abstract class ActivityCRUD
             $asc = ($asc === true) ? 'ASC' : ($asc === false) ? 'DESC' : '';
         }
 
-        return $this->db->query(
+        $result = $this->db->query(
             "SELECT {$this->selectWithParent}
             FROM {$this->joinedActivityWithParent}
             WHERE {$this->parentTable}.person_id = :person_id $where $order $asc",
             ConvertArray::addPrefixToKeys($bindings)
+        );
+
+        if (!$result['success']) {
+            return $result;
+        }
+
+        $resultShared = $this->db->query(
+            "SELECT {$this->selectWithParent}
+            FROM {$this->parentTable}_person
+                JOIN ({$this->joinedActivityWithParent})
+                ON {$this->parentTable}_person.{$this->parentTable}_id = {$this->parentTable}.id
+            WHERE {$this->parentTable}_person.person_id = {$userID}"
+        );
+
+        if (!$resultShared['success']) {
+            return $resultShared;
+        }
+
+        return array(
+            'success'=>true,
+            'data'=>array_merge($result['data'], $resultShared['data'])
         );
     }
 

@@ -15,9 +15,7 @@
 				abstract: true,
 				resolve: {
 					cache: ['cacheService', cacheAll],
-					user: ['headerService', getUser],
-					sharedCalendars: ['calendarUserService', getSharedCalendars],
-					sharedLabels: ['labelUserService', getSharedLabels]
+					user: ['headerService', getUser]
 				},
 				views: {
 					'header': {
@@ -92,16 +90,33 @@
 					}
 				}
 			})
+			.state('calendars', {
+				url: '/calendars',
+				parent: 'root'
+			})
+				.state('calendars.calendar', {
+					url: '/:groupId',
+					views: {
+						'content@': {
+							templateUrl: "pages/calendar/calendar.html",
+							controller: 'GroupPageController',
+							controllerAs: 'vm',
+							resolve: {
+								isAuthenticated: ['accessService', isAuthenticated]
+							}
+						}
+					}
+				})
 			.state('labels', {
 				url: '/labels',
 				parent: 'root'
 			})
 				.state('labels.label', {
-					url: '/:labelId',
+					url: '/:groupId',
 					views: {
 						'content@': {
 							templateUrl: "pages/tasks/label.html",
-							controller: 'LabelPageController',
+							controller: 'GroupPageController',
 							controllerAs: 'vm',
 							resolve: {
 								isAuthenticated: ['accessService', isAuthenticated]
@@ -314,6 +329,18 @@
 
 			return tasksWithinDays;
 		};
+	}
+})();
+(function() {
+	'use strict';
+
+	angular
+		.module('app')
+		.controller('GroupPageController', GroupPageController);
+
+	GroupPageController.$inject = ['$stateParams'];
+	function GroupPageController($stateParams) {
+		this.groupId = $stateParams.groupId;
 	}
 })();
 (function() {
@@ -665,7 +692,6 @@
 		}
 	}
 })();
-
 
 (function() {
 	'use strict';
@@ -1140,18 +1166,6 @@
 
 	angular
 		.module('app')
-		.controller('LabelPageController', LabelPageController);
-
-	LabelPageController.$inject = ['$stateParams'];
-	function LabelPageController($stateParams) {
-		this.labelId = $stateParams.labelId;
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.factory('accessService', accessService);
 
 	accessService.$inject = ['$q', 'sessionService', 'statusService'];
@@ -1294,7 +1308,10 @@
 			templateUrl: 'modules/activities/events/events.html',
 			controller: 'EventsController',
 			controllerAs: 'vm',
-			bindToController: true
+			bindToController: true,
+			scope: {
+				inCalendars: '=inGroups'
+			}
 		};
 	}
 })();
@@ -1547,40 +1564,6 @@
 
 	angular
 		.module('app')
-		.controller('CalendarUserController', CalendarUserController);
-
-	CalendarUserController.$inject = ['calendarUserService'];
-	function CalendarUserController(calendarUserService) {
-		var vm = this;
-		// vm.labels = [];
-		// vm.tasks = [];
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
-		.directive('spSharedCalendars', calendarUserDirective);
-
-	function calendarUserDirective() {
-		return {
-			templateUrl: 'modules/collab/collab.html',
-			controller: 'CalendarUserController',
-			controllerAs: 'vm',
-			bindToController: true,
-			scope: {
-				items: '=',
-				groups: '=',
-			}
-		};
-	}
-})();
-(function() {
-	'use strict';
-
-	angular
-		.module('app')
 		.factory('calendarUserService', calendarUserService);
 
 	calendarUserService.$inject = ['crudService'];
@@ -1700,6 +1683,52 @@
 				return res.data;
 			}
 			return res.title;
+		}
+	}
+})();
+
+(function() {
+	'use strict';
+
+	// TODO: separate into labelUser and calendarUser modal services
+
+	angular
+		.module('app')
+		.factory('collabModalService', collabModalService);
+
+	collabModalService.$inject = ['$uibModal', 'tasksService'];
+	function collabModalService($uibModal, tasksService) {
+		return {
+			openCollabModal: openCollabModal
+		};
+
+		/**
+		* Without cloning the item, any changes made in the modal will be reflected
+		* in the main window regardless of if the changes were saved or not, which
+		* means a user would not be able to cancel their changes unless they refresh.
+		*/
+		function openCollabModal(item, labels) {
+			var clonedItem = {};
+			angular.extend(clonedItem, item);
+
+			return $uibModal.open({
+				controller: 'ModalController',
+				controllerAs: 'vm',
+				templateUrl: 'modules/collab/modal.modal.html',
+				resolve: {
+					groups: {},
+					item: clonedItem
+				}
+			}).result
+				.then(function(response) {
+					return tasksService.createOrUpdateTask(response)
+						.then(tasksService.getTasks);
+				}, function(response) {
+					if (Number(response)) {
+						return tasksService.deleteTask(response)
+							.then(tasksService.getTasks);
+					}
+				});
 		}
 	}
 })();
@@ -1863,14 +1892,12 @@
 		.module('app')
 		.controller('SidebarController', SidebarController);
 
-	SidebarController.$inject = ['$rootScope', 'sharedCalendars', 'sharedLabels', 'labelService', 'calendarService', 'sidebarService'];
-	function SidebarController($rootScope, sharedCalendars, sharedLabels, labelService, calendarService, sidebarService) {
+	SidebarController.$inject = ['$rootScope', 'labelService', 'calendarService', 'sidebarService'];
+	function SidebarController($rootScope, labelService, calendarService, sidebarService) {
 		var vm = this;
 		vm.collapsed = {};
 		vm.labels = [];
 		vm.calendars = [];
-		vm.sharedCalendars = sharedCalendars;
-		vm.sharedLabels = sharedLabels;
 
 		vm.toggleSidebar = toggleSidebar;
 		vm.toggleCalendars = toggleCalendars;

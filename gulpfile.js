@@ -73,7 +73,7 @@ gulp.task('js', function() {
 		.pipe($.ngAnnotate())
 		.pipe($.sourcemaps.init())
 		.pipe($.uglify())
-		.pipe($.sourcemaps.write())
+		.pipe($.sourcemaps.write('./'))
 		.pipe(gulp.dest(dirPaths.js))
 });
 

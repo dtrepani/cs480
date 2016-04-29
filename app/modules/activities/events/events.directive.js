@@ -10,7 +10,10 @@
 			templateUrl: 'modules/activities/events/events.html',
 			controller: 'EventsController',
 			controllerAs: 'vm',
-			bindToController: true
+			bindToController: true,
+			scope: {
+				inCalendars: '=inGroups'
+			}
 		};
 	}
 })();

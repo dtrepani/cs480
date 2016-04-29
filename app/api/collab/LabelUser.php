@@ -10,9 +10,4 @@ class LabelUser extends CollabCRUD
 {
     protected $table = 'label_person';
     protected $groupTable = 'label';
-
-    public function getSharedActivities($userID)
-    {
-        return parent::getSharedActivitiesFor(new Task($this->db), $userID);
-    }
 }

@@ -23,16 +23,9 @@
 				</div>
 				<ul id="sub-nav-calendars" class="sub-nav-list" ng-class="{ collapsed: sc.collapsed.calendars }">
 					<li ng-repeat="calendar in sc.calendars">
-						<a href="#">
-							<div class="square-icon-primary"></div> <span>{{ calendar.name }}</span>
-						</a>
-					</li>
-
-					<!-- TODO: move to own section: -->
-
-					<li ng-repeat="sharedCalendar in sc.sharedCalendars">
-						<a ui-sref="labels.label({ labelId: sharedCalendar.label_id })" ui-sref-active="active">
-							<div class="square-icon-primary"></div> <span>{{ sharedCalendar.shared_name }}</span>
+						<a ui-sref="calendars.calendar({ groupId: calendar.id })" ui-sref-active="active">
+							<div class="square-icon-primary"></div>
+							<span>{{ calendar.name }}</span>
 						</a>
 					</li>
 				</ul>
@@ -57,16 +50,9 @@
 				</div>
 				<ul id="sub-nav-labels" class="sub-nav-list" ng-class="{ collapsed: sc.collapsed.labels }">
 					<li ng-repeat="label in sc.labels">
-						<a ui-sref="labels.label({ labelId: label.id })" ui-sref-active="active">
-							<div class="square-icon-primary"></div> <span>{{ label.name }}</span>
-						</a>
-					</li>
-
-					<!-- TODO: move to own section: -->
-
-					<li ng-repeat="sharedLabel in sc.sharedLabels">
-						<a ui-sref="labels.label({ labelId: sharedLabel.label_id })" ui-sref-active="active">
-							<div class="square-icon-primary"></div> <span>{{ sharedLabel.shared_name }}</span>
+						<a ui-sref="labels.label({ groupId: label.id })" ui-sref-active="active">
+							<div class="square-icon-primary"></div>
+							<span>{{ label.name }}</span>
 						</a>
 					</li>
 				</ul>

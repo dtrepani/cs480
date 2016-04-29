@@ -67,8 +67,10 @@ class Database
     {
         try {
             $this->conn = new \PDO(
-                'mysql:host=localhost;dbname=cs480;charset=utf8mb4',
-                'root',
+                'mysql:host=localhost;dbname=djt_sp;charset=utf8mb4',
+                // 'mysql:host=localhost;dbname=cs480;charset=utf8mb4',
+                '',
+                // 'root',
                 '',
                 array(
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

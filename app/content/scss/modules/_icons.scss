@@ -3,10 +3,11 @@
 }
 
 .edit-icon {
-	text-align: center;
+	text-align: right;
 	visibility: hidden;
+	color: $color-dim-dark;
 
-	li:hover & {
+	a:hover & {
 		visibility: visible;
 	}
 }

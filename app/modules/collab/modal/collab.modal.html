@@ -1,0 +1,13 @@
+<form name="collabForm" class="form-horizontal" novalidate>
+	<div class="modal-body">
+		<div class="form-group">
+			<input class="form-control input-lg" ng-model="vm.item.user" placeholder="Add user to share with" sp-auto-focus autofocus required />
+		</div>
+
+		<div class="modal-footer-custom">
+			<button class="btn btn-danger" type="button" ng-click="vm.remove(vm.item.share_id)" ng-hide="vm.item.id == null">Delete</button>
+			<button class="btn btn-default" type="button" ng-click="vm.cancel()">Cancel</button>
+			<button class="btn btn-primary" type="button" ng-click="vm.confirm(vm.item)" ng-disabled="collabForm.$invalid">Confirm</button>
+		</div>
+	</div>
+</form>
